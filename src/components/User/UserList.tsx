@@ -1,0 +1,53 @@
+import React, { useEffect, useState } from "react";
+import { getAllUsers, deleteUser } from "../../services/userService";
+import { UserType } from "../../types/user.types";  // ייבוא המודל
+
+const UserList = ({ onEdit }: { onEdit: (user: UserType) => void }) => {
+  const [users, setUsers] = useState<UserType[]>([]);
+
+  useEffect(() => {
+    loadUsers();
+  }, []);
+
+  const loadUsers = async () => {
+    const data = await getAllUsers();
+    setUsers(data);
+  };
+
+  const handleDelete = async (id: number) => {
+    if (window.confirm("את בטוחה שתרצי למחוק?")) {
+      await deleteUser(id);
+      loadUsers();
+    }
+  };
+
+  return (
+    <table>
+      <thead>
+        <tr>
+          <th>אימייל</th>
+          <th>סוג משתמש</th>
+          <th>שם איש קשר</th>
+          <th>טלפון</th>
+          <th>פעולות</th>
+        </tr>
+      </thead>
+      <tbody>
+        {users.map((user) => (
+          <tr key={user.id}>
+            <td>{user.email}</td>
+            <td>{user.userType}</td>
+            <td>{user.contactPersonFirstName} {user.contactPersonLastName}</td>
+            <td>{user.contactPersonPhone}</td>
+            <td>
+              <button onClick={() => onEdit(user)}>✏️</button>
+              <button onClick={() => handleDelete(user.id)}>🗑️</button>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+};
+
+export default UserList;

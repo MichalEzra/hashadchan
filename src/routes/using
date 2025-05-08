@@ -1,0 +1,6 @@
+; 📁 routes
+; ניהול כל הנתיבים של האתר.
+
+; Paths.ts – משתנים קבועים של URL.
+
+; Router.tsx – React Router שממפה URL ל־Component.

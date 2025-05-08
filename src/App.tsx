@@ -1,13 +1,9 @@
 import React from 'react';
 import { Provider } from "react-redux";
-
+import Router from './routes/Router';
 
 function App() {
-  return (
-   <div>
-      
-   </div>
-  );
+  return <Router />;
 }
 
 export default App;
