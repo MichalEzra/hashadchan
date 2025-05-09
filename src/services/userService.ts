@@ -1,43 +1,28 @@
 // src/services/userService.ts
+import axios from 'axios';
+import { UserType } from '../types/user.types';
 
-import { UserType } from "../types/user.types";
+const API_URL = 'http://localhost:5245/api/user';
 
-const API_URL = "http://localhost:5245/api/user";
-
-// קבלת כל המשתמשים
 export const getAllUsers = async (): Promise<UserType[]> => {
-  const res = await fetch(API_URL);
-  return await res.json();
+  const response = await axios.get(API_URL);
+  return response.data;
 };
 
-// קבלת משתמש לפי מזהה
 export const getUserById = async (id: number): Promise<UserType> => {
-  const res = await fetch(`${API_URL}/${id}`);
-  return await res.json();
+  const response = await axios.get(`${API_URL}/${id}`);
+  return response.data;
 };
 
-// הוספת משתמש חדש
 export const addUser = async (user: UserType): Promise<UserType> => {
-  const res = await fetch(API_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(user),
-  });
-  return await res.json();
+  const response = await axios.post(API_URL, user);
+  return response.data;
 };
 
-// עדכון משתמש קיים
 export const updateUser = async (id: number, user: UserType): Promise<void> => {
-  await fetch(`${API_URL}/${id}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(user),
-  });
+  await axios.put(`${API_URL}/${id}`, user);
 };
 
-// מחיקת משתמש
 export const deleteUser = async (id: number): Promise<void> => {
-  await fetch(`${API_URL}/${id}`, {
-    method: "DELETE",
-  });
+  await axios.delete(`${API_URL}/${id}`);
 };
