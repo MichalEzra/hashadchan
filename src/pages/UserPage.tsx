@@ -3,12 +3,12 @@
 import React, { useState } from "react";
 import UserForm from "../components/User/UserForm";
 import UserList from "../components/User/UserList";
-import { UserType } from "../types/user.types";
+import { User } from "../types/user.types";
 
 const UserPage = () => {
-  const [userToEdit, setUserToEdit] = useState<UserType | null>(null);
+  const [userToEdit, setUserToEdit] = useState<User | null>(null);
 
-  const handleEdit = (user: UserType) => {
+  const handleEdit = (user: User) => {
     setUserToEdit(user);
   };
 
@@ -19,7 +19,7 @@ const UserPage = () => {
   return (
     <div>
       <h1>ניהול משתמשים</h1>
-      <UserForm userToEdit={userToEdit} onFinish={handleFinish} />
+      <UserForm />
       <UserList onEdit={handleEdit} />
     </div>
   );

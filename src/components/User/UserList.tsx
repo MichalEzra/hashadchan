@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { getAllUsers, deleteUser } from "../../services/userService";
-import { UserType } from "../../types/user.types";  // ייבוא המודל
+import { User } from "../../types/user.types";
 
-const UserList = ({ onEdit }: { onEdit: (user: UserType) => void }) => {
-  const [users, setUsers] = useState<UserType[]>([]);
+interface UserListProps {
+  onEdit: (user: User) => void;
+}
+
+const UserList: React.FC<UserListProps> = ({ onEdit }) => {
+  const [users, setUsers] = useState<User[]>([]);
 
   useEffect(() => {
     loadUsers();
@@ -27,7 +31,7 @@ const UserList = ({ onEdit }: { onEdit: (user: UserType) => void }) => {
         <tr>
           <th>אימייל</th>
           <th>סוג משתמש</th>
-          <th>שם איש קשר</th>
+          <th>שם מלא</th>
           <th>טלפון</th>
           <th>פעולות</th>
         </tr>
@@ -37,8 +41,8 @@ const UserList = ({ onEdit }: { onEdit: (user: UserType) => void }) => {
           <tr key={user.id}>
             <td>{user.email}</td>
             <td>{user.userType}</td>
-            <td>{user.contactPersonFirstName} {user.contactPersonLastName}</td>
-            <td>{user.contactPersonPhone}</td>
+            <td>{user.fullName}</td>
+            <td>{user.phoneNumber || "-"}</td>
             <td>
               <button onClick={() => onEdit(user)}>✏️</button>
               <button onClick={() => handleDelete(user.id)}>🗑️</button>

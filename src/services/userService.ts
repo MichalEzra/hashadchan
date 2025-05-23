@@ -1,25 +1,25 @@
 // src/services/userService.ts
 import axios from 'axios';
-import { UserType } from '../types/user.types';
+import { User } from '../types/user.types';
 
 const API_URL = 'http://localhost:5245/api/user';
 
-export const getAllUsers = async (): Promise<UserType[]> => {
+export const getAllUsers = async (): Promise<User[]> => {
   const response = await axios.get(API_URL);
   return response.data;
 };
 
-export const getUserById = async (id: number): Promise<UserType> => {
+export const getUserById = async (id: number): Promise<User> => {
   const response = await axios.get(`${API_URL}/${id}`);
   return response.data;
 };
 
-export const addUser = async (user: UserType): Promise<UserType> => {
+export const addUser = async (user: User): Promise<User> => {
   const response = await axios.post(API_URL, user);
   return response.data;
 };
 
-export const updateUser = async (id: number, user: UserType): Promise<void> => {
+export const updateUser = async (id: number, user: User): Promise<void> => {
   await axios.put(`${API_URL}/${id}`, user);
 };
 

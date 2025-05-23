@@ -14,7 +14,7 @@ export type Candidate = {
   education: string;
   jobOrStudies: string;
   city: string;
-  arrImage?: string; // תמונה
+  imageUrl?: string;// תמונה
   origin: string;
   languages: string;
   religiousOpenness: string;
