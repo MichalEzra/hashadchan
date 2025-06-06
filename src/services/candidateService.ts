@@ -14,10 +14,15 @@ export const getCandidate = async (id: number): Promise<Candidate> => {
   return response.data;
 };
 
-export const createCandidate = async (candidate: Candidate): Promise<Candidate> => {
-  const response = await axios.post(BASE_URL, candidate);
+export const createCandidate = async (formData: FormData): Promise<Candidate> => {
+  const response = await axios.post(BASE_URL, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
   return response.data;
 };
+
 
 export const updateCandidate = async (id: number, candidate: Candidate): Promise<void> => {
   await axios.put(`${BASE_URL}/${id}`, candidate);

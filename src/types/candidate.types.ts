@@ -1,11 +1,12 @@
 // types/candidateTypes.ts
+import{Gender} from "./enums"
 export type Candidate = {
   id: number;
   candidateId: number;
   userId: number;
   firstName: string;
   lastName: string;
-  candidateGender: string;
+  candidateGender:string;
   status: string;
   age: number;
   candidateSector: string;
@@ -23,8 +24,8 @@ export type Candidate = {
   physique: string;
   skinTone: string;
   hairColor: string;
-  giving: number;
-  expecting: number;
+  giving: number | null;
+  expecting: number | null;
   familyStatus: string;
   availableForProposals: boolean;
   preferredHeadCovering: string;
