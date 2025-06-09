@@ -9,3 +9,13 @@ export type User = {
   userType: "ADMIN" | "MATCHMAKER" | "PARENT";
   candidate?: Candidate;
 };
+
+export type UserType = {
+    email: string,
+    password: string
+}
+
+export type AuthUser = {
+    user: User,
+    token: string
+}

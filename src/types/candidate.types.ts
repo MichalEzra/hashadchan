@@ -1,36 +1,55 @@
 // types/candidateTypes.ts
-import{Gender} from "./enums"
+import {
+  Gender,
+  Status,
+  Sector,
+  SubSector,
+  TorahStudy,
+  EducationInstitution,
+  Occupation,
+  Language,
+  Openness,
+  HeadCovering,
+  PhoneType,
+  ParentsStatus,
+  Smoking,
+  Physique,
+  SkinTone,
+  HairColor,
+  ClothingStyle
+} from "./enums"
+
 export type Candidate = {
   id: number;
   candidateId: number;
   userId: number;
   firstName: string;
   lastName: string;
-  candidateGender:string;
-  status: string;
+  gender: Gender | null;
+  status: Status | null;
   age: number;
-  candidateSector: string;
-  subSector: string;
-  torahLearning: string;
-  education: string;
-  jobOrStudies: string;
+  sector: Sector | null;
+  subSector: SubSector | null;
+  torahLearning: TorahStudy | null;
+  education: EducationInstitution | null;
+  occupation: Occupation | null;
   city: string;
   imageUrl?: string;// תמונה
   origin: string;
-  languages: string;
-  religiousOpenness: string;
-  clothingStyle: string;
+  languages: Language | null;
+  openness: Openness | null;
+  clothingStyle: ClothingStyle | null;
   height: number;
-  physique: string;
-  skinTone: string;
-  hairColor: string;
+  physique: Physique | null;
+  skinTone: SkinTone | null;
+  hairColor: HairColor | null;
   giving: number | null;
   expecting: number | null;
-  familyStatus: string;
+  familyStatus: ParentsStatus | null;
   availableForProposals: boolean;
-  preferredHeadCovering: string;
-  candidatePhoneType: string;
+  headCovering: HeadCovering | null;
+  phoneType: PhoneType | null;
   beard: boolean;
-  smokingStatus: string;
+  smokingStatus: Smoking | null;
   license: boolean;
 };

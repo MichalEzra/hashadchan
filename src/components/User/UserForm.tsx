@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { addUser } from "../../services/userService";
+import { addUser } from "../../services/user.service";
 
 type UserType = "ADMIN" | "MATCHMAKER" | "PARENT";
 
