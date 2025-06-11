@@ -10,6 +10,8 @@ export type User = {
   candidate?: Candidate;
 };
 
+
+
 export type UserType = {
     email: string,
     password: string

@@ -5,5 +5,6 @@ export const PATHS = {
     hereToServeYou:'/hereToServeYou',
     home:'/home',
     login: '/login',
-    userGuide:'/userGuide'
+    userGuide:'/userGuide',
+    logup: '/signup'
 }

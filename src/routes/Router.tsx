@@ -1,40 +1,36 @@
-import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
+import React from "react";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+
+import RootLayout from "../layouts/RootLayout";
+
+import HomePage from "../pages/HomePage";
+import UserPage from "../pages/UserPage";
 import { DaatTorahPage } from "../pages/DaatTorahPage";
 import { EngagedPage } from "../pages/EngagedPage";
 import { HereToServeYouPage } from "../pages/HereToServeYouPage";
-import { HomePage } from "../pages/HomePage";
 import { UserGuidePage } from "../pages/UserGuidePage";
-import  UserPage  from "../pages/UserPage"; // דף חדש שלך
+import LoginPage from "../pages/LoginPage";
+import Signup from "../pages/SignupPage";
 
 
 const router = createBrowserRouter([
   {
-    path: "/",
-    element: <HomePage />,
-  },
-  {
-    path: "/users",
-    element: <UserPage />,
-  },
-  {
-    path: "/daattorah",
-    element: <DaatTorahPage />,
-  },
-  {
-    path: "/engaged",
-    element: <EngagedPage />,
-  },
-  {
-    path: "/heretoserve",
-    element: <HereToServeYouPage />,
-  },
-  {
-    path: "/guide",
-    element: <UserGuidePage />,
+    element: <RootLayout />,
+    children: [
+      { path: "/", element: <HomePage /> },
+      { path: "/users", element: <UserPage /> },
+      { path: "/daattorah", element: <DaatTorahPage /> },
+      { path: "/engaged", element: <EngagedPage /> },
+      { path: "/heretoserve", element: <HereToServeYouPage /> },
+      { path: "/guide", element: <UserGuidePage /> },
+      { path: "/login", element: <LoginPage /> },
+      {path: "/signup", element: <Signup/>},
+      {path: "/home", element: <HomePage/>}
+    ],
   },
 ]);
 
-const Router = () => {
+const Router: React.FC = () => {
   return <RouterProvider router={router} />;
 };
 

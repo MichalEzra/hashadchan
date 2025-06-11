@@ -1,3 +1,3 @@
 import { RootState } from "../../api/store";
 
-export const selectAuth = (state: RootState) => state.auth.userType
+export const selectAuth = (state: RootState) => state.auth.user;
