@@ -22,7 +22,7 @@ import { Candidate } from "../../types/candidate.types";
 import { createCandidate } from "../../services/candidate.service";
 
 const CandidateForm: React.FC = () => {
-  const [candidate, setCandidate] = useState<Partial<Candidate>>({
+  const initialCandidate: Partial<Candidate> = {
     firstName: "",
     lastName: "",
     gender: Gender.MALE,
@@ -51,7 +51,9 @@ const CandidateForm: React.FC = () => {
     beard: false,
     smokingStatus: Smoking.NON_SMOKER,
     license: false,
-  });
+};
+
+  const [candidate, setCandidate] = useState(initialCandidate);
 
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [resumeFile, setResumeFile] = useState<File | null>(null);
@@ -132,7 +134,7 @@ const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
       setError(null);
       await createCandidate(formData);
       alert("מועמד נוסף בהצלחה!");
-      setCandidate({});
+      setCandidate(initialCandidate);
       setImageFile(null);
       setResumeFile(null);
     } catch (err) {
@@ -156,7 +158,7 @@ return (
 
       <div>
         <label>מגדר:</label>
-        <select name="candidateGender" value={candidate.gender || Gender.MALE} onChange={handleSelectChange}>
+        <select name="Gender" value={candidate.gender || Gender.MALE} onChange={handleSelectChange}>
           {Object.entries(Gender).map(([key, val]) => (
             <option key={key} value={val}>{val}</option>
           ))}
@@ -179,22 +181,22 @@ return (
 
     <div>
         <label >גובה:</label>
-<label htmlFor="height">גובה (בס"מ): {candidate.height ?? ""}</label>
-<label htmlFor="height">גובה (בס"מ): {candidate.height}</label>
-<input
-  type="range"
-  id="height"
-  name="height"
-  min="140"
-  max="220"
-  step="1"
-  value={candidate.height}
-  onChange={handleInputChange}
-/>
-   </div>
-      <div>
+        <label htmlFor="height">גובה (בס"מ): {candidate.height ?? ""}</label>
+        <label htmlFor="height">גובה (בס"מ): {candidate.height}</label>
+        <input
+          type="range"
+          id="height"
+          name="height"
+          min="140"
+          max="220"
+          step="1"
+          value={candidate.height}
+          onChange={handleInputChange}
+        />
+          </div>
+              <div>
         <label>מגזר:</label>
-        <select name="candidateSector" value={candidate.sector || Sector.HASIDI} onChange={handleSelectChange}>
+        <select name="Sector" value={candidate.sector || Sector.HASIDI} onChange={handleSelectChange}>
           {Object.entries(Sector).map(([key, val]) => (
             <option key={key} value={val}>{val}</option>
           ))}
@@ -221,164 +223,164 @@ return (
       </div>
 
 
-{/* עיר */}
-<div>
-  <label>עיר:</label>
-  <input name="city" value={candidate.city || ""} onChange={handleInputChange} />
-</div>
+        {/* עיר */}
+        <div>
+          <label>עיר:</label>
+          <input name="city" value={candidate.city || ""} onChange={handleInputChange} />
+        </div>
 
-{/* מוצא */}
-<div>
-  <label>מוצא:</label>
-  <input name="origin" value={candidate.origin || ""} onChange={handleInputChange} />
-</div>
+        {/* מוצא */}
+        <div>
+          <label>מוצא:</label>
+          <input name="origin" value={candidate.origin || ""} onChange={handleInputChange} />
+        </div>
 
-{/* שפות */}
-<div>
-  <label>שפות:</label>
-  <select name="languages" value={candidate.languages || Language.HEBREW} onChange={handleSelectChange}>
-    {Object.entries(Language).map(([key, val]) => (
-      <option key={key} value={val}>{val}</option>
-    ))}
-  </select>
-</div>
+        {/* שפות */}
+        <div>
+          <label>שפות:</label>
+          <select name="languages" multiple value={candidate.languages || []} onChange={handleSelectChange}>
+            {Object.entries(Language).map(([key, val]) => (
+              <option key={key} value={val}>{val}</option>
+            ))}
+          </select>
+        </div>
 
-{/* פתיחות דתית */}
-<div>
-  <label>פתיחות דתית:</label>
-  <select name="religiousOpenness" value={candidate.openness || Openness.TRADITIONAL} onChange={handleSelectChange}>
-    {Object.entries(Openness).map(([key, val]) => (
-      <option key={key} value={val}>{val}</option>
-    ))}
-  </select>
-</div>
+        {/* פתיחות דתית */}
+        <div>
+          <label>פתיחות דתית:</label>
+          <select name="openness" value={candidate.openness || Openness.TRADITIONAL} onChange={handleSelectChange}>
+            {Object.entries(Openness).map(([key, val]) => (
+              <option key={key} value={val}>{val}</option>
+            ))}
+          </select>
+        </div>
 
-{/* סגנון לבוש */}
-<div>
-  <label>סגנון לבוש:</label>
-  <select name="clothingStyle" value={candidate.clothingStyle || ClothingStyle.MODERN} onChange={handleSelectChange}>
-    {Object.entries(ClothingStyle).map(([key, val]) => (
-      <option key={key} value={val}>{val}</option>
-    ))}
-  </select>
-</div>
+        {/* סגנון לבוש */}
+        <div>
+          <label>סגנון לבוש:</label>
+          <select name="clothingStyle" value={candidate.clothingStyle || ClothingStyle.MODERN} onChange={handleSelectChange}>
+            {Object.entries(ClothingStyle).map(([key, val]) => (
+              <option key={key} value={val}>{val}</option>
+            ))}
+          </select>
+        </div>
 
-{/* מבנה גוף */}
-<div>
-  <label>מבנה גוף:</label>
-  <select name="physique" value={candidate.physique || Physique.AVERAGE} onChange={handleSelectChange}>
-    {Object.entries(Physique).map(([key, val]) => (
-      <option key={key} value={val}>{val}</option>
-    ))}
-  </select>
-</div>
+        {/* מבנה גוף */}
+        <div>
+          <label>מבנה גוף:</label>
+          <select name="physique" value={candidate.physique || Physique.AVERAGE} onChange={handleSelectChange}>
+            {Object.entries(Physique).map(([key, val]) => (
+              <option key={key} value={val}>{val}</option>
+            ))}
+          </select>
+        </div>
 
-{/* גוון עור */}
-<div>
-  <label>גוון עור:</label>
-  <select name="skinTone" value={candidate.skinTone || SkinTone.FAIR} onChange={handleSelectChange}>
-    {Object.entries(SkinTone).map(([key, val]) => (
-      <option key={key} value={val}>{val}</option>
-    ))}
-  </select>
-</div>
+        {/* גוון עור */}
+        <div>
+          <label>גוון עור:</label>
+          <select name="skinTone" value={candidate.skinTone || SkinTone.FAIR} onChange={handleSelectChange}>
+            {Object.entries(SkinTone).map(([key, val]) => (
+              <option key={key} value={val}>{val}</option>
+            ))}
+          </select>
+        </div>
 
-{/* צבע שיער */}
-<div>
-  <label>צבע שיער:</label>
-  <select name="hairColor" value={candidate.hairColor || HairColor.BROWN} onChange={handleSelectChange}>
-    {Object.entries(HairColor).map(([key, val]) => (
-      <option key={key} value={val}>{val}</option>
-    ))}
-  </select>
-</div>
+        {/* צבע שיער */}
+        <div>
+          <label>צבע שיער:</label>
+          <select name="hairColor" value={candidate.hairColor || HairColor.BROWN} onChange={handleSelectChange}>
+            {Object.entries(HairColor).map(([key, val]) => (
+              <option key={key} value={val}>{val}</option>
+            ))}
+          </select>
+        </div>
 
-{/* נתינה */}
-<div>
-  <label htmlFor="giving">רמת נתינה: {candidate.giving ?? "בחרי רמה (0–10)"}</label>
-  <input
-    type="range"
-    id="giving"
-    name="giving"
-    min={100000}
-    max={1000000}
-    step={10000}
-    value={candidate.giving ??0 }
-    onChange={handleInputChange}
-  />
-</div>
+        {/* נתינה */}
+        <div>
+          <label htmlFor="giving">רמת נתינה: {candidate.giving ?? "בחרי רמה (0–10)"}</label>
+          <input
+            type="range"
+            id="giving"
+            name="giving"
+            min={100000}
+            max={1000000}
+            step={10000}
+            value={candidate.giving ??0 }
+            onChange={handleInputChange}
+          />
+        </div>
 
-{/* ציפיות */}
-<div>
-  <label htmlFor="expecting">רמת ציפיות: {candidate.expecting ?? "בחרי רמה (0–10)"}</label>
-  <input
-    type="range"
-    id="expecting"
-    name="expecting"
-    min={100000}
-    max={1000000}
-    step={10000}
-    value={candidate.expecting ??0}
-    onChange={handleInputChange}
-  />
-</div>
-{/* מצב משפחתי של ההורים */}
-<div>
-  <label>מצב משפחתי של ההורים:</label>
-  <select name="familyStatus" value={candidate.familyStatus || ParentsStatus.MARRIED} onChange={handleSelectChange}>
-    {Object.entries(ParentsStatus).map(([key, val]) => (
-      <option key={key} value={val}>{val}</option>
-    ))}
-  </select>
-</div>
+        {/* ציפיות */}
+        <div>
+          <label htmlFor="expecting">רמת ציפיות: {candidate.expecting ?? "בחרי רמה (0–10)"}</label>
+          <input
+            type="range"
+            id="expecting"
+            name="expecting"
+            min={100000}
+            max={1000000}
+            step={10000}
+            value={candidate.expecting ??0}
+            onChange={handleInputChange}
+          />
+        </div>
+        {/* מצב משפחתי של ההורים */}
+        <div>
+          <label>מצב משפחתי של ההורים:</label>
+          <select name="familyStatus" value={candidate.familyStatus || ParentsStatus.MARRIED} onChange={handleSelectChange}>
+            {Object.entries(ParentsStatus).map(([key, val]) => (
+              <option key={key} value={val}>{val}</option>
+            ))}
+          </select>
+        </div>
 
-{/* פתוח להצעות */}
-<div>
-  <label>פתוח להצעות:</label>
-  <input type="checkbox" name="availableForProposals" checked={candidate.availableForProposals ?? false} onChange={handleInputChange} />
-</div>
+        {/* פתוח להצעות */}
+        <div>
+          <label>פתוח להצעות:</label>
+          <input type="checkbox" name="availableForProposals" checked={candidate.availableForProposals ?? false} onChange={handleInputChange} />
+        </div>
 
-{/* סוג כיסוי ראש מועדף */}
-<div>
-  <label>כיסוי ראש מועדף:</label>
-  <select name="preferredHeadCovering" value={candidate.headCovering || HeadCovering.FLEXIBLE} onChange={handleSelectChange}>
-    {Object.entries(HeadCovering).map(([key, val]) => (
-      <option key={key} value={val}>{val}</option>
-    ))}
-  </select>
-</div>
+        {/* סוג כיסוי ראש מועדף */}
+        <div>
+          <label>כיסוי ראש מועדף:</label>
+          <select name="headCovering" value={candidate.headCovering || HeadCovering.FLEXIBLE} onChange={handleSelectChange}>
+            {Object.entries(HeadCovering).map(([key, val]) => (
+              <option key={key} value={val}>{val}</option>
+            ))}
+          </select>
+        </div>
 
-{/* סוג פלאפון */}
-<div>
-  <label>סוג פלאפון:</label>
-  <select name="candidatePhoneType" value={candidate.phoneType || PhoneType.SMARTPHONE} onChange={handleSelectChange}>
-    {Object.entries(PhoneType).map(([key, val]) => (
-      <option key={key} value={val}>{val}</option>
-    ))}
-  </select>
-</div>
+        {/* סוג פלאפון */}
+        <div>
+          <label>סוג פלאפון:</label>
+          <select name="phoneType" value={candidate.phoneType || PhoneType.SMARTPHONE} onChange={handleSelectChange}>
+            {Object.entries(PhoneType).map(([key, val]) => (
+              <option key={key} value={val}>{val}</option>
+            ))}
+          </select>
+        </div>
 
-{/* זקן */}
-<div>
-  <label>זקן:</label>
-  <input type="checkbox" name="beard" checked={candidate.beard ?? false} onChange={handleInputChange} />
-</div>
+        {/* זקן */}
+        <div>
+          <label>זקן:</label>
+          <input type="checkbox" name="beard" checked={candidate.beard ?? false} onChange={handleInputChange} />
+        </div>
 
-{/* מעשן */}
-<div>
-  <label>סטטוס עישון:</label>
-  <select name="smokingStatus" value={candidate.smokingStatus || Smoking.NON_SMOKER} onChange={handleSelectChange}>
-    {Object.entries(Smoking).map(([key, val]) => (
-      <option key={key} value={val}>{val}</option>
-    ))}
-  </select>
-</div>
+        {/* מעשן */}
+        <div>
+          <label>סטטוס עישון:</label>
+          <select name="smokingStatus" value={candidate.smokingStatus || Smoking.NON_SMOKER} onChange={handleSelectChange}>
+            {Object.entries(Smoking).map(([key, val]) => (
+              <option key={key} value={val}>{val}</option>
+            ))}
+          </select>
+        </div>
 
-{/* רישיון נהיגה */}
-<div>
-  <label>רישיון נהיגה:</label>
-  <input type="checkbox" name="license" checked={candidate.license ?? false} onChange={handleInputChange} />
-</div>
+        {/* רישיון נהיגה */}
+        <div>
+          <label>רישיון נהיגה:</label>
+          <input type="checkbox" name="license" checked={candidate.license ?? false} onChange={handleInputChange} />
+        </div>
       <button type="submit">הוסף מועמד</button>
     </form>
   );

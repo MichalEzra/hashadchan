@@ -2,12 +2,16 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { PATHS } from '../../routes/Paths';
 import styles from './Navbar.module.css';
+import { useAppSelector } from '../../redux/store';
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
-
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
+  const { token, user } = useAppSelector((state) => state.auth);
+
+  console.log("הטוקן:", token);
+  console.log("סוג המשתמש:", user?.userType);
   return (
     <nav className={styles.navbar}>
       <div className={styles.logo}>השדכן</div>
@@ -35,9 +39,13 @@ const Navbar = () => {
       </div>
 
       <div className={styles.login}>
-        <Link to={PATHS.login}>
-          <span role="img" aria-label="User">התחברות👤</span>
-        </Link>
+        {user?.userType? (
+            <span role="img" aria-label="User">👤 מחובר</span>
+        ) : (
+          <Link to={PATHS.login}>
+            <span role="img" aria-label="Login">התחברות 👤</span>
+          </Link>
+        )}
       </div>
     </nav>
   );

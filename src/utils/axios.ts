@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { authRequestMiddleware, authResponseMiddleware } from './authMiddleware'
-const url = 'https://localhost:7090/api'
+const url = 'https://localhost:5245/api'
 
 const axiosInstance = axios.create({ baseURL: url })
 

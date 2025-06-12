@@ -11,7 +11,7 @@ import { HereToServeYouPage } from "../pages/HereToServeYouPage";
 import { UserGuidePage } from "../pages/UserGuidePage";
 import LoginPage from "../pages/LoginPage";
 import Signup from "../pages/SignupPage";
-
+import CandidatesPage from "../pages/admin/CandidatesPage"
 
 const router = createBrowserRouter([
   {
@@ -25,7 +25,10 @@ const router = createBrowserRouter([
       { path: "/guide", element: <UserGuidePage /> },
       { path: "/login", element: <LoginPage /> },
       {path: "/signup", element: <Signup/>},
-      {path: "/home", element: <HomePage/>}
+      {path: "/home", element: <HomePage/>},
+      {path: "/adminCandidates", element: <CandidatesPage />},
+      {path: "/adminMatchmakers", element: <MatchmakersPage/>},
+      {path: "/adminParents", element: <ParentsPage/>}
     ],
   },
 ]);

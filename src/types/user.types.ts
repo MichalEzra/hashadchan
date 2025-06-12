@@ -1,12 +1,12 @@
  import { Candidate } from "./candidate.types";
  
 export type User = {
-  id: number;
+  id?: number;
   fullName: string;
   email: string;
   password: string;
   phoneNumber?: string;
-  userType: "ADMIN" | "MATCHMAKER" | "PARENT";
+  userType: "ADMIN" | "MATCHMAKER" | "PARENT" ;
   candidate?: Candidate;
 };
 
@@ -18,6 +18,14 @@ export type UserType = {
 }
 
 export type AuthUser = {
-    user: User,
+    user: {
+      id?: number;
+      fullName: string;
+      email: string;
+      password: string;
+      phoneNumber?: string;
+      userType: "ADMIN" | "MATCHMAKER" | "PARENT" ;
+      candidate?: Candidate;
+    },
     token: string
 }

@@ -1,7 +1,11 @@
 import { ChangeEvent, FormEvent, useState } from "react";
-import { useAppDispatch } from "../redux/store";
+import { useAppDispatch, useAppSelector } from "../redux/store";
 import { User } from "../types/user.types";
 import { addUser } from "../services/user.service";
+import { useNavigate } from "react-router";
+
+// import { User } from "lucide-react";
+
 // import { register } from "../services/auth.service"; // תייבאי את שירות ההרשמה שלך
 // import { setUser } from "../redux/auth/auth.slice";
 // import { setSession } from "../auth/auth.utils";
@@ -17,8 +21,14 @@ import { addUser } from "../services/user.service";
 //     phone?: string;
 //     city?: string;
 // }
-
+interface DecodedToken {
+  userId: string;
+  userType: string;
+  exp: number;
+}
 export default function Signup() {
+    
+
     const [userData, setUserData] = useState({
         fullName: '',
         email: '',
@@ -27,10 +37,11 @@ export default function Signup() {
         userType: "PARENT"
 
     });
+    const navigate = useNavigate();
+    // const dispatch = useAppDispatch();
 
     const [errors, setErrors] = useState<Partial<User>>({});
     const [isLoading, setIsLoading] = useState(false);
-    const dispatch = useAppDispatch();
 
     const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = event.target;
@@ -67,39 +78,37 @@ export default function Signup() {
 
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        
         if (!validateForm()) {
             return;
         }
+    
         setIsLoading(true);
-        try {
-            // כאן תקרא לשירות ההרשמה שלך
-            console.log('נתוני הרשמה:', userData);
-            
+            try {    
+            // כאן תקרא לשירות ההרשמה שלך            
             console.log('שולחת לשרת:', userData);
-            const response = await addUser(userData as Omit<User, 'id'>);
-            
- // ✅ שליחה אמיתית
-
-        console.log('משתמש נוסף:', response);
-        alert('הרשמה הושלמה בהצלחה!');
-    } catch (error) {
+            const response = await addUser(userData as Omit<User, 'id'>); 
+            // const token = response.;
+                console.log(userData)
+            setUserData({fullName: "", email: "", password: "", phoneNumber: "", userType: ""});
+            navigate("/"); // מעבר לעמוד הבית
+        }
+        catch (error) {
         console.error('שגיאה בהרשמה:', error);
         alert('שגיאה בהרשמה. אנא נסה שוב.');
-    } finally {
+        } finally {
         setIsLoading(false);
+        }
+    
+// const handleClick = () => {
+//     console.log(userData); // שלח לשרת
+//     setIsLoading(true);
+
+//     setTimeout(() => {
+//         setIsLoading(false);
+//         alert('ההרשמה הושלמה!');
+//     }, 2000);
+// };
     }
-    };
-const handleClick = () => {
-    console.log(userData); // שלח לשרת
-    setIsLoading(true);
-
-    setTimeout(() => {
-        setIsLoading(false);
-        alert('ההרשמה הושלמה!');
-    }, 2000);
-};
-
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4" dir="rtl">
             <div className="max-w-md mx-auto bg-white rounded-lg shadow-lg p-8">

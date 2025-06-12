@@ -8,6 +8,6 @@ export const login = async (email: string, password: string): Promise<AuthUser> 
 };
 
 export const Signup = async (user: User):Promise<User>=>{
-    const response = await axios.post<User>(ENDPOINTS.logup, {user});
+    const response = await axios.post<User>(ENDPOINTS.logup, user);
     return response.data;
 }

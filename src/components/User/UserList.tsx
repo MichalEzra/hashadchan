@@ -45,7 +45,9 @@ const UserList: React.FC<UserListProps> = ({ onEdit }) => {
             <td>{user.phoneNumber || "-"}</td>
             <td>
               <button onClick={() => onEdit(user)}>✏️</button>
-              <button onClick={() => handleDelete(user.id)}>🗑️</button>
+              {user.id !== undefined && (
+                  <button onClick={() => handleDelete(user.id!)}>🗑️</button>
+              )}
             </td>
           </tr>
         ))}

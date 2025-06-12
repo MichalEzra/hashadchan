@@ -36,15 +36,19 @@ export function jwtDecode(token: string) {
     return JSON.parse(jsonPayload);
 }
 
-
-export const isValidToken = (token: string) => {
-    if (!token) {                                                                                    
-        return false;
-    }
-
-    const decoded = jwtDecode(token);
-
+export const isValidToken = (token: string): boolean => {
+  if (!token) return false;
+  try {
+    const decoded: any = jwtDecode(token);
+    console.log("Decoded inside isValidToken:", decoded);
     const currentTime = Date.now() / 1000;
+        if (!decoded.exp) {
+            console.warn("אין שדה exp בטוקן");
+            return false;
+        }
 
-    return decoded.exp > currentTime;
+    return decoded.exp && decoded.exp > currentTime;
+  } catch (err) {
+    return false;
+  }
 };
