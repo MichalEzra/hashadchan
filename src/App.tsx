@@ -1,40 +1,48 @@
-import React, { useEffect } from 'react';
-import { Provider } from "react-redux";
+import { useEffect } from 'react';
 import Router from './routes/Router';
-import AddCandidate from './components/candidate/CandidateForm';
-import { store } from './api/store';
-import { RouterProvider } from 'react-router';
-import Navbar from './components/navbar/Navbar';
-import AppRouter from './routes/Router';
 import { useAppDispatch, useAppSelector } from './redux/store';
-import { getSession, isValidToken } from './auth/auth.utils';
-import { setUser } from './redux/auth/auth.slice';
-import HomePage from './pages/HomePage';
-import LoginPage from './pages/LoginPage';
+import { loadUserFromToken, setUser } from './redux/auth/auth.slice';
+import { getUserFromToken } from './auth/auth.utils';
+import MatchmakerForm from './components/matchmaker/MatchmakerForm';
+import CandidateManagementPage from './pages/admin/CandidateManagementPage';
 
 function App() {
-  // const dispatch = useAppDispatch();
-  // const user = useAppSelector(state => state.auth.user);
+  const dispatch = useAppDispatch();
 
-  // useEffect(() => {
-  //   const session = getSession();
-  //   if (session && isValidToken(session.token)) {
-  //     dispatch(setUser(session));
-  //   }
-  // }, [dispatch]);
+  useEffect(() => {
+    // const token = localStorage.getItem("token");
+    // if (token) {
+      const user = getUserFromToken();
+    if (user) {
+      console.log("User from token:", user);
+      if (user) {
+        dispatch(setUser({
+          id: user.nameid,
+          fullName: user.name,
+          email: user.email,
+          userType: user.role,
+        }));
+      }
+    }
+  }, []);
 
-    return (
-    <Provider store={store}>
-      <Router />  {/* זה עוטף את כל הניווט */}
+
+    return <>
+      {/* <Router />  זה עוטף את כל הניווט */}
+      <CandidateManagementPage />
+    </>
+    // <Provider store={store}>
       {/* user ? <HomePage /> : <LoginPage />; */}
       {/* <BrowserRouter>
+      
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
       </Routes>
     </BrowserRouter> */}
-    </Provider>
-    )
+    {/* <CandidateManagementPage/> */}
+    {/* </Provider> */}
+    
 
 }
 

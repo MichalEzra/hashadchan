@@ -14,13 +14,14 @@ const initialState: CandidatesState = {
   error: null,
 };
 
-const candidatesSlice = createSlice({
+const candidateSlice = createSlice({
   name: "candidates",
   initialState,
   reducers: {
     clearCandidates: (state) => {
       state.candidates = [];
     },
+    
   },
   extraReducers: (builder) => {
     builder
@@ -29,6 +30,7 @@ const candidatesSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchCandidates.fulfilled, (state, action: PayloadAction<Candidate[]>) => {
+        console.log("✅ קיבלנו את המועמדים:", action.payload);
         state.loading = false;
         state.candidates = action.payload;
       })
@@ -42,5 +44,5 @@ const candidatesSlice = createSlice({
   },
 });
 
-export const { clearCandidates } = candidatesSlice.actions;
-export default candidatesSlice.reducer;
+export const { clearCandidates } = candidateSlice.actions;
+export default candidateSlice.reducer;

@@ -35,7 +35,7 @@ const CandidateForm: React.FC = () => {
     occupation: Occupation.STUDENT,
     city: "",
     origin: "",
-    languages: Language.HEBREW,
+    languages: [],
     openness: Openness.TRADITIONAL,
     clothingStyle: ClothingStyle.MODERN,
     // height: 170,
@@ -70,24 +70,35 @@ const CandidateForm: React.FC = () => {
 // };
 
 
-// לטיפול ב- input כולל טקסט, מספר, צ'קבוקס
-const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  const { name, type, value, checked } = e.target;
-  setCandidate((prev) => ({
-    ...prev,
-    [name]: type === "checkbox" ? checked : type === "number" || type === "range" ? Number(value) : value,
-  }));
-};
+    // לטיפול ב- input כולל טקסט, מספר, צ'קבוקס
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { name, type, value, checked } = e.target;
+      setCandidate((prev) => ({
+        ...prev,
+        [name]: type === "checkbox" ? checked : type === "number" || type === "range" ? Number(value) : value,
+      }));
+    };
 
 
-// לטיפול בבחירה מ- select
-const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-  const { name, value } = e.target;
-  setCandidate((prev) => ({
-    ...prev,
-    [name]: value,
-  }));
-};
+    // לטיפול בבחירה מ- select
+    const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+      const { name, value, options } = e.target;
+
+      if (name === "languages") {
+        const selectedValues = Array.from(options)
+          .filter(option => option.selected)
+          .map(option => option.value as Language);
+        setCandidate((prev) => ({
+          ...prev,
+          [name]: selectedValues,
+        }));
+      } else {
+        setCandidate((prev) => ({
+          ...prev,
+          [name]: value,
+        }));
+      }
+    };
 
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {

@@ -1,12 +1,12 @@
 // redux/auth/auth.slice.ts
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import { User } from 'lucide-react';
 
 // טייפים
 interface User {
   id?: Number;
   fullName?: string;
   email?: string;
-  phoneNumber?: string;
   userType?: 'PARENT' | 'MATCHMAKER' | 'CANDIDATE' | 'ADMIN' | 'GUEST';
   // status: 'ACTIVE' | 'INACTIVE' | 'PENDING' | 'SUSPENDED';
   // profileCompleted?: number;
@@ -22,7 +22,7 @@ interface AuthState {
 
 // Initial State
 const initialState: AuthState = {
-  user: null,
+  user: JSON.parse(localStorage.getItem("user") || "null"),
   token: localStorage.getItem('token'),
   isLoading: false,
   error: null,
@@ -34,8 +34,8 @@ export const loadUserFromToken = createAsyncThunk(
   'auth/loadUserFromToken',
   async (_, { rejectWithValue }) => {
     try {
-      const token = localStorage.getItem('token');
-      
+      const token = localStorage.getItem("token");
+      console.log("Token from localStorage:", token);
       if (!token) {
         return rejectWithValue('לא נמצא טוקן');
       }
@@ -47,8 +47,9 @@ export const loadUserFromToken = createAsyncThunk(
         return rejectWithValue('הטוקן פג תוקף');
       }
 
+      const userId = tokenPayload?.nameid; // 🟢 כאן נשתמש ב-nameid מהטוקן
       // שליחת בקשה לשרת לקבלת פרטי המשתמש
-      const response = await fetch('/api/auth/me', {
+      const response = await fetch(`/api/User/${userId}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -73,7 +74,7 @@ export const loginUser = createAsyncThunk(
   'auth/loginUser',
   async (credentials: { email: string; password: string }, { rejectWithValue }) => {
     try {
-      const response = await fetch('/api/auth/login', {
+      const response = await fetch('/api/User/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -82,16 +83,14 @@ export const loginUser = createAsyncThunk(
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'שגיאה בהתחברות');
+        const errorText = await response.text();
+        throw new Error(errorText || 'שגיאה בהתחברות');
       }
 
-      const data = await response.json();
-      
-      // שמירת הטוקן
-      localStorage.setItem('token', data.token);
-      
-      return data;
+      const token = await response.text(); // 🟢 פה השינוי – לא json
+      localStorage.setItem('token', token);
+      return { token }; // נחזיר כאובייקט עם token
+
     } catch (error: any) {
       return rejectWithValue(error.message || 'שגיאה בהתחברות');
     }
@@ -108,7 +107,7 @@ export const registerUser = createAsyncThunk(
     userType: string;
   }, { rejectWithValue }) => {
     try {
-      const response = await fetch('/api/auth/register', {
+      const response = await fetch('/api/User', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -135,22 +134,35 @@ export const registerUser = createAsyncThunk(
   }
 );
 
-// Helper function לפענוח JWT
+
+// בתוך auth.slice.ts
 function parseJWT(token: string) {
   try {
-    const base64Url = token.split('.')[1];
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const jsonPayload = decodeURIComponent(
-      atob(base64)
-        .split('')
-        .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-        .join('')
-    );
-    return JSON.parse(jsonPayload);
-  } catch (error) {
+    const payload = token.split('.')[1];
+    const decoded = atob(payload);
+    return JSON.parse(decoded);
+  } catch (e) {
+    console.error('שגיאה בפענוח הטוקן:', e);
     return null;
   }
 }
+
+// Helper function לפענוח JWT
+// function parseJWT(token: string) {
+//   try {
+//     const base64Url = token.split('.')[1];
+//     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+//     const jsonPayload = decodeURIComponent(
+//       atob(base64)
+//         .split('')
+//         .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+//         .join('')
+//     );
+//     return JSON.parse(jsonPayload);
+//   } catch (error) {
+//     return null;
+//   }
+// }
 
 // Auth Slice
 const authSlice = createSlice({
@@ -201,9 +213,10 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(loginUser.fulfilled, (state, action) => {
+        const parsedUser = parseJWT(action.payload.token);
         state.isLoading = false;
-        state.user = action.payload.user;
         state.token = action.payload.token;
+        state.user = parsedUser;
         state.isAuthenticated = true;
         state.error = null;
       })

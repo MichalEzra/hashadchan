@@ -2,7 +2,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import authReducer from './auth/auth.slice';
-import candidateReducer from './admin/candidateSlice';
+import candidateReducer from './slice/candidateSlice';
 
 export const store = configureStore({
   reducer: {
@@ -15,7 +15,9 @@ export const store = configureStore({
         ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE'],
       },
     }),
-});
+}
+);
+console.log("STATE עכשיו:", store.getState());
 
 
 export type RootState = ReturnType<typeof store.getState>;

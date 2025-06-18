@@ -1,10 +1,19 @@
 import { PATHS } from "../routes/Paths";
-import { AuthUser } from "../types/user.types";
+import { AuthUser, User, UserLoginType } from "../types/user.types";
 import axios from "../utils/axios";
+// import  jwtDecode  from "jwt-decode";
 
-export const setSession = (user: AuthUser) => {
-    localStorage.setItem('user', JSON.stringify(user))
-    axios.defaults.headers.common.Authorization = `Bearer ${user.token}`
+export type JwtPayload = {
+  email: string;
+  name: string;
+  role: string;
+  nameid: string;
+  exp: number;
+};
+
+export const setSession = ( token: string) => {
+    localStorage.setItem('token', token)
+    axios.defaults.headers.common.Authorization = `Bearer ${token}`
 }
 
 export const setAuthorizationHeader = (token: string) => {
@@ -22,6 +31,7 @@ export const removeSession = () => {
     window.location.href = PATHS.login;
 }
 
+//מה הפונקציה הזאת עושה??
 export function jwtDecode(token: string) {
     const base64Url = token.split('.')[1];
     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
@@ -52,3 +62,29 @@ export const isValidToken = (token: string): boolean => {
     return false;
   }
 };
+
+
+export function getUserFromToken() {
+  const token = localStorage.getItem('accessToken');
+  if (!token) return null;
+  try {
+    return jwtDecode(token);
+  } catch {
+    return null;
+  }
+}
+
+
+// export const getUserFromToken = (token: string): JwtPayload | null => {
+//   try {
+//     if (!token) return null;
+//     if (!isValidToken(token)) return null;
+//     // Decode the JWT token to extract user information
+//     console.log("Decoding token:", token);
+//     console.log("Decoded token:", jwtDecode(token));
+//     // Use jwtDecode to decode the token and return the payload
+//     return jwtDecode<JwtPayload>(token);
+//   } catch (error) {
+//     return null;
+//   }
+// };

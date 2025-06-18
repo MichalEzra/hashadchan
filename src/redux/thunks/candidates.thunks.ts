@@ -1,16 +1,19 @@
-import { createAsyncThunk } from "@reduxjs/toolkit";
+import { createAsyncThunk, isRejectedWithValue } from "@reduxjs/toolkit";
 import axios from "axios";
 import { Candidate } from "../../types/candidate.types";
+import {  getCandidates } from "../../services/candidate.service";
 
 // שליפת כל המועמדים
-export const fetchCandidates = createAsyncThunk(
-  "candidates/fetchAll",
+export const fetchCandidates = createAsyncThunk<Candidate[], void>(
+  "candidates/fetchCandidates",
   async (_, thunkAPI) => {
+        console.log('thunkAPI:', thunkAPI); // בדוק מה יש כאן
+        const { rejectWithValue } = thunkAPI;
     try {
-      const response = await axios.get("/api/candidates");
-      return response.data; // רשימת מועמדים
+      const candidates = await getCandidates(); // ודא שאתה קורא לפונקציה הזו
+      return candidates;
     } catch (error: any) {
-      return thunkAPI.rejectWithValue(error.message);
+      return rejectWithValue(error.response?.data || error.message);
     }
   }
 );
