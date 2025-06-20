@@ -5,27 +5,56 @@ import { User } from '../types/user.types';
 const API_URL = 'http://localhost:5245/api/user';
 export type NewUser = Omit<User, 'id' | 'candidate'>;
 
-export const addUser = async (user: NewUser): Promise<User> => {
+export const addUser = async (user: User): Promise<User> => {
   console.log('קיבלתי בקשה')
-  const response = await axios.post(API_URL, user);
+  const token = localStorage.getItem("token");
+  const response = await axios.post(API_URL, user, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
   return response.data;
 };
 
 
 export const getAllUsers = async (): Promise<User[]> => {
-  const response = await axios.get(API_URL);
+  console.log('קיבלתי בקשה')
+  const token = localStorage.getItem("token");
+  if (!token) {
+  console.error("❌ אין טוקן ב־localStorage",token);
+}
+  const response = await axios.get(API_URL, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
   return response.data;
 };
 
 export const getUserById = async (id: number): Promise<User> => {
-  const response = await axios.get(`${API_URL}/${id}`);
+  const token = localStorage.getItem("token");
+  const response = await axios.get(`${API_URL}/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
   return response.data;
 };
 
 export const updateUser = async (id: number, user: User): Promise<void> => {
-  await axios.put(`${API_URL}/${id}`, user);
+  const token = localStorage.getItem("token");
+  await axios.put(`${API_URL}/${id}`, user, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 };
 
 export const deleteUser = async (id: number): Promise<void> => {
-  await axios.delete(`${API_URL}/${id}`);
+  const token = localStorage.getItem("token");
+  await axios.delete(`${API_URL}/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 };

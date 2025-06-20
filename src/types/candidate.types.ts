@@ -36,7 +36,7 @@ export type Candidate = {
   city: string;
   imageUrl?: string;// תמונה
   origin: string;
-  languages: Language[] | null;
+  languages: Language | null;
   openness: Openness | null;
   clothingStyle: ClothingStyle | null;
   height: number;

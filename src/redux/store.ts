@@ -3,11 +3,15 @@ import { configureStore } from '@reduxjs/toolkit';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import authReducer from './auth/auth.slice';
 import candidateReducer from './slice/candidateSlice';
+import userReducer from '../redux/slice/userSlice'; // ✅ הוספנו את זה
+import matchmakerReducer from './slice/matchmakerSlice'; // ✅ הוספנו את זה
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
     candidates: candidateReducer, // ✅ הוספנו את זה
+    users: userReducer, // ✅ הוספנו את זה
+    matchmakers: matchmakerReducer, // ✅ הוספנו את זה
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

@@ -1,7 +1,7 @@
 import { createAsyncThunk, isRejectedWithValue } from "@reduxjs/toolkit";
 import axios from "axios";
 import { Candidate } from "../../types/candidate.types";
-import {  getCandidates } from "../../services/candidate.service";
+import {  deleteCandidate, getCandidates } from "../../services/candidate.service";
 
 // שליפת כל המועמדים
 export const fetchCandidates = createAsyncThunk<Candidate[], void>(
@@ -34,3 +34,26 @@ export const createCandidate = createAsyncThunk(
     }
   }
 );
+
+// דוגמה בתוך ה־thunk:
+export const deleteCandidateById = createAsyncThunk(
+  'candidates/deleteById',
+  async (id: number) => {
+    await axios.delete(`/api/candidate/${id}`);
+    return id; // או return deletedCandidate אם אתה רוצה להחזיר את כולו
+  }
+);
+
+
+export const updateCandidate = createAsyncThunk(
+  "candidates/update",
+  async ({ id, data }: { id: number; data: FormData }) => {
+    const response = await axios.put(`/api/candidate/${id}`, data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data; // מחזיר את המועמד המעודכן
+  }
+);
+

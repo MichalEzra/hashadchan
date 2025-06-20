@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Gender,
   Status,
@@ -18,98 +18,191 @@ import {
   HairColor,
   ClothingStyle,
 } from "../../types/enums";
-import { Candidate } from "../../types/candidate.types";
-import { createCandidate } from "../../services/candidate.service";
+import {createCandidate,  getCandidate,  updateCandidate,} from "../../services/candidate.service";
+import styles from "../design/CandidateForm.module.css";
+import { useParams } from "react-router-dom";
+interface ColorCircleSelectorProps {
+  name: string;
+  selected: string;
+  onChange: (value: string) => void;
+  options: { value: string; label: string; hex: string }[];
+  labelText: string;
+  dotColor?: 'green' | 'purple' | 'blue';
+}
 
-const CandidateForm: React.FC = () => {
-  const initialCandidate: Partial<Candidate> = {
-    firstName: "",
-    lastName: "",
-    gender: Gender.MALE,
-    status: Status.SINGLE,
-    // age: 18,
-    sector: Sector.HASIDI,
-    subSector: SubSector.YESHIVISH,
-    torahLearning: TorahStudy.FULL_TIME,
-    education: EducationInstitution.HIGH_SCHOOL,
-    occupation: Occupation.STUDENT,
-    city: "",
-    origin: "",
-    languages: [],
-    openness: Openness.TRADITIONAL,
-    clothingStyle: ClothingStyle.MODERN,
-    // height: 170,
-    physique: Physique.AVERAGE,
-    skinTone: SkinTone.FAIR,
-    hairColor: HairColor.BROWN,
-    giving: 0,
-    expecting: 0,
-    familyStatus: ParentsStatus.MARRIED,
-    availableForProposals: true,
-    headCovering: HeadCovering.FLEXIBLE,
-    phoneType: PhoneType.SMARTPHONE,
-    beard: false,
-    smokingStatus: Smoking.NON_SMOKER,
-    license: false,
+const ColorCircleSelector: React.FC<ColorCircleSelectorProps> = ({
+  name,
+  selected,
+  onChange,
+  options,
+  labelText,
+  dotColor = 'green',
+}) => {
+  return (
+    <div className={styles.fieldWrapper}>
+      <label className={styles.labelWithDot}>
+        <span className={`${styles.dot} ${styles[dotColor + 'Dot']}`}></span>
+        {labelText}
+      </label>
+      <div className={styles.colorCircleContainer}>
+        {options.map((opt) => (
+          <div
+            key={opt.value}
+            title={opt.label}
+            onClick={() => onChange(opt.value)}
+            className={styles.colorCircle}
+            style={{
+              backgroundColor: opt.hex,
+              border: selected === opt.value ? '3px solid black' : '1px solid #ccc',
+            }}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+const hairColorOptions = [
+  { value: 'BROWN', label: HairColor.BROWN, hex: '#6B4423' },
+  { value: 'BLACK', label: HairColor.BLACK, hex: ' #000000' },
+  { value: 'DIRTY_BLONDE', label: HairColor.DIRTY_BLONDE, hex: 'rgb(230, 175, 81)' },
+  { value: 'BLONDE', label: HairColor.BLONDE, hex: 'rgb(250, 235, 104)' },
+  { value: 'REDHEAD', label: HairColor.REDHEAD, hex: 'rgb(254, 160, 45)' },
+];
+
+const skinToneOptions = [
+  { value: 'FAIR', label: SkinTone.FAIR, hex: 'rgb(255, 220, 202) ' },
+  { value: 'FAIR_TO_MEDIUM', label: SkinTone.FAIR_TO_MEDIUM, hex: 'rgb(255, 218, 175) ' },
+  { value: 'TAN', label: SkinTone.TAN, hex: 'rgb(230, 189, 157)' },
+  { value: 'MEDIUM_TO_DARK', label: SkinTone.MEDIUM_TO_DARK, hex: 'rgb(212, 167, 138)' },
+  { value: 'DARK', label: SkinTone.DARK, hex: 'rgb(182, 127, 91)' },
+];
+
+
+interface HeightSliderProps {
+  value: number;
+  onChange: (value: number) => void;
+  min?: number;
+  max?: number;
+  step?: number;
+}
+
+const HeightSlider: React.FC<HeightSliderProps> = ({
+      value,
+      onChange,
+      min = 140,
+      max = 220,
+      step = 1,
+        }) => {
+          const ticks = [];
+          for (let i = min; i <= max; i += 5) {
+            ticks.push(i);
+          }
+
+  return (
+    <div className={styles.container}>
+      <label className={styles.heightLabel}>
+        גובה: <span className={styles.value}>{(value / 100).toFixed(2)} מ'</span> ({value} ס"מ)
+      </label>
+      <input
+        type="range"
+        min={min}
+        max={max}
+        step={step}
+        value={value}
+        onChange={(e) => onChange(Number(e.target.value))}
+        className={styles.slider}
+      />
+      <div className={styles.ticks}>
+        {ticks.map((tick) => (
+          <span
+            key={tick}
+            className={styles.tick}
+            style={{ left: `${((tick - min) / (max - min)) * 100}%` }}
+          >
+            {tick}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
 };
 
-  const [candidate, setCandidate] = useState(initialCandidate);
+const CandidateForm: React.FC = () => {
+  const { id } = useParams();
 
+  const initialCandidate: any = {
+    firstName: "",
+    lastName: "",
+    gender: "",
+    status: "",
+    age: 18,
+    sector: "",
+    subSector: "",
+    torahLearning: "",
+    education: "",
+    occupation: "",
+    city: "",
+    origin: "",
+    languages: "",
+    openness: "",
+    clothingStyle: "",
+    height: 140,
+    physique: "",
+    skinTone: "",
+    hairColor: "",
+    giving: 0,
+    expecting: 0,
+    familyStatus: "",
+    availableForProposals: false,
+    headCovering: "",
+    phoneType: "",
+    beard: false,
+    smokingStatus: "",
+    license: false,
+    descriptionSelf: "",
+    descriptionFind: "",
+  };
+
+  const [candidate, setCandidate] = useState(initialCandidate);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-// const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-//   const { name, value, type } = e.target;
-//   const isCheckbox = type === "checkbox";
+  useEffect(() => {
+    if (id) {
+      getCandidate(Number(id)).then((data) => {
+        setCandidate(data);
+      });
+    }
+  }, [id]);
 
-//   setCandidate((prev) => ({
-//     ...prev,
-//     [name]: isCheckbox ? (e.target as HTMLInputElement).checked : value,
-//   }));
-// };
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, type, value, checked } = e.target as HTMLInputElement;
+    setCandidate((prev: any) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : type === "number" ? Number(value) : value,
+    }));
+  };
 
-
-    // לטיפול ב- input כולל טקסט, מספר, צ'קבוקס
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const { name, type, value, checked } = e.target;
-      setCandidate((prev) => ({
-        ...prev,
-        [name]: type === "checkbox" ? checked : type === "number" || type === "range" ? Number(value) : value,
-      }));
-    };
-
-
-    // לטיפול בבחירה מ- select
-    const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-      const { name, value, options } = e.target;
-
-      if (name === "languages") {
-        const selectedValues = Array.from(options)
-          .filter(option => option.selected)
-          .map(option => option.value as Language);
-        setCandidate((prev) => ({
-          ...prev,
-          [name]: selectedValues,
-        }));
-      } else {
-        setCandidate((prev) => ({
-          ...prev,
-          [name]: value,
-        }));
-      }
-    };
-
+  const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const { name, value, options, multiple } = e.target;
+    if (multiple) {
+      const selected = Array.from(options).filter((o) => o.selected).map((o) => o.value);
+      setCandidate((prev: any) => ({ ...prev, [name]: selected }));
+    } else {
+      setCandidate((prev: any) => ({ ...prev, [name]: value }));
+    }
+  };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file && !file.type.startsWith("image/")) {
       setError("נא לבחור קובץ תמונה חוקי");
-      setImageFile(null);
-    } else {
-      setError(null);
-      setImageFile(file || null);
+      return;
     }
+    setImageFile(file || null);
   };
 
   const handleResumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -120,281 +213,649 @@ const CandidateForm: React.FC = () => {
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     ];
     if (file && !allowedTypes.includes(file.type)) {
-      setError("נא להעלות קובץ רזומה בפורמט PDF או Word בלבד");
-      setResumeFile(null);
-    } else {
-      setError(null);
-      setResumeFile(file || null);
+      setError("נא להעלות קובץ רזומה חוקי (PDF או Word)");
+      return;
     }
+    setResumeFile(file || null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     const formData = new FormData();
     Object.entries(candidate).forEach(([key, value]) => {
-      if (value !== null && value !== undefined) {
+      if (Array.isArray(value)) {
+        value.forEach((val) => formData.append(key, val));
+      } else if (value !== undefined && value !== null) {
         formData.append(key, value.toString());
       }
     });
-
-    if (imageFile) formData.append("imageFile", imageFile);
-    if (resumeFile) formData.append("resumeFile", resumeFile);
-
+    if (imageFile) formData.append("fileImage", imageFile);
+    if (resumeFile) formData.append("rezumehFile", resumeFile);
+    console.log("Form data being sent:", Object.fromEntries(formData.entries()));
     try {
-      setError(null);
-      await createCandidate(formData);
-      alert("מועמד נוסף בהצלחה!");
-      setCandidate(initialCandidate);
-      setImageFile(null);
-      setResumeFile(null);
-    } catch (err) {
-      console.error(err);
-      setError("שגיאה ביצירת מועמד, נסי שוב מאוחר יותר");
+      if (id) {
+        await updateCandidate(Number(id), formData);
+        alert("המועמד עודכן בהצלחה");
+      } else {
+        await createCandidate(formData);
+        alert("מועמד נוסף בהצלחה");
+      }
+    } catch {
+      setError("שגיאה בשליחה");
     }
   };
-return (
-    <form onSubmit={handleSubmit}>
-      {error && <p style={{ color: "red" }}>{error}</p>}
 
-      <div>
-        <label>שם פרטי:</label>
-        <input name="firstName" value={candidate.firstName || ""} onChange={handleInputChange} required />
+  // const renderSelectWithPlaceholder = (
+  //   name: string,
+  //   value: any,
+  //   options: any,
+  //   multiple = false,
+  //   labelText: string
+  // ) => (
+  //   <label className={styles.fieldWrapper}>
+  //     <span className={styles.label}>{labelText}</span>
+  //     <select
+  //       name={name}
+  //       value={value}
+  //       onChange={handleSelectChange}
+  //       multiple={multiple}
+  //       className={styles.select}
+  //     >
+  //       {!multiple && <option value="" disabled>בחר/י</option>}
+  //       {Object.entries(options).map(([key, val]) => (
+  //         <option key={key} value={key}>
+  //           {String(val)}
+  //         </option>
+  //       ))}
+  //     </select>
+  //   </label>
+  // );
+
+
+   const renderSelectWithPlaceholder = (
+    name: string,
+    value: any,
+    options: any,
+    multiple = false,
+    labelText: string,
+    dotColor: 'green' | 'purple' | 'blue' = 'green'
+  ) => (
+    <div className={styles.fieldWrapper}>
+      <label className={styles.labelWithDot}>
+        <span className={`${styles.dot} ${styles[dotColor + 'Dot']}`}></span>
+        {labelText}
+      </label>
+      <select
+        name={name}
+        value={value}
+        onChange={handleSelectChange}
+        multiple={multiple}
+        className={styles.select}
+      >
+        {!multiple && <option value="" disabled>בחר/י</option>}
+        {Object.entries(options).map(([key, val]) => (
+          <option key={key} value={key}>
+            {String(val)}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+
+  const renderInputField = (
+    name: string,
+    value: any,
+    labelText: string,
+    type = "text",
+    dotColor: 'green' | 'purple' | 'blue' = 'green'
+  ) => (
+    <div className={styles.fieldWrapper}>
+      <label className={styles.labelWithDot}>
+        <span className={`${styles.dot} ${styles[dotColor + 'Dot']}`}></span>
+        {labelText}
+      </label>
+      <input
+        name={name}
+        type={type}
+        value={value}
+        onChange={handleInputChange}
+        className={styles.input}
+      />
+    </div>
+  );
+
+  const renderTextareaField = (
+    name: string,
+    value: any,
+    labelText: string,
+    dotColor: 'green' | 'purple' | 'blue' = 'green'
+  ) => (
+    <div className={styles.fieldWrapper}>
+      <label className={styles.labelWithDot}>
+        <span className={`${styles.dot} ${styles[dotColor + 'Dot']}`}></span>
+        {labelText}
+      </label>
+      <textarea
+        name={name}
+        value={value}
+        onChange={handleInputChange}
+        className={styles.textarea}
+      />
+    </div>
+  );
+
+  const renderCheckboxField = (
+    name: string,
+    checked: boolean,
+    labelText: string
+  ) => (
+    <div className={styles.checkboxGroup}>
+      <label className={styles.checkboxLabel}>
+        <input
+          type="checkbox"
+          name={name}
+          checked={checked}
+          onChange={handleInputChange}
+          className={styles.checkbox}
+        />
+        <span className={styles.checkboxText}>{labelText}</span>
+      </label>
+    </div>
+  );
+
+  const renderRangeSlider = (
+    name: string,
+    value: number,
+    labelText: string,
+    min: number,
+    max: number,
+    step: number,
+    dotColor: 'green' | 'purple' | 'blue' = 'green'
+  ) => (
+    <div className={styles.fieldWrapper}>
+      <label className={styles.labelWithDot}>
+        <span className={`${styles.dot} ${styles[dotColor + 'Dot']}`}></span>
+        {labelText}
+        <span className={styles.rangeValue}>{value.toLocaleString()}</span>
+      </label>
+      <input
+        type="range"
+        name={name}
+        min={min}
+        max={max}
+        step={step}
+        value={value}
+        onChange={handleInputChange}
+        className={styles.rangeSlider}
+      />
+      <div className={styles.rangeTicks}>
+        <span>{min.toLocaleString()}</span>
+        <span>{max.toLocaleString()}</span>
+      </div>
+    </div>
+  );
+
+  const renderGenderButtons = () => (
+    <div className={styles.fieldWrapper}>
+      <label className={styles.labelWithDot}>
+        <span className={styles.greenDot}></span>
+        מגדר *
+      </label>
+      <div className={styles.genderButtons}>
+        <button
+          type="button"
+          className={`${styles.genderButton} ${candidate.gender === 'FEMALE' ? styles.active : ''}`}
+          onClick={() => setCandidate((prev : typeof candidate) => ({...prev, gender: 'FEMALE'}))}
+        >
+          <div className={styles.genderIcon}>👤</div>
+          אישה
+        </button>
+        <button
+          type="button"
+          className={`${styles.genderButton} ${candidate.gender === 'MALE' ? styles.active : ''}`}
+          onClick={() => setCandidate((prev : typeof candidate) => ({...prev, gender: 'MALE'}))}
+        >
+          <div className={styles.genderIcon}>👤</div>
+          גבר
+        </button>
+      </div>
+    </div>
+  );
+
+  const renderFileUpload = (
+    name: string,
+    file: File | null,
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
+    labelText: string,
+    accept: string,
+    dotColor: 'green' | 'purple' | 'blue' = 'green'
+  ) => (
+    <div className={styles.fieldWrapper}>
+      <label className={styles.labelWithDot}>
+        <span className={`${styles.dot} ${styles[dotColor + 'Dot']}`}></span>
+        {labelText}
+      </label>
+      <div className={styles.fileUpload}>
+        <div className={styles.fileUploadBox}>
+          <div className={styles.fileUploadIcon}>+</div>
+          <div className={styles.fileUploadText}>
+            {file ? file.name : `קובץ ${labelText.toLowerCase()}`}
+          </div>
+        </div>
+        <input
+          type="file"
+          accept={accept}
+          onChange={onChange}
+          className={styles.fileInput}
+        />
+      </div>
+      <div className={styles.fileHint}>
+        הקובץ יכול להיות בפורמטים {accept.replace(/\./g, '').toUpperCase()} עד למשקל 7MB
+      </div>
+    </div>
+  );
+
+
+  return (
+        <div className={styles.container}>
+      <div className={styles.header}>
+        <div className={styles.profileSection}>
+          <div className={styles.profileImage}>
+            <div className={styles.avatarPlaceholder}>👤</div>
+          </div>
+          <div className={styles.profileInfo}>
+            <h2> פרופיל</h2>
+            {/* <p>מתור מאגר איכותיי</p> */}
+          </div>
+        </div>
+        <div className={styles.formTitle}>פרטי מועמד</div>
       </div>
 
-      <div>
-        <label>שם משפחה:</label>
-        <input name="lastName" value={candidate.lastName || ""} onChange={handleInputChange} required />
-      </div>
+    <form onSubmit={handleSubmit} className={styles.form} dir="rtl">
 
-      <div>
-        <label>מגדר:</label>
-        <select name="Gender" value={candidate.gender || Gender.MALE} onChange={handleSelectChange}>
-          {Object.entries(Gender).map(([key, val]) => (
-            <option key={key} value={val}>{val}</option>
-          ))}
-        </select>
-      </div>
+           {/* שורה ראשונה */}
+          <div className={styles.row}>
+            {renderInputField("firstName", candidate.firstName, "שם פרטי *", "text", "purple")}
+           {renderInputField("lastName", candidate.lastName, "שם משפחה", "text", "green")}
+        </div>
 
-      <div>
-        <label>סטטוס:</label>
-        <select name="status" value={candidate.status || Status.SINGLE} onChange={handleSelectChange}>
-          {Object.entries(Status).map(([key, val]) => (
-            <option key={key} value={val}>{val}</option>
-          ))}
-        </select>
-      </div>
+           {/* שורה שנייה */}
+          <div className={styles.row}>
+          {renderGenderButtons()} 
+           {renderSelectWithPlaceholder("status", candidate.status, Status, false, "מצב אישי *", "green")}
+         </div>
 
-      <div>
-        <label>גיל:</label>
-        <input type="number" name="age" value={candidate.age || ""} onChange={handleInputChange} required min={18} />
-      </div>
 
-    <div>
-        <label >גובה:</label>
-        <label htmlFor="height">גובה (בס"מ): {candidate.height ?? ""}</label>
-        <label htmlFor="height">גובה (בס"מ): {candidate.height}</label>
+           {/* שורה שלישית */}
+           <div className={styles.row}>
+             {/* <div className={styles.fieldWrapper}>
+               <label className={styles.labelWithDot}>
+                 <span className={styles.purpleDot}></span>
+                 תאריך לידה *
+               </label>
+               <input
+                type="date"
+                name="birthDate"
+                className={styles.input}
+              />
+            </div> */}
+            {renderInputField("age", candidate.age, "גיל *", "number", "purple")}
+            {renderInputField("candidateId", candidate.id, "מספר זהות *" , "purple")}
+       </div>
+
+           {/* שורה רביעית */}
+           <div className={styles.row}>
+             {renderSelectWithPlaceholder("sector", candidate.sector, Sector, false, "מגזר *", "green")}
+             {renderSelectWithPlaceholder("subSector", candidate.subSector, SubSector, false, "תת מגזר *", "green")}
+             {/* {renderSelectWithPlaceholder("sector", candidate.sector, Sector, false, "מגזר *", "green")} */}
+           </div>
+
+           
+           {/* שדות נוספים */}
+           <div className={styles.row}>
+             {renderSelectWithPlaceholder("languages", candidate.languages, Language, false, "שפות *", "green")}
+              {renderInputField("city", candidate.city, "עיר *", "text", "green")}
+             {/* {renderSelectWithPlaceholder("openness", candidate.openness, Openness, false, "פתיחות", "green")} */}
+           </div>
+
+           {/* טווחי כסף */}
+           <div className={styles.row}>
+             {renderRangeSlider("giving", candidate.giving, "כמה מבקשים (ועליו לידירה - מקסימום)", 0, 1000000, 25000, "green")}
+             {renderRangeSlider("expecting", candidate.expecting, "כמה נותנים (ועליו לידירה - מקסימום)", 0, 1000000, 25000, "green")}
+           </div>
+
+            <div className={styles.row}>
+              {renderSelectWithPlaceholder("phoneType", candidate.phoneType, PhoneType, false, "סוג טלפון *", "green")}
+              {renderSelectWithPlaceholder("openness", candidate.openness, Openness, false, "רמת פתיחות *", "green")}
+            </div>
+
+            <div className={styles.row}>
+              {renderSelectWithPlaceholder("clothingStyle", candidate.clothingStyle, ClothingStyle, false, "סגנון לבוש *", "green")}
+              {renderSelectWithPlaceholder("headCovering", candidate.headCovering, HeadCovering, false, "כיסוי ראש *", "green")}
+            </div>
+
+            <div className={styles.row}>
+              {renderCheckboxField("license", candidate.license, "רישיון נהיגה *")}
+              {renderCheckboxField("beard", candidate.beard, "זקן *")}
+            </div>
+
+            <div className={styles.row}>
+              {renderSelectWithPlaceholder("physique", candidate.physique, Physique, false, "מבנה גוף *", "green")}
+              {renderInputField("origin", candidate.origin, "מוצא *", "text", "green")}
+            </div>
+              {/* גובה */}
+                {/* <HeightSlider
+                  value={candidate.height}
+                  onChange={(val) => setCandidate((prev: any) => ({ ...prev, height: val }))}
+                  min={140}
+                  max={200}
+                  step={1}
+                /> */}
+                {renderRangeSlider("height", candidate.height, 'גובה (ס"מ) *', 140, 220, 1, "green")}
+          <div className={styles.row}>
+            <ColorCircleSelector
+              name="hairColor"
+              selected={candidate.hairColor}
+              onChange={(val) => setCandidate((prev: any) => ({ ...prev, hairColor: val }))}
+              options={hairColorOptions}
+              labelText="צבע שיער"
+            />
+
+            <ColorCircleSelector
+              name="skinTone"
+              selected={candidate.skinTone}
+              onChange={(val) => setCandidate((prev : any) => ({ ...prev, skinTone: val }))}
+              options={skinToneOptions}
+              labelText="גוון עור"
+            />
+        </div>
+
+        <div className={styles.row}>
+          {renderSelectWithPlaceholder("education", candidate.education, EducationInstitution, false, "מוסד לימודים *", "green")}
+          {renderSelectWithPlaceholder("occupation", candidate.occupation, Occupation, false, "עיסוק *", "green")}
+        </div>
+
+        <div className={styles.row}>
+              {renderSelectWithPlaceholder("torahLearning", candidate.torahLearning, TorahStudy, false, "לומד / עובד *", "green")}
+              {renderSelectWithPlaceholder("familyStatus", candidate.familyStatus, ParentsStatus, false, "סטטוס הורים *", "green")}
+        </div>
+
+        <div className={styles.row}>
+              {renderCheckboxField("availableForProposals", candidate.availableForProposals, "זמין להצעות")}
+              {renderSelectWithPlaceholder("smokingStatus", candidate.smokingStatus, Smoking, false, "עישון *", "green")}
+        </div>
+
+          {renderTextareaField("descriptionSelf", candidate.descriptionSelf, "תיאור עצמי", "purple")}
+          {renderTextareaField("descriptionFind", candidate.descriptionFind, "מה אני מחפש/ת?", "purple")}
+        
+                {/* העלאת קבצים */}
+           <div className={styles.row}>
+             {renderFileUpload("image", imageFile, handleImageChange, "העלאת תמונה*", "image/*", "purple")}
+             {renderFileUpload("resume", resumeFile, handleResumeChange, "העלאת רזומה *", ".pdf,.doc,.docx", "purple")}
+           </div>
+      {/* <label className={styles.fieldWrapper}>
+        <span className={styles.label}>עיר</span>
+        <input name="city" value={candidate.city} onChange={handleInputChange} className={styles.input} />
+      </label>
+
+      <label className={styles.fieldWrapper}>
+        <span className={styles.label}>מוצא</span>
+        <input name="origin" value={candidate.origin} onChange={handleInputChange} className={styles.input} />
+      </label>
+
+      <label className={styles.fieldWrapper}>
+        <span className={styles.label}>תיאור עצמי</span>
+        <textarea name="descriptionSelf" value={candidate.descriptionSelf} onChange={handleInputChange} className={styles.textarea} />
+      </label>
+
+      <label className={styles.fieldWrapper}>
+        <span className={styles.label}>מה אני מחפש/ת?</span>
+        <textarea name="descriptionFind" value={candidate.descriptionFind} onChange={handleInputChange} className={styles.textarea} />
+      </label>
+
+      {renderSelectWithPlaceholder("gender", candidate.gender, Gender, false, "מגדר")}
+      {renderSelectWithPlaceholder("status", candidate.status, Status, false, "סטטוס")}
+      {renderSelectWithPlaceholder("sector", candidate.sector, Sector, false, "מגזר")}
+      {renderSelectWithPlaceholder("subSector", candidate.subSector, SubSector, false, "תת מגזר")}
+      {renderSelectWithPlaceholder("torahLearning", candidate.torahLearning, TorahStudy, false, "לומד / עובד")}
+      {renderSelectWithPlaceholder("education", candidate.education, EducationInstitution, false, "מוסד לימודים")}
+      {renderSelectWithPlaceholder("occupation", candidate.occupation, Occupation, false, "עיסוק")}
+      {renderSelectWithPlaceholder("languages", candidate.languages, Language, false, "שפה")}
+      {renderSelectWithPlaceholder("openness", candidate.openness, Openness, false, "פתיחות")}
+      {renderSelectWithPlaceholder("clothingStyle", candidate.clothingStyle, ClothingStyle, false, "סגנון לבוש")}
+      {renderSelectWithPlaceholder("physique", candidate.physique, Physique, false, "מבנה גוף")}
+      {renderSelectWithPlaceholder("skinTone", candidate.skinTone, SkinTone, false, "צבע עור")}
+      {renderSelectWithPlaceholder("hairColor", candidate.hairColor, HairColor, false, "צבע שיער")}
+      {renderSelectWithPlaceholder("familyStatus", candidate.familyStatus, ParentsStatus, false, "סטטוס הורים")}
+      {renderSelectWithPlaceholder("headCovering", candidate.headCovering, HeadCovering, false, "כיסוי ראש")}
+      {renderSelectWithPlaceholder("phoneType", candidate.phoneType, PhoneType, false, "סוג טלפון")}
+      {renderSelectWithPlaceholder("smokingStatus", candidate.smokingStatus, Smoking, false, "מצב עישון")}
+
+      <label className={styles.checkboxWrapper}>
+        <input name="availableForProposals" type="checkbox" checked={candidate.availableForProposals} onChange={handleInputChange} />
+        <span>זמין/ה להצעות</span>
+      </label>
+
+      <label className={styles.checkboxWrapper}>
+        <input name="beard" type="checkbox" checked={candidate.beard} onChange={handleInputChange} />
+        <span>זקן</span>
+      </label>
+
+      <label className={styles.checkboxWrapper}>
+        <input name="license" type="checkbox" checked={candidate.license} onChange={handleInputChange} />
+        <span>רישיון נהיגה</span>
+      </label>
+
+      <label className={styles.fieldWrapper}>
+        <HeightSlider
+          value={candidate.height}
+          onChange={(val) => setCandidate((prev: any) => ({ ...prev, height: val }))}
+          min={140}
+          max={220}
+          step={1}
+        />
+
+      </label>
+
+      <label className={styles.fieldWrapper}>
+        <span className={styles.label}>רמת נתינה: {candidate.giving.toLocaleString()}</span>
         <input
           type="range"
-          id="height"
-          name="height"
-          min="140"
-          max="220"
-          step="1"
-          value={candidate.height}
+          name="giving"
+          min={100000}
+          max={2000000}
+          step={50000}
+          value={candidate.giving}
           onChange={handleInputChange}
+          className={styles.range}
         />
-          </div>
-              <div>
-        <label>מגזר:</label>
-        <select name="Sector" value={candidate.sector || Sector.HASIDI} onChange={handleSelectChange}>
-          {Object.entries(Sector).map(([key, val]) => (
-            <option key={key} value={val}>{val}</option>
-          ))}
-        </select>
-      </div>
+      </label>
 
-      <div>
-        <label>תת מגזר:</label>
-        <select name="subSector" value={candidate.subSector || SubSector.YESHIVISH} onChange={handleSelectChange}>
-          {Object.entries(SubSector).map(([key, val]) => (
-            <option key={key} value={val}>{val}</option>
-          ))}
-        </select>
-      </div>
+      <label className={styles.fieldWrapper}>
+        <span className={styles.label}>רמת ציפייה: {candidate.expecting.toLocaleString()}</span>
+        <input
+          type="range"
+          name="expecting"
+          min={100000}
+          max={2000000}
+          step={50000}
+          value={candidate.expecting}
+          onChange={handleInputChange}
+          className={styles.range}
+        />
+      </label>
 
-      <div>
-        <label>תמונה:</label>
+
+      <label className={styles.fieldWrapper}>
+        <span className={styles.heightLabel}>העלאת תמונה</span>
         <input type="file" accept="image/*" onChange={handleImageChange} />
-      </div>
+      </label>
 
-      <div>
-        <label>רזומה (PDF או Word):</label>
+      <label className={styles.fieldWrapper}>
+        <span className={styles.heightLabel}>העלאת רזומה </span>
         <input type="file" accept=".pdf,.doc,.docx" onChange={handleResumeChange} />
-      </div>
+      </label>
 
+      {error && <div className={styles.error}>{error}</div>} */}
 
-        {/* עיר */}
-        <div>
-          <label>עיר:</label>
-          <input name="city" value={candidate.city || ""} onChange={handleInputChange} />
-        </div>
-
-        {/* מוצא */}
-        <div>
-          <label>מוצא:</label>
-          <input name="origin" value={candidate.origin || ""} onChange={handleInputChange} />
-        </div>
-
-        {/* שפות */}
-        <div>
-          <label>שפות:</label>
-          <select name="languages" multiple value={candidate.languages || []} onChange={handleSelectChange}>
-            {Object.entries(Language).map(([key, val]) => (
-              <option key={key} value={val}>{val}</option>
-            ))}
-          </select>
-        </div>
-
-        {/* פתיחות דתית */}
-        <div>
-          <label>פתיחות דתית:</label>
-          <select name="openness" value={candidate.openness || Openness.TRADITIONAL} onChange={handleSelectChange}>
-            {Object.entries(Openness).map(([key, val]) => (
-              <option key={key} value={val}>{val}</option>
-            ))}
-          </select>
-        </div>
-
-        {/* סגנון לבוש */}
-        <div>
-          <label>סגנון לבוש:</label>
-          <select name="clothingStyle" value={candidate.clothingStyle || ClothingStyle.MODERN} onChange={handleSelectChange}>
-            {Object.entries(ClothingStyle).map(([key, val]) => (
-              <option key={key} value={val}>{val}</option>
-            ))}
-          </select>
-        </div>
-
-        {/* מבנה גוף */}
-        <div>
-          <label>מבנה גוף:</label>
-          <select name="physique" value={candidate.physique || Physique.AVERAGE} onChange={handleSelectChange}>
-            {Object.entries(Physique).map(([key, val]) => (
-              <option key={key} value={val}>{val}</option>
-            ))}
-          </select>
-        </div>
-
-        {/* גוון עור */}
-        <div>
-          <label>גוון עור:</label>
-          <select name="skinTone" value={candidate.skinTone || SkinTone.FAIR} onChange={handleSelectChange}>
-            {Object.entries(SkinTone).map(([key, val]) => (
-              <option key={key} value={val}>{val}</option>
-            ))}
-          </select>
-        </div>
-
-        {/* צבע שיער */}
-        <div>
-          <label>צבע שיער:</label>
-          <select name="hairColor" value={candidate.hairColor || HairColor.BROWN} onChange={handleSelectChange}>
-            {Object.entries(HairColor).map(([key, val]) => (
-              <option key={key} value={val}>{val}</option>
-            ))}
-          </select>
-        </div>
-
-        {/* נתינה */}
-        <div>
-          <label htmlFor="giving">רמת נתינה: {candidate.giving ?? "בחרי רמה (0–10)"}</label>
-          <input
-            type="range"
-            id="giving"
-            name="giving"
-            min={100000}
-            max={1000000}
-            step={10000}
-            value={candidate.giving ??0 }
-            onChange={handleInputChange}
-          />
-        </div>
-
-        {/* ציפיות */}
-        <div>
-          <label htmlFor="expecting">רמת ציפיות: {candidate.expecting ?? "בחרי רמה (0–10)"}</label>
-          <input
-            type="range"
-            id="expecting"
-            name="expecting"
-            min={100000}
-            max={1000000}
-            step={10000}
-            value={candidate.expecting ??0}
-            onChange={handleInputChange}
-          />
-        </div>
-        {/* מצב משפחתי של ההורים */}
-        <div>
-          <label>מצב משפחתי של ההורים:</label>
-          <select name="familyStatus" value={candidate.familyStatus || ParentsStatus.MARRIED} onChange={handleSelectChange}>
-            {Object.entries(ParentsStatus).map(([key, val]) => (
-              <option key={key} value={val}>{val}</option>
-            ))}
-          </select>
-        </div>
-
-        {/* פתוח להצעות */}
-        <div>
-          <label>פתוח להצעות:</label>
-          <input type="checkbox" name="availableForProposals" checked={candidate.availableForProposals ?? false} onChange={handleInputChange} />
-        </div>
-
-        {/* סוג כיסוי ראש מועדף */}
-        <div>
-          <label>כיסוי ראש מועדף:</label>
-          <select name="headCovering" value={candidate.headCovering || HeadCovering.FLEXIBLE} onChange={handleSelectChange}>
-            {Object.entries(HeadCovering).map(([key, val]) => (
-              <option key={key} value={val}>{val}</option>
-            ))}
-          </select>
-        </div>
-
-        {/* סוג פלאפון */}
-        <div>
-          <label>סוג פלאפון:</label>
-          <select name="phoneType" value={candidate.phoneType || PhoneType.SMARTPHONE} onChange={handleSelectChange}>
-            {Object.entries(PhoneType).map(([key, val]) => (
-              <option key={key} value={val}>{val}</option>
-            ))}
-          </select>
-        </div>
-
-        {/* זקן */}
-        <div>
-          <label>זקן:</label>
-          <input type="checkbox" name="beard" checked={candidate.beard ?? false} onChange={handleInputChange} />
-        </div>
-
-        {/* מעשן */}
-        <div>
-          <label>סטטוס עישון:</label>
-          <select name="smokingStatus" value={candidate.smokingStatus || Smoking.NON_SMOKER} onChange={handleSelectChange}>
-            {Object.entries(Smoking).map(([key, val]) => (
-              <option key={key} value={val}>{val}</option>
-            ))}
-          </select>
-        </div>
-
-        {/* רישיון נהיגה */}
-        <div>
-          <label>רישיון נהיגה:</label>
-          <input type="checkbox" name="license" checked={candidate.license ?? false} onChange={handleInputChange} />
-        </div>
-      <button type="submit">הוסף מועמד</button>
+      <button type="submit" className={styles.submitBtn}>שלח</button>
     </form>
+    </div>
   );
 };
 
 export default CandidateForm;
+
+
+//       <form onSubmit={handleSubmit} className={styles.form} dir="rtl">
+//         <div className={styles.formGrid}>
+          
+//           {/* שורה ראשונה */}
+//           <div className={styles.row}>
+//             {renderInputField("firstName", candidate.firstName, "שם פרטי *", "text", "purple")}
+//             {renderInputField("lastName", candidate.lastName, "שם משפחה", "text", "green")}
+//           </div>
+
+//           {/* שורה שנייה */}
+//           <div className={styles.row}>
+//             {renderGenderButtons()}
+//             {renderSelectWithPlaceholder("status", candidate.status, Status, false, "מצב אישי *", "green")}
+//           </div>
+
+//           {/* שורה שלישית */}
+//           <div className={styles.row}>
+//             <div className={styles.fieldWrapper}>
+//               <label className={styles.labelWithDot}>
+//                 <span className={styles.purpleDot}></span>
+//                 תאריך לידה *
+//               </label>
+//               <input
+//                 type="date"
+//                 name="birthDate"
+//                 className={styles.input}
+//               />
+//             </div>
+//             {renderSelectWithPlaceholder("familyStatus", candidate.familyStatus, ParentsStatus, false, "מספר זהות *", "purple")}
+//           </div>
+
+//           {/* שורה רביעית */}
+//           <div className={styles.row}>
+//             {renderInputField("city", candidate.city, "מגזר *", "text", "green")}
+//             {renderSelectWithPlaceholder("subSector", candidate.subSector, SubSector, false, "תת מגזר", "green")}
+//             {renderSelectWithPlaceholder("sector", candidate.sector, Sector, false, "מגזר *", "green")}
+//           </div>
+
+//           {/* העלאת קבצים */}
+//           <div className={styles.row}>
+//             {renderFileUpload("image", imageFile, handleImageChange, "העלאת ספט שתעודת לידה/שוחרי רשומה בן *", "image/*", "purple")}
+//             {renderFileUpload("resume", resumeFile, handleResumeChange, "העלאת זהות של הזוירי *", ".pdf,.doc,.docx", "purple")}
+//           </div>
+
+//           {/* שדות נוספים */}
+//           <div className={styles.row}>
+//             {renderSelectWithPlaceholder("languages", candidate.languages, Language, false, "שפות", "green")}
+//             {renderSelectWithPlaceholder("openness", candidate.openness, Openness, false, "פתיחות", "green")}
+//           </div>
+
+//           {/* טווחי כסף */}
+//           <div className={styles.row}>
+//             {renderRangeSlider("giving", candidate.giving, "כמה מבקשים (ועליו לידירה - מקסימום)", 0, 1000000, 25000, "green")}
+//             {renderRangeSlider("expecting", candidate.expecting, "כמה נותנים (ועליו לידירה - מקסימום)", 0, 1000000, 25000, "green")}
+//           </div>
+
+//           {/* מידע כסכי נוסף */}
+//           <div className={styles.fullWidth}>
+//             {renderTextareaField("descriptionSelf", candidate.descriptionSelf, "מידע כסכי נוסף", "green")}
+//           </div>
+
+//           {/* שדות נוספים */}
+//           <div className={styles.row}>
+//             {renderSelectWithPlaceholder("physique", candidate.physique, Physique, false, "פלאפון", "green")}
+//             {renderSelectWithPlaceholder("phoneType", candidate.phoneType, PhoneType, false, "כשר", "green")}
+//           </div>
+
+//           <div className={styles.row}>
+//             {renderSelectWithPlaceholder("smokingStatus", candidate.smokingStatus, Smoking, false, "כיסוי ראש", "green")}
+//             {renderSelectWithPlaceholder("clothingStyle", candidate.clothingStyle, ClothingStyle, false, "עצני", "green")}
+//           </div>
+
+//           {/* גובה */}
+//           <div className={styles.fullWidth}>
+//             <HeightSlider
+//               value={candidate.height}
+//               onChange={(val) => setCandidate((prev: any) => ({ ...prev, height: val }))}
+//               min={140}
+//               max={200}
+//               step={1}
+//             />
+//           </div>
+
+//           {/* קוד קווים */}
+//           <div className={styles.fullWidth}>
+//             {renderTextareaField("descriptionFind", candidate.descriptionFind, "קוד קווים", "purple")}
+//           </div>
+
+//           {/* צבע שיער וצבע עור */}
+//           <div className={styles.row}>
+//             {renderSelectWithPlaceholder("skinTone", candidate.skinTone, SkinTone, false, "צבע שיער", "green")}
+//             {renderSelectWithPlaceholder("hairColor", candidate.hairColor, HairColor, false, "צוון עור", "green")}
+//           </div>
+
+//           {/* תיאור עצמי */}
+//           <div className={styles.fullWidth}>
+//             {renderTextareaField("descriptionSelf", candidate.descriptionSelf, "איפי ותכונות", "green")}
+//           </div>
+
+//           {/* החתרבים */}
+//           <div className={styles.fullWidth}>
+//             {renderTextareaField("descriptionFind", candidate.descriptionFind, "התחרבים, שניות או כל דבר אחר על עצמי", "green")}
+//           </div>
+
+//           {/* העלאת תמונות */}
+//           <div className={styles.row}>
+//             <div className={styles.fieldWrapper}>
+//               <label className={styles.labelWithDot}>
+//                 <span className={styles.purpleDot}></span>
+//                 העלאת תמונות
+//               </label>
+//               <div className={styles.imageUploadGrid}>
+//                 <div className={styles.imageUploadBox}>
+//                   <div className={styles.imageUploadIcon}>+</div>
+//                 </div>
+//                 <div className={styles.imageUploadBox}>
+//                   <div className={styles.imageUploadIcon}>+</div>
+//                 </div>
+//               </div>
+//               <div className={styles.imageUploadNote}>
+//                 הקובץ יכול להיות בפורמטים JPEG, PNG עד למשקל 7MB
+//               </div>
+//             </div>
+//           </div>
+
+//           {/* צ'קבוקסים */}
+//           <div className={styles.checkboxesSection}>
+//             {renderCheckboxField("availableForProposals", candidate.availableForProposals, "אני לא מעלימי תמונות באופן עקביו")}
+//             {renderCheckboxField("license", candidate.license, "מוכנים לפגישה עם האמא/אבא לפני פגישה")}
+//           </div>
+
+//           {/* רישיון */}
+//           <div className={styles.checkboxRow}>
+//             {renderCheckboxField("beard", candidate.beard, "כן")}
+//             {renderCheckboxField("license", candidate.license, "לא מעוניין לציין")}
+//             {renderCheckboxField("availableForProposals", candidate.availableForProposals, "לא")}
+//             {renderCheckboxField("license", candidate.license, "כן")}
+//           </div>
+
+//         </div>
+
+//         {error && <div className={styles.error}>{error}</div>}
+
+//         <button type="submit" className={styles.submitBtn}>
+//           עדכון רזומה
+//         </button>
+//       </form>
+//     </div>
+//   );
+// };
+
+// export default CandidateForm;

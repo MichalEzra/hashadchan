@@ -6,7 +6,7 @@ const RootLayout: FC = () => {
   return (
     <>
       <Navbar />
-      <main>
+        <main >
         <Outlet />
       </main>
     </>

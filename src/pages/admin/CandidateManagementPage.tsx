@@ -1,18 +1,62 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../redux/store';
-import { fetchCandidates } from '../../redux/thunks/candidates.thunks';
-import styles from './CandidateManagementPage.module.css'; // ייבוא ה-CSS Module
+import { fetchCandidates, deleteCandidateById, updateCandidate } from '../../redux/thunks/candidates.thunks';
+import styles from '../style/CandidateManagementPage.module.css';
 import { Candidate } from '../../types/candidate.types';
+import { Pencil, Trash } from 'lucide-react'; // אייקונים לעריכה ומחיקה
+// import { updateCandidateById } from '../../services/candidate.service';
+// import { useNavigate } from 'react-router';
 
 const CandidateManagementPage = () => {
+  // const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { candidates = [], loading, error } = useAppSelector((state) => state.candidates) || {};
+  const [search, setSearch] = useState('');
 
   useEffect(() => {
     dispatch(fetchCandidates());
   }, [dispatch]);
 
+  const handleDelete = async (id: number) => {
+    const confirmDelete = window.confirm('האם את בטוחה שברצונך למחוק את המועמד?');
+    if (confirmDelete) {
+      await dispatch(deleteCandidateById(id));
+      dispatch(fetchCandidates());
+    }
+  };
+
+  const handleEdit = async(id: number) => {
+    const candidate = candidates.find(c => c.id === id);
+if (!candidate) return;
+
+    const formData = convertCandidateToFormData(candidate);
+    await dispatch(updateCandidate({ id: candidate.id, data: formData }));
+
+    dispatch(fetchCandidates());
+  };
+
+  function convertCandidateToFormData(candidate: any): FormData {
+  const formData = new FormData();
+
+  for (const key in candidate) {
+    const value = candidate[key];
+    if (value !== undefined && value !== null) {
+      if (value instanceof File) {
+        formData.append(key, value); // קובץ
+      } else {
+        formData.append(key, value.toString()); // מחרוזת/מספר
+      }
+    }
+  }
+
+  return formData;
+}
+
   const formatBoolean = (value: boolean | undefined) => (value ? 'כן' : 'לא');
+
+  const filteredCandidates = candidates.filter((c: Candidate) =>
+    `${c.firstName} ${c.lastName}`.includes(search)
+  );
 
   if (loading) return <p className={styles.loading}>טוען נתונים...</p>;
   if (error) return <p className={styles.error}>שגיאה: {error}</p>;
@@ -21,11 +65,19 @@ const CandidateManagementPage = () => {
     <div className={styles.page} dir="rtl">
       <h2 className={styles.title}>ניהול מועמדים</h2>
 
-      {candidates.length === 0 && !loading && !error ? (
+      <input
+        type="text"
+        className={styles.searchInput}
+        placeholder="חיפוש לפי שם..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+      />
+
+      {filteredCandidates.length === 0 && !loading && !error ? (
         <p className={styles.noCandidates}>לא נמצאו מועמדים להצגה כרגע.</p>
       ) : (
         <div className={styles.grid}>
-          {candidates.map((c: Candidate) => (
+          {filteredCandidates.map((c: Candidate) => (
             <div key={c.id} className={styles.card}>
               <div className={styles.header}>
                 {c.imageUrl ? (
@@ -71,6 +123,15 @@ const CandidateManagementPage = () => {
                 <li><strong>רמת ציפיות:</strong> <span className={styles.expecting}>{c.expecting}</span></li>
                 <li><strong>זמין להצעות:</strong> {formatBoolean(c.availableForProposals)}</li>
               </ul>
+
+              <div className={styles.actions}>
+                <button className={styles.editBtn} onClick={() => handleEdit(c.id)}>
+                  <Pencil size={16} /> עריכה
+                </button>
+                <button className={styles.deleteBtn} onClick={() => handleDelete(c.id)}>
+                  <Trash size={16} /> מחיקה
+                </button>
+              </div>
             </div>
           ))}
         </div>

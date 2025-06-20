@@ -2,7 +2,7 @@
 import { useState, ChangeEvent, MouseEvent, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { User, Heart, Search, MessageCircle, Shield, Users, Settings, UserCheck, UserX, Edit3 } from 'lucide-react';
-import styles from '../components/design/HomePage.module.css';
+import styles from './style/HomePage.module.css';
 import { useAppSelector, useAppDispatch } from '../redux/store';
 import { loadUserFromToken, loginUser, registerUser } from '../redux/auth/auth.slice';
 
@@ -126,7 +126,8 @@ export default function HomePage() {
 
         {/* כפתורי פעולה רגילים (רק למשתמשים לא מחוברים או אורחים) */}
         {(!isAuthenticated || userType === "GUEST") && (
-          <div className="flex flex-col md:flex-row gap-6 justify-center items-center mb-16">
+          // "flex flex-col md:flex-row gap-6 justify-center items-center mb-16"
+          <div className= {styles.buttonGroup}>
             <button
               onClick={() => setShowLoginModal(true)}
               className={styles.buttonPrimary}

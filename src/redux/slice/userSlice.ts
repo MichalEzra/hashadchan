@@ -1,30 +1,45 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+// redux/slices/users.slice.ts
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { User } from "../../types/user.types";
+import { fetchUsers } from "../thunks/users.thunks";
 
-interface UserState {
-  user: null | {
-    id: string;
-    name: string;
-    email: string;
-    userType: string;
-  };
+interface UsersState {
+  users: User[];
+  loading: boolean;
+  error: string | null;
 }
 
-const initialState: UserState = {
-  user: null,
+const initialState: UsersState = {
+  users: [],
+  loading: false,
+  error: null,
 };
 
-const userSlice = createSlice({
-  name: 'user',
+const usersSlice = createSlice({
+  name: "users",
   initialState,
   reducers: {
-    setUser: (state, action: PayloadAction<UserState['user']>) => {
-      state.user = action.payload;
+    clearUsers: (state) => {
+      state.users = [];
     },
-    clearUser: (state) => {
-      state.user = null;
-    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchUsers.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchUsers.fulfilled, (state, action: PayloadAction<User[]>) => {
+        console.log("✅ קיבלנו את המשתמשים:", action.payload);
+        state.loading = false;
+        state.users = action.payload;
+      })
+      .addCase(fetchUsers.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || "שגיאה בקבלת המשתמשים";
+      });
   },
 });
 
-export const { setUser, clearUser } = userSlice.actions;
-export default userSlice.reducer;
+export const { clearUsers } = usersSlice.actions;
+export default usersSlice.reducer;

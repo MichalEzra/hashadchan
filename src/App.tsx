@@ -5,6 +5,9 @@ import { loadUserFromToken, setUser } from './redux/auth/auth.slice';
 import { getUserFromToken } from './auth/auth.utils';
 import MatchmakerForm from './components/matchmaker/MatchmakerForm';
 import CandidateManagementPage from './pages/admin/CandidateManagementPage';
+import UserManagementPage from './pages/admin/UserManagementPage';
+import MatchmakerManagementPage from './pages/admin/MatchmakerManagementPage';
+import CandidateForm from './components/candidate/CandidateForm';
 
 function App() {
   const dispatch = useAppDispatch();
@@ -28,8 +31,9 @@ function App() {
 
 
     return <>
-      {/* <Router />  זה עוטף את כל הניווט */}
-      <CandidateManagementPage />
+      {/* <Router />  */}
+       {/* זה עוטף את כל הניווט */}
+      <CandidateForm />
     </>
     // <Provider store={store}>
       {/* user ? <HomePage /> : <LoginPage />; */}

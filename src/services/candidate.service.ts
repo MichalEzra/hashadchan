@@ -24,8 +24,13 @@ export const createCandidate = async (formData: FormData): Promise<Candidate> =>
 };
 
 
-export const updateCandidate = async (id: number, candidate: Candidate): Promise<void> => {
-  await axios.put(`${BASE_URL}/${id}`, candidate);
+export const updateCandidate = async (id: number, formData: FormData): Promise<void> => {
+  await axios.put(`${BASE_URL}/${id}`, formData, {
+     headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  
 };
 
 export const deleteCandidate = async (id: number): Promise<void> => {

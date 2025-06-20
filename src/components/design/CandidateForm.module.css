@@ -1,0 +1,575 @@
+.form {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  direction: rtl;
+  font-family: Arial, sans-serif;
+}
+
+/* .fieldWrapper {
+  display: flex;
+  flex-direction: column;
+} */
+
+/* .label {
+  font-weight: bold;
+  margin-bottom: 5px;
+  font-size: 14px;
+} */
+
+/* .input,
+.select,
+.textarea {
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+} */
+
+/* .select {
+  height: 36px;
+} */
+
+/* .textarea {
+  resize: vertical;
+  min-height: 60px;
+}
+
+.checkboxWrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.checkbox {
+  width: 18px;
+  height: 18px;
+} */
+
+.submitBtn {
+  background-color: #007bff;
+  color: white;
+  padding: 12px;
+  font-size: 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.submitBtn:hover {
+  background-color: #0056b3;
+}
+
+.error {
+  color: red;
+  font-weight: bold;
+}
+
+/* עיצוב משותף לכל הסליידרים */
+.range,
+.slider {
+  width: 100%;
+  height: 10px;
+  background: #ddd;
+  border-radius: 5px;
+  outline: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  margin-top: 5px;
+  direction: rtl; /* הופך את הכיוון */
+  transform: scaleX(-1); /* הופך את הסרגל עצמו */
+}
+
+/* עבור הסליידר של גובה (webkit) */
+.slider::-webkit-slider-thumb,
+.range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  background: #4caf50;
+  border: 2px solid #388e3c;
+  border-radius: 50%;
+  margin-top: -6px;
+}
+
+/* עבור פיירפוקס */
+.slider::-moz-range-thumb,
+.range::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  background: #4caf50;
+  border: 2px solid #388e3c;
+  border-radius: 50%;
+}
+
+.container {
+  position: relative;
+  width: 100%;
+  margin: 10px 0;
+}
+
+.value {
+  color: #333;
+  margin-left: 6px;
+  direction: ltr; /* הופך את הכיוון של הטקסט */
+}
+
+.ticks {
+  position: relative;
+  height: 20px;
+  margin-top: 4px;
+}
+
+.tick {
+  position: absolute;
+  top: 0;
+  font-size: 10px;
+  color: #666;
+  transform: none;
+  user-select: none;
+  direction: ltr;
+  text-align: center;
+}
+
+.heightLabel {
+  font-weight: bold;
+  margin-bottom: 10px;
+  display: block;
+  font-size: 14px;
+}
+
+.colorCircleContainer {
+  display: flex;
+  color: rgb(224, 177, 184);
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.colorCircle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: border 0.2s;
+}
+
+
+
+/* Container */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f8f9fc;
+  min-height: 100vh;
+  direction: rtl;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.profileSection {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.profileImage {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #8b5cf6, #a78bfa);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 24px;
+  position: relative;
+}
+
+.avatarPlaceholder {
+  font-size: 32px;
+  color: white;
+}
+
+.profileInfo h2 {
+  margin: 0 0 5px 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.profileInfo p {
+  margin: 0;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.formTitle {
+  color: #8b5cf6;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+/* Form */
+.form {
+  background: white;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.formGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+.row.threeColumns {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.fullWidth {
+  grid-column: 1 / -1;
+  margin-bottom: 5px;
+}
+
+/* Field Wrapper */
+.fieldWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Labels with dots */
+.labelWithDot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 8px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.greenDot {
+  background-color: #10b981;
+}
+
+.purpleDot {
+  background-color: #8b5cf6;
+}
+
+.blueDot {
+  background-color: #3b82f6;
+}
+
+/* Input Fields */
+.input {
+  width: 90%;
+  padding: 12px 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  background-color: white;
+  direction: rtl;
+  text-align: right;
+  
+}
+
+.input:focus {
+  outline: none;
+  border-color: #8b5cf6;
+  box-shadow: 0 0 0 1px #8b5cf6;
+}
+
+.input::placeholder {
+  color: #9ca3af;
+}
+
+/* Select Fields */
+.select {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  background-color: white;
+  direction: rtl;
+  text-align: right;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: left 12px center;
+  background-repeat: no-repeat;
+  background-size: 16px;
+  padding-left: 40px;
+}
+
+.select:focus {
+  outline: none;
+  border-color: #8b5cf6;
+  box-shadow: 0 0 0 1px #8b5cf6;
+}
+
+/* Textarea */
+.textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  background-color: white;
+  direction: rtl;
+  text-align: right;
+  min-height: 120px;
+  resize: vertical;
+  font-family: inherit;
+}
+
+.textarea:focus {
+  outline: none;
+  border-color: #8b5cf6;
+  box-shadow: 0 0 0 1px #8b5cf6;
+}
+
+/* Gender Buttons */
+.genderButtons {
+  display: flex;
+  gap: 10px;
+}
+
+.genderButton {
+  flex: 1;
+  padding: 15px 20px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.genderButton:hover {
+  border-color: #8b5cf6;
+  background-color: #f3f4f6;
+}
+
+.genderButton.active {
+  background-color: #8b5cf6;
+  color: white;
+  border-color: #8b5cf6;
+}
+
+.genderIcon {
+  width: 24px;
+  height: 24px;
+  background-color: #f3f4f6;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+.genderButton.active .genderIcon {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Range Sliders */
+.rangeSlider {
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: #e5e7eb;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.rangeSlider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #1f2937;
+  cursor: pointer;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.rangeSlider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #1f2937;
+  cursor: pointer;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.rangeValue {
+  font-weight: 600;
+  color: #1f2937;
+  font-size: 16px;
+  margin-right: auto;
+}
+
+.rangeTicks {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* Height Slider */
+.heightSliderContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.heightSliderLabel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.heightValue {
+  font-weight: 600;
+  color: #1f2937;
+  font-size: 16px;
+}
+
+.heightSlider {
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: #e5e7eb;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.heightSlider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #1f2937;
+  cursor: pointer;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+.heightSlider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #1f2937;
+  cursor: pointer;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+/* Buttons */
+.button {   
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    background-color: #8b5cf6;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.2s;
+    }
+.button:hover {
+    background-color: #7c3aed;
+    transform: translateY(-2px);
+}   
+.button:active {
+    background-color: #6d28d9;
+    transform: translateY(0);
+}           
+.button:disabled {
+    background-color: #d1d5db;
+    cursor: not-allowed;
+    transform: none;
+}
+/* Responsive Design */
+@media (max-width: 768px) {
+    .formGrid {
+        flex-direction: column;
+    }
+    
+    .row {
+        grid-template-columns: 1fr;
+    }
+    
+    .row.threeColumns {
+        grid-template-columns: 1fr;
+    }
+    
+    .genderButtons {
+        flex-direction: column;
+    }
+    
+    .genderButton {
+        width: 100%;
+    }
+    }
+/* Footer */
+.footer {
+    margin-top: 30px;
+    padding: 20px;
+    background-color: #f3f4f6;
+    text-align: center;
+    border-radius: 12px;
+    }
+.footer p {
+    margin: 0;
+    color: #6b7280;
+    font-size: 14px;
+    }
+/* Footer links */
+.footer a {
+    color: #8b5cf6;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s;
+}
+.footer a:hover {
+    color: #7c3aed;
+}
+.footer a:visited {
+    color: #6d28d9;
+}

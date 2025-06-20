@@ -12,6 +12,7 @@ import { UserGuidePage } from "../pages/UserGuidePage";
 import LoginPage from "../pages/LoginPage";
 import Signup from "../pages/SignupPage";
 import CandidatesPage from "../pages/admin/CandidateManagementPage"
+import CandidateForm from "../components/candidate/CandidateForm";
 
 const router = createBrowserRouter([
   {
@@ -24,20 +25,23 @@ const router = createBrowserRouter([
       { path: "/heretoserve", element: <HereToServeYouPage /> },
       { path: "/guide", element: <UserGuidePage /> },
       { path: "/login", element: <LoginPage /> },
-      {path: "/signup", element: <Signup/>},
-      {path: "/home", element: <HomePage/>},
-      {
-      path: "/admin",
-      children: [
-        { path: "candidates", element: <CandidatesPage /> },
-        // { path: "matchmakers", element: <MatchmakersPage /> },
-        // { path: "parents", element: <ParentsPage /> },
-  ],
-}
+      { path: "/signup", element: <Signup /> },
+      { path: "/home", element: <HomePage /> },
+      { path: "/candidates/edit/:id", element: <CandidateForm /> },
+      { path: "/candidates/new", element: <CandidateForm /> },
 
+      {
+        path: "/admin",
+        children: [
+          { path: "candidates", element: <CandidatesPage /> },
+          // { path: "matchmakers", element: <MatchmakersPage /> },
+          // { path: "parents", element: <ParentsPage /> },
+        ],
+      }
     ],
   },
 ]);
+
 
 const Router: React.FC = () => {
   return <RouterProvider router={router} />;

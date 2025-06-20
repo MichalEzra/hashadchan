@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Candidate } from "../../types/candidate.types";
-import { fetchCandidates, createCandidate } from "../thunks/candidates.thunks";
+import { fetchCandidates, createCandidate, deleteCandidateById, updateCandidate } from "../thunks/candidates.thunks";
 
 interface CandidatesState {
   candidates: Candidate[];
@@ -40,7 +40,17 @@ const candidateSlice = createSlice({
       })
       .addCase(createCandidate.fulfilled, (state, action: PayloadAction<Candidate>) => {
         state.candidates.push(action.payload);
-      });
+      })
+      .addCase(deleteCandidateById.fulfilled, (state, action) => {
+        state.candidates = state.candidates.filter(c => c.id !== action.payload);
+    })
+      .addCase(updateCandidate.fulfilled, (state, action) => {
+        const updated = action.payload;
+        const index = state.candidates.findIndex(c => c.id === updated.id);
+        if (index !== -1) {
+          state.candidates[index] = updated;
+        }
+    });
   },
 });
 
