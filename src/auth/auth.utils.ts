@@ -65,13 +65,23 @@ export const isValidToken = (token: string): boolean => {
 
 
 export function getUserFromToken() {
-  const token = localStorage.getItem('accessToken');
+  const token = localStorage.getItem('token');
   if (!token) return null;
   try {
     return jwtDecode(token);
   } catch {
     return null;
   }
+}
+
+export function mapJwtClaims(rawToken: any): JwtPayload {
+  return {
+    email: rawToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"],
+    name: rawToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"],
+    role: rawToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"],
+    nameid: rawToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"],
+    exp: rawToken.exp,
+  };
 }
 
 

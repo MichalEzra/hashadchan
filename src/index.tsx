@@ -4,6 +4,7 @@ import './index.css';
 import App from './App';
 import { Provider } from 'react-redux';
 import { store, useAppSelector } from './redux/store';
+import { BrowserRouter } from 'react-router';
 
 
 const root = ReactDOM.createRoot(
@@ -13,9 +14,11 @@ const root = ReactDOM.createRoot(
 // console.log("Redux user:", user);
 root.render(
   <React.StrictMode>
+    <BrowserRouter>
     <Provider store={store}>
     <App />
 </Provider>
+    </BrowserRouter>
 
   </React.StrictMode>
 );

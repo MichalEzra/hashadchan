@@ -1,20 +1,29 @@
 // src/services/userService.ts
 import axios from 'axios';
 import { User } from '../types/user.types';
+import {Signup} from './auth.service'; // Assuming you have a signup function in auth.service
 
 const API_URL = 'http://localhost:5245/api/user';
 export type NewUser = Omit<User, 'id' | 'candidate'>;
 
+// export const addUser = async (user: User): Promise<User> => {
+//   console.log('קיבלתי בקשה')
+//   const token = localStorage.getItem("token");
+//   const response = await axios.post(API_URL, user, {
+//     headers: {
+//       Authorization: `Bearer ${token}`,
+//     },
+//   });
+//   return response.data;
+// };
+
+
 export const addUser = async (user: User): Promise<User> => {
-  console.log('קיבלתי בקשה')
-  const token = localStorage.getItem("token");
-  const response = await axios.post(API_URL, user, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  return response.data;
+  console.log('📩 שולח בקשה להרשמה דרך Signup');
+  const createdUser = await Signup(user);
+  return createdUser;
 };
+
 
 
 export const getAllUsers = async (): Promise<User[]> => {
