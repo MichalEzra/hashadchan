@@ -10,6 +10,7 @@ import MatchmakerManagementPage from './pages/admin/MatchmakerManagementPage';
 import CandidateForm from './components/candidate/CandidateForm';
 import Signup from './pages/SignupPage';
 import LoginPage from './pages/LoginPage';
+import MatchPage from './components/matches/MatchPage';
 
 function App() {
   const dispatch = useAppDispatch();
@@ -35,7 +36,7 @@ function App() {
     return <>
       {/* <Router />  */}
        {/* זה עוטף את כל הניווט */}
-      <CandidateManagementPage />
+      <MatchPage />
     </>
     // <Provider store={store}>
       {/* user ? <HomePage /> : <LoginPage />; */}

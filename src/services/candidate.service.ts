@@ -36,3 +36,24 @@ export const updateCandidate = async (id: number, formData: FormData): Promise<v
 export const deleteCandidate = async (id: number): Promise<void> => {
   await axios.delete(`${BASE_URL}/${id}`);
 };
+
+
+//שליפה של כל המועמדים
+export const getMaleCandidates = async () => {
+  const response = await axios.get<Candidate[]>(`${BASE_URL}/males`, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+  return response.data;
+};
+
+//שליפה של כל המועמדות
+export const getFemaleCandidates = async () => {
+  const response = await axios.get<Candidate[]>(`${BASE_URL}/females`, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+  return response.data;
+};

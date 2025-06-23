@@ -1,7 +1,6 @@
 // types/candidateTypes.ts
 import {
   Gender,
-  Status,
   Sector,
   SubSector,
   TorahStudy,
@@ -26,7 +25,7 @@ export type Candidate = {
   firstName: string;
   lastName: string;
   gender: Gender | null;
-  status: Status | null;
+  status: false;
   age: number;
   sector: Sector | null;
   subSector: SubSector | null;
@@ -35,6 +34,7 @@ export type Candidate = {
   occupation: Occupation | null;
   city: string;
   imageUrl?: string;// תמונה
+  rezumehName?: string; // קובץ קורות חיים (PDF וכו')
   origin: string;
   languages: Language | null;
   openness: Openness | null;

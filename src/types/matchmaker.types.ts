@@ -1,3 +1,4 @@
+import { Gender, Language, Openness, Sector, SubSector } from "./enums";
 import { User } from "./user.types";
 export type Matchmaker = {
   id: number;
@@ -6,16 +7,16 @@ export type Matchmaker = {
   firstName: string;
   lastName: string;
   birthDate: string; // DateTime ב-C# -> string בפורמט ISO בתקשורת עם ה-API
-  matchmakerGender: string; // Gender ב-C# -> string או enum
+  matchmakerGender: Gender | null; // Gender ב-C# -> string או enum
   identityNumber: string;
   marriageDate?: string; // תאריך נישואין – שדה אופציונלי
   country?: string;
   city?: string;
-  matchmakerSector: string;
-  subSector?: string;
+  matchmakerSector: Sector | null; // Sector ב-C# -> string או enu
+  subSector?: SubSector | null;
   yearsOfExperience?: number;
   matchesClosed?: number;
-  languages: string;
-  religiousOpenness: string;
+  languages: Language | null;
+  religiousOpenness: Openness | null;
   phoneNumber: string;
 };

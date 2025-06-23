@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
   Gender,
-  Status,
   Sector,
   SubSector,
   TorahStudy,
@@ -17,6 +16,7 @@ import {
   SkinTone,
   HairColor,
   ClothingStyle,
+  Status,
 } from "../../types/enums";
 import {createCandidate,  getCandidate,  updateCandidate,} from "../../services/candidate.service";
 import styles from "../design/CandidateForm.module.css";
@@ -65,20 +65,20 @@ const ColorCircleSelector: React.FC<ColorCircleSelectorProps> = ({
 };
 //צבע שיער
 const hairColorOptions = [
-  { value: 'BROWN', label: HairColor.BROWN, hex: '#6B4423' },
-  { value: 'BLACK', label: HairColor.BLACK, hex: ' #000000' },
-  { value: 'DIRTY_BLONDE', label: HairColor.DIRTY_BLONDE, hex: 'rgb(230, 175, 81)' },
-  { value: 'BLONDE', label: HairColor.BLONDE, hex: 'rgb(250, 235, 104)' },
-  { value: 'REDHEAD', label: HairColor.REDHEAD, hex: 'rgb(254, 160, 45)' },
+  { value: 'BROWN', label: HairColor.HUM, hex: '#6B4423' },
+  { value: 'BLACK', label: HairColor.SHAHOR, hex: ' #000000' },
+  { value: 'DIRTY_BLONDE', label: HairColor.SHATANI, hex: 'rgb(230, 175, 81)' },
+  { value: 'BLONDE', label: HairColor.BLONDI, hex: 'rgb(250, 235, 104)' },
+  { value: 'REDHEAD', label: HairColor.GINGI, hex: 'rgb(254, 160, 45)' },
 ];
 
 //צבע גוף
 const skinToneOptions = [
-  { value: 'FAIR', label: SkinTone.FAIR, hex: 'rgb(255, 220, 202) ' },
-  { value: 'FAIR_TO_MEDIUM', label: SkinTone.FAIR_TO_MEDIUM, hex: 'rgb(255, 218, 175) ' },
-  { value: 'TAN', label: SkinTone.TAN, hex: 'rgb(230, 189, 157)' },
-  { value: 'MEDIUM_TO_DARK', label: SkinTone.MEDIUM_TO_DARK, hex: 'rgb(212, 167, 138)' },
-  { value: 'DARK', label: SkinTone.DARK, hex: 'rgb(182, 127, 91)' },
+  { value: 'FAIR', label: SkinTone.BAHIR, hex: 'rgb(255, 220, 202) ' },
+  { value: 'FAIR_TO_MEDIUM', label: SkinTone.NOTE_LE_BAHIR, hex: 'rgb(255, 218, 175) ' },
+  { value: 'TAN', label: SkinTone.SHAZUF, hex: 'rgb(230, 189, 157)' },
+  { value: 'MEDIUM_TO_DARK', label: SkinTone.NOTE_LE_KEHA, hex: 'rgb(212, 167, 138)' },
+  { value: 'DARK', label: SkinTone.KEHA, hex: 'rgb(182, 127, 91)' },
 ];
 
 interface HeightSliderProps {
@@ -388,16 +388,16 @@ const CandidateForm: React.FC = () => {
       <div className={styles.genderButtons}>
         <button
           type="button"
-          className={`${styles.genderButton} ${candidate.gender === 'FEMALE' ? styles.active : ''}`}
-          onClick={() => setCandidate((prev : typeof candidate) => ({...prev, gender: 'FEMALE'}))}
+          className={`${styles.genderButton} ${candidate.gender === 'נקבה' ? styles.active : ''}`}
+          onClick={() => setCandidate((prev : typeof candidate) => ({...prev, gender: 'נקבה'}))}
         >
           <div className={styles.genderIcon}>👤</div>
           אישה
         </button>
         <button
           type="button"
-          className={`${styles.genderButton} ${candidate.gender === 'MALE' ? styles.active : ''}`}
-          onClick={() => setCandidate((prev : typeof candidate) => ({...prev, gender: 'MALE'}))}
+          className={`${styles.genderButton} ${candidate.gender === 'זכר' ? styles.active : ''}`}
+          onClick={() => setCandidate((prev : typeof candidate) => ({...prev, gender: 'זכר'}))}
         >
           <div className={styles.genderIcon}>👤</div>
           גבר

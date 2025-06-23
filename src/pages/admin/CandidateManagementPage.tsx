@@ -4,6 +4,7 @@ import { fetchCandidates, deleteCandidateById, updateCandidate } from '../../red
 import styles from '../style/CandidateManagementPage.module.css';
 import { Candidate } from '../../types/candidate.types';
 import { Pencil, Trash } from 'lucide-react'; // אייקונים לעריכה ומחיקה
+import { ENDPOINTS } from '../../api/endpoints';
 // import { updateCandidateById } from '../../services/candidate.service';
 // import { useNavigate } from 'react-router';
 
@@ -99,8 +100,9 @@ if (!candidate) return;
 
               <ul className={styles.details}>
                 <li><strong>גיל:</strong> {c.age}</li>
-                <li><strong>מגדר:</strong> {c.gender}</li>
-                <li><strong>מגזר:</strong> {c.sector} - {c.subSector}</li>
+                {/* <li><strong>מגדר:</strong> {c.gender}</li> */}
+                <li><strong>מגזר:</strong> {c.sector}</li>
+                <li><strong>תת מגזר:</strong> {c.subSector}</li>
                 <li><strong>עיר:</strong> {c.city}</li>
                 <li><strong>מוצא:</strong> {c.origin}</li>
                 <li><strong>גובה:</strong> {c.height} ס"מ</li>
@@ -115,14 +117,39 @@ if (!candidate) return;
                 <li><strong>סגנון לבוש:</strong> {c.clothingStyle}</li>
                 <li><strong>כיסוי ראש:</strong> {c.headCovering}</li>
                 <li><strong>זקן:</strong> {formatBoolean(c.beard)}</li>
-                <li><strong>סטטוס משפחתי:</strong> {c.familyStatus}</li>
+                <li><strong>סטטוס הורים:</strong> {c.familyStatus}</li>
                 <li><strong>סוג טלפון:</strong> {c.phoneType}</li>
                 <li><strong>עישון:</strong> {c.smokingStatus}</li>
                 <li><strong>רישיון נהיגה:</strong> {formatBoolean(c.license)}</li>
-                <li><strong>רמת נתינה:</strong> <span className={styles.giving}>{c.giving}</span></li>
-                <li><strong>רמת ציפיות:</strong> <span className={styles.expecting}>{c.expecting}</span></li>
+                <li><strong>נותנים (מקסימום) :</strong> <span className={styles.giving}>{c.giving}</span></li>
+                <li><strong>דורשים (מינימום) :</strong> <span className={styles.expecting}>{c.expecting}</span></li>
                 <li><strong>זמין להצעות:</strong> {formatBoolean(c.availableForProposals)}</li>
               </ul>
+              {/* צפייה בקבצים */}
+              <div className={styles.files}>
+                  {c.imageUrl && (
+                    <a
+                      href={`${ENDPOINTS.getImage}/${c.imageUrl}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.link}
+                    >
+                      📷 לצפייה בתמונה
+                    </a>
+                  )}
+
+                  {c.rezumehName && (
+                    <a
+                      href={`${ENDPOINTS.getResume}/${c.rezumehName}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.link}
+                    >
+                      📄 לצפייה ברזומה
+                    </a>
+                  )}
+                </div>
+
 
               <div className={styles.actions}>
                 <button className={styles.editBtn} onClick={() => handleEdit(c.id)}>

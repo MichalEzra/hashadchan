@@ -13,5 +13,7 @@ export const ENDPOINTS = {
   updateCandidate: 'http://localhost:5245/api/admin/Candidate',
   updateUser: 'http://localhost:5245/api/admin/User',
   updateMatchmaker: 'http://localhost:5245/api/admin/Matchmaker',
+  getImage: 'http://localhost:5245/Images',
+  getResume: 'http://localhost:5245/Resumes',
   // ...
 };

@@ -16,14 +16,18 @@ export const getMatchmakerById = async (id: number): Promise<Matchmaker> => {
 };
 
 // יצירת שדכן חדש
-export const createMatchmaker = async (matchmaker: Matchmaker): Promise<Matchmaker> => {
-  const response = await axios.post(BASE_URL, matchmaker);
+export const createMatchmaker = async (formDate: FormData): Promise<Matchmaker> => {
+  const response = await axios.post(BASE_URL, formDate);
   return response.data;
 };
 
 // עדכון שדכן קיים
-export const updateMatchmaker = async (id: number, matchmaker: Matchmaker): Promise<void> => {
-  await axios.put(`${BASE_URL}/${id}`, matchmaker);
+export const updateMatchmaker = async (id: number, formData: FormData): Promise<void> => {
+  await axios.put(`${BASE_URL}/${id}`, formData, {
+    headers: {    
+      "Content-Type": "multipart/form-data",
+    },
+  });
 };
 
 // מחיקת שדכן

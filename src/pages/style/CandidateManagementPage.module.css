@@ -155,3 +155,18 @@
   color: #6b21a8; /* סגול כהה */
   font-weight: 700;
 }
+
+.files {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.link {
+  color: #1d4ed8;
+  text-decoration: underline;
+  cursor: pointer;
+  font-weight: 500;
+}
+
