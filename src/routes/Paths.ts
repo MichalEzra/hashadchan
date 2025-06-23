@@ -9,5 +9,7 @@ export const PATHS = {
     logup: '/signup',
     adminCandidates: "/admin/candidates",
     adminMatchmakers: "/admin/matchmakers",
-    adminParents: "/admin/parents"
+    adminParents: "/admin/parents",
+    createMatch: "/create-match", 
+    AlgorithmMatch: "/algorithm-match"
 }

@@ -38,6 +38,9 @@ const Navbar = () => {
         <Link to={PATHS.engaged}>מאורסים</Link>
         <Link to={PATHS.hereToServeYou}>כאן לשירותכם</Link>
         <Link to={PATHS.userGuide}>מדריך למשתמש</Link>
+        {user?.userType === "MATCHMAKER" && ( // ודא ש-"MATCHMAKER" הוא השם הנכון של התפקיד
+          <Link to={PATHS.createMatch}>הצעות שידוכים</Link>
+        )}
       </div>
 
       <div className={styles.login}>

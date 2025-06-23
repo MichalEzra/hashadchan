@@ -5,6 +5,7 @@ import authReducer from './auth/auth.slice';
 import candidateReducer from './slice/candidateSlice';
 import userReducer from '../redux/slice/userSlice'; // ✅ הוספנו את זה
 import matchmakerReducer from './slice/matchmakerSlice'; // ✅ הוספנו את זה
+import matchReducer from './slice/matchSlice';
 
 export const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
     candidates: candidateReducer, // ✅ הוספנו את זה
     users: userReducer, // ✅ הוספנו את זה
     matchmakers: matchmakerReducer, // ✅ הוספנו את זה
+    matches: matchReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

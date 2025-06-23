@@ -13,6 +13,9 @@ import LoginPage from "../pages/LoginPage";
 import Signup from "../pages/SignupPage";
 import CandidatesPage from "../pages/admin/CandidateManagementPage"
 import CandidateForm from "../components/candidate/CandidateForm";
+import CreateMatchPage from "../components/matches/CreateMatchPage"; // ✅ ייבוא לדף יצירת שידוך ידני
+import AlgorithmMatchingPage from "../components/matches/AlgorithmMatchingPage";//✅ ייבוא לדף הצעות שידוכים
+
 
 const router = createBrowserRouter([
   {
@@ -29,6 +32,8 @@ const router = createBrowserRouter([
       { path: "/home", element: <HomePage /> },
       { path: "/candidates/edit/:id", element: <CandidateForm /> },
       { path: "/candidates/new", element: <CandidateForm /> },
+      { path: "/create-match", element: <CreateMatchPage /> }, // לדף יצירת שידוך ידני
+      { path: "/algorithm-match", element: <AlgorithmMatchingPage /> }, // לדף הצעות שידוכים מהאלגוריתם
 
       {
         path: "/admin",
