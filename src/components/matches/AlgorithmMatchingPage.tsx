@@ -3,7 +3,7 @@ import { useAppDispatch, useAppSelector } from '../../redux/store'; // ודא י
 import { fetchMaleMatches, fetchFemaleMatches, createNewMatch } from '../../redux/thunks/matches.thunks';
 import { clearMatchCreationMessage } from '../../redux/slice/matchSlice';
 import { CandidateDto } from '../../types/candidateDto.types'; // ייבוא CandidateDto שלך
-import classes from '../../components/design/AlgorithmMatchingPage.module.css'; // נתיב לקובץ ה-CSS החדש שתיצור עבור עמוד זה
+import styles from '../design/AlgorithmMatchingPage.module.css'; // נתיב לקובץ ה-CSS החדש שתיצור עבור עמוד זה
 
 const AlgorithmMatchingPage: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -38,7 +38,7 @@ const AlgorithmMatchingPage: React.FC = () => {
   };
 
   const renderCandidateDetails = (candidate: CandidateDto) => (
-    <div className={classes.candidateDetails}>
+    <div className={styles.candidateDetails}>
       <p><strong>שם:</strong> {candidate.firstName} {candidate.lastName}</p>
       <p><strong>גיל:</strong> {candidate.age}</p>
       <p><strong>סטטוס:</strong> {candidate.status}</p>
@@ -72,9 +72,9 @@ const AlgorithmMatchingPage: React.FC = () => {
   );
 
   return (
-    <div className={classes.container}>
+    <div className={styles.container}>
       <h2>הצעות שידוכים (מבוסס אלגוריתם)</h2> {/* שינוי הכותרת כדי להבדיל */}
-      <div className={classes.buttons}>
+      <div className={styles.buttons}>
         <button onClick={handleFetchMaleMatches} disabled={loading}>
           קבל הצעות לבנים
         </button>
@@ -84,12 +84,12 @@ const AlgorithmMatchingPage: React.FC = () => {
       </div>
 
       {loading && <p>טוען הצעות...</p>}
-      {error && <p className={classes.error}>שגיאה: {error}</p>}
+      {error && <p className={styles.error}>שגיאה: {error}</p>}
 
       {displayType === 'male' && maleMatches.length > 0 && (
-        <div className={classes.matchList}>
+        <div className={styles.matchList}>
           <h3>הצעות שידוכים לבנים</h3>
-          <table className={classes.matchTable}>
+          <table className={styles.matchTable}>
             <thead>
               <tr>
                 <th>פרטי הבחור</th>
@@ -117,9 +117,9 @@ const AlgorithmMatchingPage: React.FC = () => {
       )}
 
       {displayType === 'female' && femaleMatches.length > 0 && (
-        <div className={classes.matchList}>
+        <div className={styles.matchList}>
           <h3>הצעות שידוכים לבנות</h3>
-          <table className={classes.matchTable}>
+          <table className={styles.matchTable}>
             <thead>
               <tr>
                 <th>פרטי הבחורה</th>

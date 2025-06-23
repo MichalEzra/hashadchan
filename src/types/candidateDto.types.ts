@@ -1,6 +1,6 @@
 import {
   Gender,
-  Sector,
+  candidateSector,
   SubSector,
   TorahStudy,
   EducationInstitution,
@@ -27,7 +27,7 @@ export type CandidateDto = {
   gender: Gender | null;
   status: string; // שיניתי ל-string בהתאם לדוגמת ה-JSON שסיפקת ("רווק_ה")
   age: number;
-  sector: Sector | null;
+  sector: candidateSector | null;
   subSector: SubSector | null;
   torahLearning: TorahStudy | null;
   education: EducationInstitution | null;

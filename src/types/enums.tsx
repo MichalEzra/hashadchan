@@ -28,7 +28,7 @@ export const CandidateStatusDisplayMap: Record<Status, string> = {
   [Status.ALMAN_H_IM_YELADIM]: "אלמן/ה עם ילדים",
 };
 
-export enum Sector {
+export enum candidateSector {
   HASIDI = "חסידי",
   LITAI = "ליטאי",
   SEFARDI = "ספרדי",
@@ -37,14 +37,14 @@ export enum Sector {
   HETZI_HETZI = "חצי_חצי",
   ACHER = "אחר",
 };
-export const SectorDisplayMap: Record<Sector, string> = {
-  [Sector.HASIDI]: "חסידי",
-  [Sector.LITAI]: "ליטאי",
-  [Sector.SEFARDI]: "ספרדי",
-  [Sector.TEIMANI]: "תימני",
-  [Sector.CHABAD]: "חבד",
-  [Sector.HETZI_HETZI]: "חצי חצי",
-  [Sector.ACHER]: "אחר",
+export const SectorDisplayMap: Record<candidateSector, string> = {
+  [candidateSector.HASIDI]: "חסידי",
+  [candidateSector.LITAI]: "ליטאי",
+  [candidateSector.SEFARDI]: "ספרדי",
+  [candidateSector.TEIMANI]: "תימני",
+  [candidateSector.CHABAD]: "חבד",
+  [candidateSector.HETZI_HETZI]: "חצי חצי",
+  [candidateSector.ACHER]: "אחר",
 };
 
 export enum SubSector {
