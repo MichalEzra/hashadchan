@@ -5,9 +5,11 @@ import { Candidate } from '../types/candidate.types';
 const BASE_URL = 'http://localhost:5245/api/Candidate';
 
 export const getCandidates = async (): Promise<Candidate[]> => {
-  const response = await axios.get(`${BASE_URL}`);
-  return response.data;
+  const male = await getMaleCandidates();
+  const female = await getFemaleCandidates();
+  return [...male, ...female];
 };
+
 
 export const getCandidate = async (id: number): Promise<Candidate> => {
   const response = await axios.get(`${BASE_URL}/${id}`);
@@ -25,13 +27,15 @@ export const createCandidate = async (formData: FormData): Promise<Candidate> =>
 
 
 export const updateCandidate = async (id: number, formData: FormData): Promise<void> => {
+  const token = localStorage.getItem("token");
+  console.log('token:', token)
   await axios.put(`${BASE_URL}/${id}`, formData, {
-     headers: {
-      "Content-Type": "multipart/form-data",
+    headers: {
+      Authorization: `Bearer ${token}`,
     },
   });
-  
 };
+
 
 export const deleteCandidate = async (id: number): Promise<void> => {
   await axios.delete(`${BASE_URL}/${id}`);

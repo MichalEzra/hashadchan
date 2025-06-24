@@ -21,6 +21,7 @@ import {
 import {createCandidate,  getCandidate,  updateCandidate,} from "../../services/candidate.service";
 import styles from "../design/CandidateForm.module.css";
 import { useParams } from "react-router-dom";
+import { Candidate } from "../../types/candidate.types";
 
 //זה אחראי בעצם על העיגולים של הצבעים, הבנת???
 interface ColorCircleSelectorProps {
@@ -130,7 +131,15 @@ const HeightSlider: React.FC<HeightSliderProps> = ({
   );
 };
 
-const CandidateForm: React.FC = () => {
+
+interface CandidateFormProps {
+  candidate: Candidate;
+  onChange: (updated: Candidate) => void;
+}
+
+
+
+const CandidateForm: React.FC= () => {
   const { id } = useParams();
 
   const initialCandidate: any = {
@@ -170,20 +179,27 @@ const CandidateForm: React.FC = () => {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
+    const [formState, setFormState] = useState(candidate || initialCandidate);
 
-  useEffect(() => {
-    if (id) {
-      getCandidate(Number(id)).then((data) => {
-        setCandidate(data);
-      });
-    }
-  }, [id]);
+useEffect(() => {
+  if (candidate) {
+    setFormState(candidate);
+  }
+}, [candidate]);
+
+  // useEffect(() => {
+  //   if (id) {
+  //     getCandidate(Number(id)).then((data) => {
+  //       setCandidate(data);
+  //     });
+  //   }
+  // }, [id]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, type, value, checked } = e.target as HTMLInputElement;
-    setCandidate((prev: any) => ({
+    setFormState((prev: any) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : type === "number" ? Number(value) : value,
     }));
@@ -193,9 +209,9 @@ const CandidateForm: React.FC = () => {
     const { name, value, options, multiple } = e.target;
     if (multiple) {
       const selected = Array.from(options).filter((o) => o.selected).map((o) => o.value);
-      setCandidate((prev: any) => ({ ...prev, [name]: selected }));
+      setFormState((prev: any) => ({ ...prev, [name]: selected }));
     } else {
-      setCandidate((prev: any) => ({ ...prev, [name]: value }));
+      setFormState((prev: any) => ({ ...prev, [name]: value }));
     }
   };
 
@@ -237,9 +253,6 @@ const CandidateForm: React.FC = () => {
     console.log("Form data being sent:", Object.fromEntries(formData.entries()));
     try {
       if (id) {
-        await updateCandidate(Number(id), formData);
-        alert("המועמד עודכן בהצלחה");
-      } else {
         await createCandidate(formData);
         alert("מועמד נוסף בהצלחה");
       }
@@ -388,16 +401,16 @@ const CandidateForm: React.FC = () => {
       <div className={styles.genderButtons}>
         <button
           type="button"
-          className={`${styles.genderButton} ${candidate.gender === 'נקבה' ? styles.active : ''}`}
-          onClick={() => setCandidate((prev : typeof candidate) => ({...prev, gender: 'נקבה'}))}
+          className={`${styles.genderButton} ${formState.gender === 'נקבה' ? styles.active : ''}`}
+          onClick={() => setFormState((prev : typeof formState) => ({...prev, gender: 'נקבה'}))}
         >
           <div className={styles.genderIcon}>👤</div>
           אישה
         </button>
         <button
           type="button"
-          className={`${styles.genderButton} ${candidate.gender === 'זכר' ? styles.active : ''}`}
-          onClick={() => setCandidate((prev : typeof candidate) => ({...prev, gender: 'זכר'}))}
+          className={`${styles.genderButton} ${formState.gender === 'זכר' ? styles.active : ''}`}
+          onClick={() => setFormState((prev : typeof formState) => ({...prev, gender: 'זכר'}))}
         >
           <div className={styles.genderIcon}>👤</div>
           גבר
@@ -459,14 +472,14 @@ const CandidateForm: React.FC = () => {
 
            {/* שורה ראשונה */}
           <div className={styles.row}>
-            {renderInputField("firstName", candidate.firstName, "שם פרטי *", "text", "purple")}
-           {renderInputField("lastName", candidate.lastName, "שם משפחה", "text", "green")}
+            {renderInputField("firstName", formState.firstName, "שם פרטי *", "text", "purple")}
+           {renderInputField("lastName", formState.lastName, "שם משפחה", "text", "green")}
         </div>
 
            {/* שורה שנייה */}
           <div className={styles.row}>
           {renderGenderButtons()} 
-           {renderSelectWithPlaceholder("status", candidate.status, Status, false, "מצב אישי *", "green")}
+           {renderSelectWithPlaceholder("status", formState.status, Status, false, "מצב אישי *", "green")}
          </div>
 
 
@@ -483,49 +496,49 @@ const CandidateForm: React.FC = () => {
                 className={styles.input}
               />
             </div> */}
-            {renderInputField("age", candidate.age, "גיל *", "number", "purple")}
-            {renderInputField("candidateId", candidate.id, "מספר זהות *" , "purple")}
+            {renderInputField("age", formState.age, "גיל *", "number", "purple")}
+            {renderInputField("candidateId", formState.id, "מספר זהות *" , "purple")}
        </div>
 
            {/* שורה רביעית */}
            <div className={styles.row}>
-             {renderSelectWithPlaceholder("sector", candidate.sector, Sector, false, "מגזר *", "green")}
-             {renderSelectWithPlaceholder("subSector", candidate.subSector, SubSector, false, "תת מגזר *", "green")}
+             {renderSelectWithPlaceholder("sector", formState.sector, Sector, false, "מגזר *", "green")}
+             {renderSelectWithPlaceholder("subSector", formState.subSector, SubSector, false, "תת מגזר *", "green")}
              {/* {renderSelectWithPlaceholder("sector", candidate.sector, Sector, false, "מגזר *", "green")} */}
            </div>
 
            
            {/* שדות נוספים */}
            <div className={styles.row}>
-             {renderSelectWithPlaceholder("languages", candidate.languages, Language, false, "שפות *", "green")}
-              {renderInputField("city", candidate.city, "עיר *", "text", "green")}
+             {renderSelectWithPlaceholder("languages", formState.languages, Language, false, "שפות *", "green")}
+              {renderInputField("city", formState.city, "עיר *", "text", "green")}
              {/* {renderSelectWithPlaceholder("openness", candidate.openness, Openness, false, "פתיחות", "green")} */}
            </div>
 
            {/* טווחי כסף */}
            <div className={styles.row}>
-             {renderRangeSlider("giving", candidate.giving, "כמה מבקשים (ועליו לידירה - מקסימום)", 0, 1000000, 25000, "green")}
-             {renderRangeSlider("expecting", candidate.expecting, "כמה נותנים (ועליו לידירה - מקסימום)", 0, 1000000, 25000, "green")}
+             {renderRangeSlider("giving", formState.giving, "כמה מבקשים (ועליו לידירה - מקסימום)", 0, 1000000, 25000, "green")}
+             {renderRangeSlider("expecting", formState.expecting, "כמה נותנים (ועליו לידירה - מקסימום)", 0, 1000000, 25000, "green")}
            </div>
 
             <div className={styles.row}>
-              {renderSelectWithPlaceholder("phoneType", candidate.phoneType, PhoneType, false, "סוג טלפון *", "green")}
-              {renderSelectWithPlaceholder("openness", candidate.openness, Openness, false, "רמת פתיחות *", "green")}
+              {renderSelectWithPlaceholder("phoneType", formState.phoneType, PhoneType, false, "סוג טלפון *", "green")}
+              {renderSelectWithPlaceholder("openness", formState.openness, Openness, false, "רמת פתיחות *", "green")}
             </div>
 
             <div className={styles.row}>
-              {renderSelectWithPlaceholder("clothingStyle", candidate.clothingStyle, ClothingStyle, false, "סגנון לבוש *", "green")}
-              {renderSelectWithPlaceholder("headCovering", candidate.headCovering, HeadCovering, false, "כיסוי ראש *", "green")}
+              {renderSelectWithPlaceholder("clothingStyle", formState.clothingStyle, ClothingStyle, false, "סגנון לבוש *", "green")}
+              {renderSelectWithPlaceholder("headCovering", formState.headCovering, HeadCovering, false, "כיסוי ראש *", "green")}
             </div>
 
             <div className={styles.row}>
-              {renderCheckboxField("license", candidate.license, "רישיון נהיגה *")}
-              {renderCheckboxField("beard", candidate.beard, "זקן *")}
+              {renderCheckboxField("license", formState.license, "רישיון נהיגה *")}
+              {renderCheckboxField("beard", formState.beard, "זקן *")}
             </div>
 
             <div className={styles.row}>
-              {renderSelectWithPlaceholder("physique", candidate.physique, Physique, false, "מבנה גוף *", "green")}
-              {renderInputField("origin", candidate.origin, "מוצא *", "text", "green")}
+              {renderSelectWithPlaceholder("physique", formState.physique, Physique, false, "מבנה גוף *", "green")}
+              {renderInputField("origin", formState.origin, "מוצא *", "text", "green")}
             </div>
               {/* גובה */}
                 {/* <HeightSlider
@@ -535,42 +548,42 @@ const CandidateForm: React.FC = () => {
                   max={200}
                   step={1}
                 /> */}
-                {renderRangeSlider("height", candidate.height, 'גובה (ס"מ) *', 140, 220, 1, "green")}
+                {renderRangeSlider("height", formState.height, 'גובה (ס"מ) *', 140, 220, 1, "green")}
           <div className={styles.row}>
             <ColorCircleSelector
               name="hairColor"
-              selected={candidate.hairColor}
-              onChange={(val) => setCandidate((prev: any) => ({ ...prev, hairColor: val }))}
+              selected={formState.hairColor}
+              onChange={(val) => setFormState((prev: any) => ({ ...prev, hairColor: val }))}
               options={hairColorOptions}
               labelText="צבע שיער"
             />
 
             <ColorCircleSelector
               name="skinTone"
-              selected={candidate.skinTone}
-              onChange={(val) => setCandidate((prev : any) => ({ ...prev, skinTone: val }))}
+              selected={formState.skinTone}
+              onChange={(val) => setFormState((prev : any) => ({ ...prev, skinTone: val }))}
               options={skinToneOptions}
               labelText="גוון עור"
             />
         </div>
 
         <div className={styles.row}>
-          {renderSelectWithPlaceholder("education", candidate.education, EducationInstitution, false, "מוסד לימודים *", "green")}
-          {renderSelectWithPlaceholder("occupation", candidate.occupation, Occupation, false, "עיסוק *", "green")}
+          {renderSelectWithPlaceholder("education", formState.education, EducationInstitution, false, "מוסד לימודים *", "green")}
+          {renderSelectWithPlaceholder("occupation", formState.occupation, Occupation, false, "עיסוק *", "green")}
         </div>
 
         <div className={styles.row}>
-              {renderSelectWithPlaceholder("torahLearning", candidate.torahLearning, TorahStudy, false, "לומד / עובד *", "green")}
-              {renderSelectWithPlaceholder("familyStatus", candidate.familyStatus, ParentsStatus, false, "סטטוס הורים *", "green")}
+              {renderSelectWithPlaceholder("torahLearning", formState.torahLearning, TorahStudy, false, "לומד / עובד *", "green")}
+              {renderSelectWithPlaceholder("familyStatus", formState.familyStatus, ParentsStatus, false, "סטטוס הורים *", "green")}
         </div>
 
         <div className={styles.row}>
-              {renderCheckboxField("availableForProposals", candidate.availableForProposals, "זמין להצעות")}
-              {renderSelectWithPlaceholder("smokingStatus", candidate.smokingStatus, Smoking, false, "עישון *", "green")}
+              {renderCheckboxField("availableForProposals", formState.availableForProposals, "זמין להצעות")}
+              {renderSelectWithPlaceholder("smokingStatus", formState.smokingStatus, Smoking, false, "עישון *", "green")}
         </div>
 
-          {renderTextareaField("descriptionSelf", candidate.descriptionSelf, "תיאור עצמי", "purple")}
-          {renderTextareaField("descriptionFind", candidate.descriptionFind, "מה אני מחפש/ת?", "purple")}
+          {renderTextareaField("descriptionSelf", formState.descriptionSelf, "תיאור עצמי", "purple")}
+          {renderTextareaField("descriptionFind", formState.descriptionFind, "מה אני מחפש/ת?", "purple")}
         
                 {/* העלאת קבצים */}
            <div className={styles.row}>

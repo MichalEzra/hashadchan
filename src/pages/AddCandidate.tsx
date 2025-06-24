@@ -1,6 +1,6 @@
 import React from "react";
 import { useAppSelector } from "../hooks/useAppSelector";
-import CandidateForm from "../components/candidate/CandidateForm";
+import CandidateForm from "../components/forms/CandidateForm";
 
 const AddCandidate: React.FC = () => {
   const userType = useAppSelector((state) => state.auth.user?.userType);

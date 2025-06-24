@@ -1,4 +1,4 @@
-.container {
+/* .container {
   min-height: 100vh;
   background: linear-gradient(to bottom right, #1e1b4b, #4c1d95, #be185d);
   color: white;
@@ -63,7 +63,6 @@
   transform: scale(1.05);
 }
 
-/* רספונסיביות */
 @media (max-width: 768px) {
   .title {
     font-size: 1.75rem;
@@ -73,4 +72,314 @@
     flex-direction: column;
     align-items: center;
   }
+} */
+
+
+
+/* HomePage.module.css */
+/* 
+
+
+
+
+/* HomePage.module.css */
+/* 
+.container {
+  direction: rtl;
+  font-family: 'Assistant', sans-serif;
+  min-height: 100vh;
+  background: linear-gradient(to bottom right, #1e293b, #0f172a);
+  color: white;
+  padding: 2rem 1rem;
+  position: relative;
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.buttonGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.buttonPrimary,
+.buttonSecondary,
+.buttonTertiary {
+  padding: 1rem 2rem;
+  font-size: 1.25rem;
+  border-radius: 0.75rem;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  text-align: center;
+  width: 220px;
+}
+
+.buttonPrimary {
+  background-color: #3b82f6;
+  color: white;
+}
+.buttonPrimary:hover {
+  background-color: #2563eb;
+}
+
+.buttonSecondary {
+  background-color: #10b981;
+  color: white;
+}
+.buttonSecondary:hover {
+  background-color: #059669;
+}
+
+.buttonTertiary {
+  background-color: #f59e0b;
+  color: white;
+}
+.buttonTertiary:hover {
+  background-color: #d97706;
+}
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  padding: 1rem;
+}
+
+.modalContent {
+  background-color: white;
+  color: black;
+  border-radius: 1rem;
+  padding: 2rem;
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+  position: relative;
+}
+
+.modalClose {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: gray;
+}
+.modalClose:hover {
+  color: black;
+}
+
+.inputField {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  margin-top: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.inputField:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px #3b82f640;
+}
+
+.errorText {
+  color: red;
+  font-size: 0.75rem;
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+}
+
+.submitButton {
+  width: 100%;
+  background-color: #3b82f6;
+  color: white;
+  font-weight: bold;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.submitButton:hover {
+  background-color: #2563eb;
+}
+
+.linkButton {
+  background: none;
+  border: none;
+  color: #3b82f6;
+  cursor: pointer;
+  font-weight: bold;
+  padding: 0;
+}
+.linkButton:hover {
+  text-decoration: underline;
+} */
+
+
+
+
+.container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: linear-gradient(135deg, #1e293b, #4f46e5);
+  color: white;
+  font-family: 'Arial', sans-serif;
+  padding: 2rem;
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.buttonGroup {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  margin-top: 2rem;
+}
+
+.buttonPrimary,
+.buttonSecondary,
+.buttonTertiary {
+  padding: 1.5rem 2rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  border-radius: 1rem;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  text-align: center;
+  max-width: 250px;
+  width: 100%;
+}
+
+.buttonPrimary {
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+}
+.buttonPrimary:hover {
+  background-color: #2563eb;
+}
+
+.buttonSecondary {
+  background-color: #10b981;
+  color: white;
+  border: none;
+}
+.buttonSecondary:hover {
+  background-color: #059669;
+}
+
+.buttonTertiary {
+  background-color: #f59e0b;
+  color: white;
+  border: none;
+}
+.buttonTertiary:hover {
+  background-color: #d97706;
+}
+
+/* מודלים */
+.modalBackdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 50;
+}
+
+.modal {
+  background-color: white;
+  color: black;
+  padding: 2rem;
+  border-radius: 1rem;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.25);
+  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+  direction: rtl;
+}
+
+.modal h2 {
+  font-size: 1.75rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+}
+
+.modalClose {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  font-size: 1.5rem;
+  color: gray;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.modalClose:hover {
+  color: black;
+}
+
+.modal input,
+.modal select {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+}
+
+.modal button[type="submit"] {
+  width: 100%;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 0.5rem;
+  background-color: #3b82f6;
+  color: white;
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-top: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.modal button[type="submit"]:hover {
+  background-color: #2563eb;
+}
+
+.errorMessage {
+  color: #dc2626;
+  font-size: 0.875rem;
+  margin-top: -0.25rem;
+  margin-bottom: 0.75rem;
 }

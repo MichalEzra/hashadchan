@@ -14,11 +14,11 @@ const root = ReactDOM.createRoot(
 // console.log("Redux user:", user);
 root.render(
   <React.StrictMode>
-    <BrowserRouter>
+    {/* <BrowserRouter> */}
     <Provider store={store}>
     <App />
 </Provider>
-    </BrowserRouter>
+    {/* </BrowserRouter> */}
 
   </React.StrictMode>
 );

@@ -17,10 +17,7 @@ export type UserLoginType ={
     userType: "ADMIN" | "MATCHMAKER" | "PARENT";
 }
 
-export type UserType = {
-    email: string,
-    password: string
-}
+
 
 export type AuthUser = {
     // user: {

@@ -1,6 +1,9 @@
 // redux/auth/auth.slice.ts
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { User } from 'lucide-react';
+import { UserType } from '../../types/enums';
+import { getUserFromToken, jwtDecode, mapJwtClaims } from '../../auth/auth.utils';
+import { get } from 'http';
 
 // טייפים
 interface User {
@@ -29,46 +32,13 @@ const initialState: AuthState = {
   isAuthenticated: false,
 };
 
-// Async Thunks
-export const loadUserFromToken = createAsyncThunk(
-  'auth/loadUserFromToken',
-  async (_, { rejectWithValue }) => {
-    try {
-      const token = localStorage.getItem("token");
-      console.log("Token from localStorage:", token);
-      if (!token) {
-        return rejectWithValue('לא נמצא טוקן');
-      }
+export const loadUserFromToken = createAsyncThunk('auth/loadUserFromToken', async (token: string) => {
+  // כאן אפשר לפענח את הטוקן ולשלוף פרטי משתמש
+  const user = mapJwtClaims(token);
+  return user;
+});
 
-      // בדיקה אם הטוקן תקף (אופציונלי - ניתן לפענח JWT)
-      const tokenPayload = parseJWT(token);
-      if (tokenPayload && tokenPayload.exp * 1000 < Date.now()) {
-        localStorage.removeItem('token');
-        return rejectWithValue('הטוקן פג תוקף');
-      }
 
-      const userId = tokenPayload?.nameid; // 🟢 כאן נשתמש ב-nameid מהטוקן
-      // שליחת בקשה לשרת לקבלת פרטי המשתמש
-      const response = await fetch(`/api/User/${userId}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        localStorage.removeItem('token');
-        throw new Error('שגיאה בטעינת פרטי המשתמש');
-      }
-
-      const userData = await response.json();
-      return { user: userData, token };
-    } catch (error: any) {
-      localStorage.removeItem('token');
-      return rejectWithValue(error.message || 'שגיאה בטעינת המשתמש');
-    }
-  }
-);
 
 export const loginUser = createAsyncThunk(
   'auth/loginUser',
@@ -86,8 +56,7 @@ export const loginUser = createAsyncThunk(
         const errorText = await response.text();
         throw new Error(errorText || 'שגיאה בהתחברות');
       }
-
-      const token = await response.text(); // 🟢 פה השינוי – לא json
+      const token = await response.text();
       localStorage.setItem('token', token);
       return { token }; // נחזיר כאובייקט עם token
 
@@ -104,7 +73,7 @@ export const registerUser = createAsyncThunk(
     email: string;
     password: string;
     phoneNumber: string;
-    userType: string;
+    userType: UserType;
   }, { rejectWithValue }) => {
     try {
       const response = await fetch('/api/User', {
@@ -112,6 +81,7 @@ export const registerUser = createAsyncThunk(
         headers: {
           'Content-Type': 'application/json',
         },
+        
         body: JSON.stringify(userData),
       });
 
@@ -147,23 +117,6 @@ function parseJWT(token: string) {
   }
 }
 
-// Helper function לפענוח JWT
-// function parseJWT(token: string) {
-//   try {
-//     const base64Url = token.split('.')[1];
-//     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-//     const jsonPayload = decodeURIComponent(
-//       atob(base64)
-//         .split('')
-//         .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-//         .join('')
-//     );
-//     return JSON.parse(jsonPayload);
-//   } catch (error) {
-//     return null;
-//   }
-// }
-
 // Auth Slice
 const authSlice = createSlice({
   name: 'auth',
@@ -193,11 +146,19 @@ const authSlice = createSlice({
       })
       .addCase(loadUserFromToken.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.user = action.payload.user;
-        state.token = action.payload.token;
+        state.user = action.payload;
         state.isAuthenticated = true;
-        state.error = null;
-      })
+        if (!action.payload || !action.payload.role) {
+          state.user = null;
+          state.isAuthenticated = false;
+        } else {
+          state.user = {
+            ...action.payload,
+            userType: action.payload.role.toUpperCase() as UserType, // שימי לב לזה
+          };
+        state.isAuthenticated = true;
+  }
+})
       .addCase(loadUserFromToken.rejected, (state, action) => {
         state.isLoading = false;
         state.user = null;

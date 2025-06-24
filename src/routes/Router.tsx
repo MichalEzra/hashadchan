@@ -1,43 +1,38 @@
 import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-
 import RootLayout from "../layouts/RootLayout";
-
 import HomePage from "../pages/HomePage";
 import UserPage from "../pages/UserPage";
 import { DaatTorahPage } from "../pages/DaatTorahPage";
 import { EngagedPage } from "../pages/EngagedPage";
 import { HereToServeYouPage } from "../pages/HereToServeYouPage";
 import { UserGuidePage } from "../pages/UserGuidePage";
-import LoginPage from "../pages/LoginPage";
-import Signup from "../pages/SignupPage";
+// import LoginPage from "../pages/LoginPage";
+// import Signup from "../pages/SignupPage";
 import CandidatesPage from "../pages/admin/CandidateManagementPage"
-import CandidateForm from "../components/candidate/CandidateForm";
+import CandidateForm from "../components/forms/CandidateForm";
+import MatchmakerManagementPage from "../pages/admin/MatchmakerManagementPage";
+import CandidateManagementPage from "../pages/admin/CandidateManagementPage";
+import UserManagementPage from "../pages/admin/UserManagementPage";
 
 const router = createBrowserRouter([
   {
     element: <RootLayout />,
     children: [
       { path: "/", element: <HomePage /> },
-      { path: "/users", element: <UserPage /> },
       { path: "/daattorah", element: <DaatTorahPage /> },
       { path: "/engaged", element: <EngagedPage /> },
       { path: "/heretoserve", element: <HereToServeYouPage /> },
       { path: "/guide", element: <UserGuidePage /> },
-      { path: "/login", element: <LoginPage /> },
-      { path: "/signup", element: <Signup /> },
+      // { path: "/login", element: <LoginPage /> },
+      // { path: "/signup", element: <Signup /> },
       { path: "/home", element: <HomePage /> },
       { path: "/candidates/edit/:id", element: <CandidateForm /> },
-      { path: "/candidates/new", element: <CandidateForm /> },
-
-      {
-        path: "/admin",
-        children: [
-          { path: "candidates", element: <CandidatesPage /> },
-          // { path: "matchmakers", element: <MatchmakersPage /> },
-          // { path: "parents", element: <ParentsPage /> },
-        ],
-      }
+      { path: "/candidates/new", element: <CandidateForm /> },     
+      //עמודי ניהול 
+      { path: "/candidates", element: <CandidateManagementPage /> },
+      { path: "/matchmakers", element: <MatchmakerManagementPage /> },
+      { path: "/users", element: <UserManagementPage /> },
     ],
   },
 ]);

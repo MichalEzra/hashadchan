@@ -9,10 +9,10 @@ const Navbar = () => {
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
   const { user } = useAppSelector((state) => state.auth);
-  console.log("user מהרדאקס:", user);
+  // console.log("user מהרדאקס:", user);
 //למה אני לא רואה שהמשתמש מחובר?
-   const token = localStorage.getItem("user");
-  console.log("הטוקן:", token);
+  //  const token = localStorage.getItem("user");
+  // console.log("הטוקן:", token);
   // console.log("סוג המשתמש:", user?.userType);
   return (
     <nav className={styles.navbar}>

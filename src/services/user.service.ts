@@ -55,9 +55,11 @@ export const updateUser = async (id: number, user: User): Promise<void> => {
   await axios.put(`${API_URL}/${id}`, user, {
     headers: {
       Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
     },
   });
 };
+
 
 export const deleteUser = async (id: number): Promise<void> => {
   const token = localStorage.getItem("token");

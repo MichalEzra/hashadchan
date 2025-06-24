@@ -4,23 +4,6 @@ import { User } from "../types/user.types";
 import { addUser } from "../services/user.service";
 import { useNavigate } from "react-router";
 
-// import { User } from "lucide-react";
-
-// import { register } from "../services/auth.service"; // תייבאי את שירות ההרשמה שלך
-// import { setUser } from "../redux/auth/auth.slice";
-// import { setSession } from "../auth/auth.utils";
-
-// interface RegisterData {
-//     firstName: string;
-//     lastName: string;
-//     email: string;
-//     password: string;
-//     confirmPassword: string;
-//     age: string;
-//     gender: string;
-//     phone?: string;
-//     city?: string;
-// }
 interface DecodedToken {
   userId: string;
   userType: string;

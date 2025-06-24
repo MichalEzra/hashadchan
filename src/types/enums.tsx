@@ -1,6 +1,12 @@
 // enums.ts - זה הקובץ שאתה צריך לעדכן בצד הלקוח (frontend)
 
 // הגדרת Enums עם מפתחות באנגלית וערכים שתואמים לשמות ה-Enum ב-C# (כולל קווים תחתונים)
+export enum UserType {
+  PARENT = "PARENT",
+  MATCHMAKER = "MATCHMAKER",
+  ADMIN = "ADMIN"
+}
+
 export enum Gender {
   ZACHOR = "זכר",
   NEKEVA = "נקבה",

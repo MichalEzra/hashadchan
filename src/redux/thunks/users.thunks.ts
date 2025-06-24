@@ -1,7 +1,5 @@
 import { createAsyncThunk, isRejectedWithValue } from "@reduxjs/toolkit";
 import axios from "axios";
-import { Candidate } from "../../types/candidate.types";
-import {  getCandidates } from "../../services/candidate.service";
 import { User } from "../../types/user.types";
 import { getAllUsers } from "../../services/user.service";
 
