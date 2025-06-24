@@ -114,13 +114,20 @@ const UserManagementPage = () => {
               />
             </label>
             <label>
+              אימייל:
+              <input
+                value={selectedUser.email}
+                onChange={(e) => setSelectedUser({ ...selectedUser, email: e.target.value })}
+              />
+            </label>
+            <label>
               טלפון:
               <input
                 value={selectedUser.phoneNumber || ''}
                 onChange={(e) => setSelectedUser({ ...selectedUser, phoneNumber: e.target.value })}
               />
             </label>
-            <label>
+            {/* <label>
               סוג משתמש:
               <select
                 value={selectedUser.userType}
@@ -130,7 +137,7 @@ const UserManagementPage = () => {
                 <option value="PARENT">הורה</option>
                 <option value="MATCHMAKER">שדכן</option>
               </select>
-            </label>
+            </label> */}
 
             <div className={styles.modalActions}>
               <button onClick={() =>  handleSaveEdit()}>שמור</button>

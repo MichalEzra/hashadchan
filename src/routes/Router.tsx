@@ -14,6 +14,7 @@ import CandidateForm from "../components/forms/CandidateForm";
 import MatchmakerManagementPage from "../pages/admin/MatchmakerManagementPage";
 import CandidateManagementPage from "../pages/admin/CandidateManagementPage";
 import UserManagementPage from "../pages/admin/UserManagementPage";
+import MatchPage from "../pages/MatchPage";
 
 const router = createBrowserRouter([
   {
@@ -33,6 +34,8 @@ const router = createBrowserRouter([
       { path: "/candidates", element: <CandidateManagementPage /> },
       { path: "/matchmakers", element: <MatchmakerManagementPage /> },
       { path: "/users", element: <UserManagementPage /> },
+      { path: "/match", element: <MatchPage /> },
+
     ],
   },
 ]);

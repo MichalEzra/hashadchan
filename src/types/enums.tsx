@@ -2,8 +2,8 @@
 
 // הגדרת Enums עם מפתחות באנגלית וערכים שתואמים לשמות ה-Enum ב-C# (כולל קווים תחתונים)
 export enum UserType {
-  PARENT = "PARENT",
-  MATCHMAKER = "MATCHMAKER",
+  PARENT = "הורה",
+  MATCHMAKER = "שדכן",
   ADMIN = "ADMIN"
 }
 

@@ -10,7 +10,7 @@ interface User {
   id?: Number;
   fullName?: string;
   email?: string;
-  userType?: 'PARENT' | 'MATCHMAKER' | 'CANDIDATE' | 'ADMIN' | 'GUEST';
+  userType?: UserType;
   // status: 'ACTIVE' | 'INACTIVE' | 'PENDING' | 'SUSPENDED';
   // profileCompleted?: number;
 }
@@ -81,7 +81,7 @@ export const registerUser = createAsyncThunk(
         headers: {
           'Content-Type': 'application/json',
         },
-        
+
         body: JSON.stringify(userData),
       });
 
@@ -91,12 +91,12 @@ export const registerUser = createAsyncThunk(
       }
 
       const data = await response.json();
-      
+
       // שמירת הטוכן אם הרשמה מצליחה מיד
       if (data.token) {
         localStorage.setItem('token', data.token);
       }
-      
+
       return data;
     } catch (error: any) {
       return rejectWithValue(error.message || 'שגיאה בהרשמה');
@@ -122,12 +122,9 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    logout: (state) => {
-      localStorage.removeItem('token');
+    logoutUser(state) {
       state.user = null;
       state.token = null;
-      state.isAuthenticated = false;
-      state.error = null;
     },
     clearError: (state) => {
       state.error = null;
@@ -152,13 +149,17 @@ const authSlice = createSlice({
           state.user = null;
           state.isAuthenticated = false;
         } else {
+          const upperRole = action.payload.role?.toUpperCase();
+          const validRole = Object.values(UserType).includes(upperRole as UserType)
+            ? (upperRole as UserType)
+            : undefined;
           state.user = {
             ...action.payload,
-            userType: action.payload.role.toUpperCase() as UserType, // שימי לב לזה
+            userType: validRole, // שימי לב לזה
           };
-        state.isAuthenticated = true;
-  }
-})
+          state.isAuthenticated = true;
+        }
+      })
       .addCase(loadUserFromToken.rejected, (state, action) => {
         state.isLoading = false;
         state.user = null;
@@ -206,5 +207,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { logout, clearError, setUser } = authSlice.actions;
+export const { logoutUser, clearError, setUser } = authSlice.actions;
 export default authSlice.reducer;

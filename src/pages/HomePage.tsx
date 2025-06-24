@@ -4,11 +4,12 @@ import { useNavigate } from 'react-router-dom';
 import { Heart, Search, MessageCircle, Shield, Users, Settings, UserCheck, UserX, Edit3 } from 'lucide-react';
 import styles from './style/HomePage.module.css';
 import { useAppSelector, useAppDispatch } from '../redux/store';
-import { loadUserFromToken, loginUser, registerUser } from '../redux/auth/auth.slice';
+import { loadUserFromToken, loginUser, registerUser, setUser } from '../redux/auth/auth.slice';
 import { login, Signup } from '../services/auth.service';
 import { UserType } from '../types/enums';
-import { getUserFromToken, mapJwtClaims, parseJWT } from '../auth/auth.utils';
+import { getUserFromToken, mapJwtClaims, jwtDecode } from '../auth/auth.utils';
 import { ENDPOINTS } from '../api/endpoints';
+import { raw } from 'express';
 
 export default function HomePage() {
   const dispatch = useAppDispatch();
@@ -22,25 +23,23 @@ export default function HomePage() {
   const [showRegisterModal, setShowRegisterModal] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      dispatch(loadUserFromToken(token));
-      const payload = parseJWT(token);
-      console.log("Payload מהטוקן:", payload);
-      console.log('Token found, loading user from token', token);
+    const raw = getUserFromToken();
+    if (raw) {
+      const user = mapJwtClaims(raw);
+      dispatch(setUser(user)); // הכנסת המשתמש לסטייט
     }
-  }, [dispatch]);
+  }, []);
 
   // useEffect(() => {
   //   console.log("🎯 Redux user:", user);
   //   console.log("🎯 userType:", userType);
   // }, [user, userType]);
 
-  useEffect(() => {
-    if (isAuthenticated && userType && userType !== "GUEST") {
-      navigate('/');
-    }
-  }, [isAuthenticated, userType, navigate]);
+  // useEffect(() => {
+  //   if (isAuthenticated && userType) {
+  //     navigate('/');
+  //   }
+  // }, [isAuthenticated, userType, navigate]);
 
   const [loginData, setLoginData] = useState({ email: '', password: '' });
   const [registerData, setRegisterData] = useState({
@@ -109,7 +108,8 @@ export default function HomePage() {
     try {
       console.log('loginData', loginData);
       await dispatch(loginUser(loginData)).unwrap();
-
+      if(user)
+        dispatch(setUser(user));
       setShowLoginModal(false);
       setLoginData({ email: '', password: '' });
       setLoginErrors({});
@@ -119,8 +119,10 @@ export default function HomePage() {
         console.error('❌ טוקן לא קיים או לא תקף');
         return;
       }
-      const user = mapJwtClaims(row);
-      const userType = user.role;
+      const user1 = mapJwtClaims(row);
+      const userType = user1.role;
+      dispatch(setUser(user1)); // פעולה מה־authSlice שמכניסה את המשתמש ל־store
+      // navigate("/");
       console.log('userType', userType);
     } catch (error) {
       console.error('שגיאה בהתחברות:', error);
@@ -157,7 +159,7 @@ export default function HomePage() {
         <p>היחיד שמאפשר למצוא הצעה מתאימה בדיסקרטיות</p>
       </div>
 
-      {(!isAuthenticated || userType === "GUEST") && (
+      {(!isAuthenticated || !userType) && (
         <div className={styles.buttonGroup}>
           <button onClick={() => setShowLoginModal(true)} className={styles.buttonPrimary}>יש לנו כבר חשבון<br />התחברו</button>
           <button onClick={() => { setShowRegisterModal(true) }} className={styles.buttonSecondary}>רוצים להירשם?<br />בואו נתחיל</button>
@@ -165,12 +167,21 @@ export default function HomePage() {
         </div>
       )}
 
-      {user && userType === "ADMIN" && (
-        <div>
+      {user && userType === UserType.ADMIN && (
+        <div className={styles.adminButtonsContainer}>
           <h2>שלום {userName}, אתה מחובר כמנהל מערכת</h2>
-          <button onClick={() => navigate('/users')}>ניהול משתמשים</button>
-          <button onClick={() => navigate('/candidates')}>ניהול מועמדים</button>
-          <button onClick={() => navigate('/matchmakers')}>ניהול שדכנים</button>
+          <button className={styles.adminButton} onClick={() => navigate('/users')}>ניהול משתמשים</button>
+          <button className={styles.adminButton} onClick={() => navigate('/candidates')}>ניהול מועמדים</button>
+          <button className={styles.adminButton} onClick={() => navigate('/matchmakers')}>ניהול שדכנים</button>
+        </div>
+      )}
+
+      {user && userType === UserType.MATCHMAKER && (
+        <div className={styles.adminButtonsContainer}>
+          <h2>שלום {userName}, אתה מחובר כשדכן</h2>
+          {/* <button className={styles.adminButton} onClick={() => navigate('/users')}>ניהול משתמשים</button> */}
+          <button className={styles.adminButton} onClick={() => navigate('/candidates')}>ניהול מועמדים</button>
+          <button className={styles.adminButton} onClick={() => navigate('/match')}>התאמת מועמדים</button>
         </div>
       )}
 
@@ -205,7 +216,7 @@ export default function HomePage() {
               <select name="userType" value={registerData.userType} onChange={handleRegisterChange}>
                 <option value="">בחר סוג משתמש</option>
                 <option value="PARENT">הורה</option>
-                <option value="CANDIDATE">מועמד</option>
+                {/* <option value="CANDIDATE">מועמד</option> */}
                 <option value="MATCHMAKER">שדכן</option>
               </select>
               {registerErrors.userType && <p className={styles.errorMessage}>{registerErrors.userType}</p>}

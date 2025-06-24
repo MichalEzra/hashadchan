@@ -2,6 +2,8 @@ import { raw } from "express";
 import { PATHS } from "../routes/Paths";
 import { AuthUser, User, UserLoginType } from "../types/user.types";
 import axios from "../utils/axios";
+// import jwtDecode from "jwt-decode";
+
 // import  jwtDecode  from "jwt-decode";
 
 export type JwtPayload = {
@@ -64,14 +66,14 @@ export const isValidToken = (token: string): boolean => {
   }
 };
 
-export function getUserFromToken(): User | null {
+export function getUserFromToken(): JwtPayload | null {
   const token = localStorage.getItem('token');
   if (!token || token.split('.').length !== 3) {
     console.warn("⚠️ טוקן לא תקין או ריק");
     return null;
   }
 
-  const payload = parseJWT(token);
+  const payload = jwtDecode(token);
   if (!payload || !payload.role) {
     console.warn("⚠️ פיענוח הטוקן נכשל או לא כולל role");
     return null;
@@ -80,6 +82,18 @@ export function getUserFromToken(): User | null {
   return payload;
 }
 
+// export const getUserFromToken = (): JwtPayload | null => {
+//   const token = localStorage.getItem("token");
+//   if (!token) return null;
+
+//   try {
+//     const decoded = jwtDecode<JwtPayload>(token);
+//     return decoded;
+//   } catch (err) {
+//     console.error("❌ פענוח הטוקן נכשל:", err);
+//     return null;
+//   }
+// };
 
 // export function getUserFromToken() {
 //   const token = localStorage.getItem('token');
@@ -94,11 +108,11 @@ export function getUserFromToken(): User | null {
 // }
 
 export function mapJwtClaims(rawToken: any): JwtPayload {
-    const payload = parseJWT(rawToken);
+    const payload = jwtDecode(rawToken);
 
-  if (!payload) {
-    console.error('❌ claims is null or undefined');
-  }
+  // if (!payload) {
+  //   console.error('❌ claims is null or undefined');
+  // }
   return {
     email: payload["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"],
     name: payload["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"],
@@ -108,22 +122,22 @@ export function mapJwtClaims(rawToken: any): JwtPayload {
   };
 }
 
-export function parseJWT(token: string) {
-  try {
-    const base64Url = token.split('.')[1];
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const jsonPayload = decodeURIComponent(
-      atob(base64)
-        .split('')
-        .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-        .join('')
-    );
-    return JSON.parse(jsonPayload);
-  } catch (error) {
-    console.error("❌ שגיאה בפענוח הטוקן:", error);
-    return null;
-  }
-}
+// export function parseJWT(token: string) {
+//   try {
+//     const base64Url = token.split('.')[1];
+//     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+//     const jsonPayload = decodeURIComponent(
+//       atob(base64)
+//         .split('')
+//         .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+//         .join('')
+//     );
+//     return JSON.parse(jsonPayload);
+//   } catch (error) {
+//     console.error("❌ שגיאה בפענוח הטוקן:", error);
+//     return null;
+//   }
+// }
 
 
 // export const getUserFromToken = (token: string): JwtPayload | null => {
