@@ -1,15 +1,8 @@
 import { useEffect } from 'react';
 import Router from './routes/Router';
-import { useAppDispatch, useAppSelector } from './redux/store';
-import { loadUserFromToken, setUser } from './redux/auth/auth.slice';
-import { getUserFromToken } from './auth/auth.utils';
-import MatchmakerForm from './components/matchmaker/MatchmakerForm';
-import CandidateManagementPage from './pages/admin/CandidateManagementPage';
-import UserManagementPage from './pages/admin/UserManagementPage';
-import MatchmakerManagementPage from './pages/admin/MatchmakerManagementPage';
-import CandidateForm from './components/candidate/CandidateForm';
-import Signup from './pages/SignupPage';
-import LoginPage from './pages/LoginPage';
+import { useAppDispatch } from './redux/store';
+import { setUser } from './redux/auth/auth.slice';
+import { getUserFromToken, mapJwtClaims } from './auth/auth.utils';
 import MatchPage from './components/matches/MatchPage';
 
 function App() {
