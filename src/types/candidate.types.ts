@@ -1,7 +1,7 @@
 // types/candidateTypes.ts
 import {
   Gender,
-  Sector,
+  candidateSector,
   SubSector,
   TorahStudy,
   EducationInstitution,
@@ -27,7 +27,7 @@ export type Candidate = {
   gender: Gender | null;
   status: false;
   age: number;
-  sector: Sector | null;
+  sector: candidateSector | null;
   subSector: SubSector | null;
   torahLearning: TorahStudy | null;
   education: EducationInstitution | null;

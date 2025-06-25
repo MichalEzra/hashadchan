@@ -502,8 +502,8 @@ useEffect(() => {
 
            {/* שורה רביעית */}
            <div className={styles.row}>
-             {renderSelectWithPlaceholder("sector", formState.sector, Sector, false, "מגזר *", "green")}
-             {renderSelectWithPlaceholder("subSector", formState.subSector, SubSector, false, "תת מגזר *", "green")}
+             {renderSelectWithPlaceholder("sector", candidate.sector, Sector, false, "מגזר *", "green")}
+             {renderSelectWithPlaceholder("subSector", candidate.subSector, SubSector, false, "תת מגזר *", "green")}
              {/* {renderSelectWithPlaceholder("sector", candidate.sector, Sector, false, "מגזר *", "green")} */}
            </div>
 

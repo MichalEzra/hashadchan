@@ -5,7 +5,7 @@ import {
   Openness,
   SubSector,
   // אם יש צורך ב-enums נוספים לשדכן, הוסף אותם כאן
-  Sector, // משתמשים ב-Sector הכללי לבינתיים
+  candidateSector, // משתמשים ב-Sector הכללי לבינתיים
 } from "../../types/enums"; // ודא שהנתיב הזה נכון בפרויקט שלך - ייתכן שתצטרך לשנות אותו
 import styles from "../design/CandidateForm.module.css"; // ודא שהנתיב הזה נכון בפרויקט שלך - ייתכן שתצטרך לשנות אותו
 import { useParams } from "react-router-dom";
@@ -295,7 +295,7 @@ const MatchmakerForm: React.FC = () => {
         {/* שורה חמישית: מדינה, מגזר השדכן */}
         <div className={styles.row}>
           {renderInputField("country", matchmaker.country, "מדינה", "text", "blue")}
-          {renderSelectWithPlaceholder("matchmakerSector", matchmaker.matchmakerSector, Sector, false, "מגזר *", "green")}
+          {renderSelectWithPlaceholder("matchmakerSector", matchmaker.matchmakerSector, candidateSector, false, "מגזר *", "green")}
         </div>
 
         {/* שורה שישית: תת מגזר, שפות */}

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import styles from '../design/CreateMatchPage.module.css';
+import styles from './style/MatchPage.module.css';
 import { useAppSelector } from '../../redux/store';
 import { Candidate } from '../../types/candidate.types';
 import { createMatch } from '../../services/match.service';
@@ -96,3 +96,4 @@ export default function MatchPage() {
     </div>
   );
 }
+

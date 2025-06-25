@@ -4,17 +4,18 @@ import RootLayout from "../layouts/RootLayout";
 import HomePage from "../pages/HomePage";
 import UserPage from "../pages/UserPage";
 import { DaatTorahPage } from "../pages/DaatTorahPage";
-import { EngagedPage } from "../pages/EngagedPage";
+import EngagedPage from "../pages/EngagedPage";
 import { HereToServeYouPage } from "../pages/HereToServeYouPage";
 import { UserGuidePage } from "../pages/UserGuidePage";
-// import LoginPage from "../pages/LoginPage";
-// import Signup from "../pages/SignupPage";
 import CandidatesPage from "../pages/admin/CandidateManagementPage"
 import CandidateForm from "../components/forms/CandidateForm";
 import MatchmakerManagementPage from "../pages/admin/MatchmakerManagementPage";
 import CandidateManagementPage from "../pages/admin/CandidateManagementPage";
 import UserManagementPage from "../pages/admin/UserManagementPage";
-import MatchPage from "../pages/MatchPage";
+import MatchPage from "../components/matches/MatchPage";
+// import CandidateForm from "../components/candidate/CandidateForm";
+import AlgorithmMatchingPage from "../components/matches/AlgorithmMatchingPage";//✅ ייבוא לדף הצעות שידוכים
+
 
 const router = createBrowserRouter([
   {
@@ -35,6 +36,8 @@ const router = createBrowserRouter([
       { path: "/matchmakers", element: <MatchmakerManagementPage /> },
       { path: "/users", element: <UserManagementPage /> },
       { path: "/match", element: <MatchPage /> },
+      { path: "/candidates/new", element: <CandidateForm /> },
+      { path: "/algorithm-match", element: <AlgorithmMatchingPage /> }, // לדף הצעות שידוכים מהאלגוריתם
 
     ],
   },
