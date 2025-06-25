@@ -6,7 +6,7 @@ import { Candidate } from '../../types/candidate.types';
 import { Pencil, Trash } from 'lucide-react';
 import { deleteCandidate, updateCandidate } from '../../services/candidate.service';
 import {
-  Gender, Sector, SubSector, TorahStudy, EducationInstitution, Occupation,
+  Gender, candidateSector, SubSector, TorahStudy, EducationInstitution, Occupation,
   Language, Openness, ClothingStyle, Physique, SkinTone, HairColor, ParentsStatus,
   HeadCovering, PhoneType, Smoking
 } from '../../types/enums';
@@ -220,7 +220,7 @@ const CandidateManagementPage = () => {
               />
             </label>
             {renderSelect('מגדר', 'gender', Gender)}
-            {renderSelect('מגזר', 'sector', Sector)}
+            {renderSelect('מגזר', 'sector', candidateSector)}
             {renderSelect('תת מגזר', 'subSector', SubSector)}
             {renderSelect('לימוד תורה', 'torahLearning', TorahStudy)}
             {renderSelect('מוסד לימודים', 'education', EducationInstitution)}

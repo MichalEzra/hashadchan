@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   Gender,
-  Sector,
+  candidateSector,
   SubSector,
   TorahStudy,
   EducationInstitution,
@@ -502,7 +502,7 @@ useEffect(() => {
 
            {/* שורה רביעית */}
            <div className={styles.row}>
-             {renderSelectWithPlaceholder("sector", candidate.sector, Sector, false, "מגזר *", "green")}
+             {renderSelectWithPlaceholder("sector", candidate.sector, candidateSector, false, "מגזר *", "green")}
              {renderSelectWithPlaceholder("subSector", candidate.subSector, SubSector, false, "תת מגזר *", "green")}
              {/* {renderSelectWithPlaceholder("sector", candidate.sector, Sector, false, "מגזר *", "green")} */}
            </div>
