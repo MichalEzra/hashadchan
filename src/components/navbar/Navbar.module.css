@@ -1,0 +1,128 @@
+.navbar {
+  position: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.8rem 2rem;
+  background-color: #f8f9fa;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  direction: rtl;
+  font-family: 'Segoe UI', sans-serif;
+  /* position: relative; */
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 50px;
+    z-index: 1000;
+
+}
+
+.logo {
+  font-size: 1.6rem;
+  font-weight: bold;
+  color: #343a40;
+}
+
+/* כפתור המבורגר - מוסתר בדסקטופ */
+.menuButton {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 24px;
+  height: 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin-right: 10px;
+  z-index: 20;
+}
+
+/* שלושת הקווים של ההמבורגר */
+.bar {
+  width: 100%;
+  height: 3px;
+  background-color: #343a40;
+  transition: 0.3s ease;
+}
+
+/* אנימציה לפתיחת תפריט המבורגר */
+.bar1Active {
+  transform: rotate(-45deg) translate(-5px, 6px);
+}
+
+.bar2Active {
+  opacity: 0;
+}
+
+.bar3Active {
+  transform: rotate(45deg) translate(-5px, -6px);
+}
+
+.links {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  flex: 1;
+}
+
+.links a {
+  text-decoration: none;
+  color: #343a40;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.links a:hover {
+  color: #007bff;
+}
+
+.login {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.login a {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 500;
+  color: #343a40;
+  text-decoration: none;
+  font-size: 1rem;
+  transition: color 0.3s ease;
+}
+
+.login a:hover {
+  color: #007bff;
+}
+
+/* רספונסיביות */
+@media (max-width: 768px) {
+  .menuButton {
+    display: flex;
+  }
+
+  .links {
+    display: none;
+    position: absolute;
+    top: 60px;
+    right: 0;
+    background-color: #f8f9fa;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+    padding: 1rem 2rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    z-index: 10;
+  }
+
+  /* כשפותחים את התפריט במובייל */
+  .linksMobileOpen {
+    display: flex;
+  }
+
+  .login {
+    display: none; /* אפשר להציג איפשהו אחר או להוסיף לאזור התפריט */
+  }
+}

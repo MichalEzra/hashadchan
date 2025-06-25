@@ -1,0 +1,4 @@
+; 📁 services
+; ניהול קריאות ל-API, עבודה עם fetch/axios.
+
+; דוג': candidateService.ts, authService.ts.

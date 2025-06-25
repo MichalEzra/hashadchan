@@ -1,0 +1,4 @@
+; 📁 hooks
+; Custom React Hooks — קוד שמבצע לוגיקה וניתן לשימוש חוזר.
+
+; דוג': useAuth, useForm, useCandidates.

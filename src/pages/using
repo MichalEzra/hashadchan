@@ -1,0 +1,4 @@
+;  pages
+; כל דף באתר שמיוצג בנתיב (route) משלו.
+
+; דוג': HomePage, UserGuidePage, EngagedPage.
