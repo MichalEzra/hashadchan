@@ -4,7 +4,8 @@ import { useAppSelector } from '../../redux/store';
 import { Candidate } from '../../types/candidate.types';
 import { createMatch } from '../../services/match.service';
 import { getMaleCandidates, getFemaleCandidates } from '../../services/candidate.service';
-import { getUserFromToken, mapJwtClaims } from '../../auth/auth.utils';
+import { mapJwtClaims } from '../../auth/auth.utils';
+import { loadUserFromToken } from '../../redux/auth/auth.slice';
 
 export default function MatchPage() {
 //   const currentUser = useAppSelector(state => state.auth.user);
@@ -20,14 +21,14 @@ export default function MatchPage() {
   }, []);
 
   const handleSubmit = async () => {
-    const currentUser = getUserFromToken();
+    const currentUser = loadUserFromToken();
     if (!currentUser) {
         setStatusMessage('לא נמצאה משתמש מחובר');
         return;
         }
     const user = mapJwtClaims(currentUser);
     console.log('currentUser:', currentUser);
-    if (!selectedMale || !selectedFemale || !user?.nameid) {
+    if (!selectedMale || !selectedFemale || !user?.id) {
       setStatusMessage('יש לבחור מועמד, מועמדת ולהיות מחובר');
       return;
     }

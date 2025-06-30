@@ -1,7 +1,7 @@
 // src/services/userService.ts
 import axios from 'axios';
 import { User } from '../types/user.types';
-import {Signup} from './auth.service'; // Assuming you have a signup function in auth.service
+import {register} from './auth.service'; // Assuming you have a signup function in auth.service
 
 const API_URL = 'http://localhost:5245/api/user';
 export type NewUser = Omit<User, 'id' | 'candidate'>;
@@ -20,7 +20,7 @@ export type NewUser = Omit<User, 'id' | 'candidate'>;
 
 export const addUser = async (user: User): Promise<User> => {
   console.log('📩 שולח בקשה להרשמה דרך Signup');
-  const createdUser = await Signup(user);
+  const createdUser = await register(user);
   return createdUser;
 };
 

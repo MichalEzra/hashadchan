@@ -1,27 +1,29 @@
 import React, { useEffect, useState } from "react";
 import {
-  Gender,
-  candidateSector,
-  SubSector,
-  TorahStudy,
-  EducationInstitution,
-  Occupation,
-  Language,
-  Openness,
-  HeadCovering,
-  PhoneType,
-  ParentsStatus,
-  Smoking,
-  Physique,
   SkinTone,
   HairColor,
-  ClothingStyle,
-  Status,
+  CandidateStatusDisplayMap,
+  SubSectorDisplayMap,
+  SectorDisplayMap,
+  LanguageDisplayMap,
+  PhoneTypeDisplayMap,
+  OpennessDisplayMap,
+  ClothingStyleDisplayMap,
+  HeadCoveringDisplayMap,
+  PhysiqueDisplayMap,
+  EducationInstitutionDisplayMap,
+  OccupationDisplayMap,
+  TorahStudyDisplayMap,
+  ParentsStatusDisplayMap,
+  SmokingDisplayMap,
+  HairColorDisplayMap,
+  SkinToneDisplayMap,
 } from "../../types/enums";
-import {createCandidate,  getCandidate,  updateCandidate,} from "../../services/candidate.service";
+import { createCandidate } from "../../redux/thunks/candidates.thunks";
 import styles from "../design/CandidateForm.module.css";
 import { useParams } from "react-router-dom";
 import { Candidate } from "../../types/candidate.types";
+import { useAppDispatch } from "../../redux/store";
 
 //זה אחראי בעצם על העיגולים של הצבעים, הבנת???
 interface ColorCircleSelectorProps {
@@ -66,20 +68,20 @@ const ColorCircleSelector: React.FC<ColorCircleSelectorProps> = ({
 };
 //צבע שיער
 const hairColorOptions = [
-  { value: 'BROWN', label: HairColor.HUM, hex: '#6B4423' },
-  { value: 'BLACK', label: HairColor.SHAHOR, hex: ' #000000' },
-  { value: 'DIRTY_BLONDE', label: HairColor.SHATANI, hex: 'rgb(230, 175, 81)' },
-  { value: 'BLONDE', label: HairColor.BLONDI, hex: 'rgb(250, 235, 104)' },
-  { value: 'REDHEAD', label: HairColor.GINGI, hex: 'rgb(254, 160, 45)' },
+  { value: 'BROWN', label: HairColorDisplayMap.חום, hex: '#6B4423' },
+  { value: 'BLACK', label: HairColorDisplayMap.שחור, hex: ' #000000' },
+  { value: 'DIRTY_BLONDE', label: HairColorDisplayMap.שטני, hex: 'rgb(230, 175, 81)' },
+  { value: 'BLONDE', label: HairColorDisplayMap.בלונדי, hex: 'rgb(250, 235, 104)' },
+  { value: 'REDHEAD', label: HairColorDisplayMap.גינגי, hex: 'rgb(254, 160, 45)' },
 ];
 
 //צבע גוף
 const skinToneOptions = [
-  { value: 'FAIR', label: SkinTone.BAHIR, hex: 'rgb(255, 220, 202) ' },
-  { value: 'FAIR_TO_MEDIUM', label: SkinTone.NOTE_LE_BAHIR, hex: 'rgb(255, 218, 175) ' },
-  { value: 'TAN', label: SkinTone.SHAZUF, hex: 'rgb(230, 189, 157)' },
-  { value: 'MEDIUM_TO_DARK', label: SkinTone.NOTE_LE_KEHA, hex: 'rgb(212, 167, 138)' },
-  { value: 'DARK', label: SkinTone.KEHA, hex: 'rgb(182, 127, 91)' },
+  { value: 'FAIR', label: SkinToneDisplayMap.בהיר, hex: 'rgb(255, 220, 202) ' },
+  { value: 'FAIR_TO_MEDIUM', label: SkinToneDisplayMap.נוטה_לבהיר, hex: 'rgb(255, 218, 175) ' },
+  { value: 'TAN', label: SkinToneDisplayMap.שזוף, hex: 'rgb(230, 189, 157)' },
+  { value: 'MEDIUM_TO_DARK', label: SkinToneDisplayMap.נוטה_לכהה, hex: 'rgb(212, 167, 138)' },
+  { value: 'DARK', label: SkinToneDisplayMap.כהה, hex: 'rgb(182, 127, 91)' },
 ];
 
 interface HeightSliderProps {
@@ -91,16 +93,16 @@ interface HeightSliderProps {
 }
 
 const HeightSlider: React.FC<HeightSliderProps> = ({
-      value,
-      onChange,
-      min = 140,
-      max = 220,
-      step = 1,
-        }) => {
-          const ticks = [];
-          for (let i = min; i <= max; i += 5) {
-            ticks.push(i);
-          }
+  value,
+  onChange,
+  min = 140,
+  max = 220,
+  step = 1,
+}) => {
+  const ticks = [];
+  for (let i = min; i <= max; i += 5) {
+    ticks.push(i);
+  }
 
   return (
     <div className={styles.container}>
@@ -139,7 +141,7 @@ interface CandidateFormProps {
 
 
 
-const CandidateForm: React.FC= () => {
+const CandidateForm: React.FC = () => {
   const { id } = useParams();
 
   const initialCandidate: any = {
@@ -179,13 +181,13 @@ const CandidateForm: React.FC= () => {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
-    const [formState, setFormState] = useState(candidate || initialCandidate);
-
-useEffect(() => {
-  if (candidate) {
-    setFormState(candidate);
-  }
-}, [candidate]);
+  const [formState, setFormState] = useState(candidate || initialCandidate);
+  const dispatch = useAppDispatch()
+  useEffect(() => {
+    if (candidate) {
+      setFormState(candidate);
+    }
+  }, [candidate]);
 
   // useEffect(() => {
   //   if (id) {
@@ -237,31 +239,37 @@ useEffect(() => {
     }
     setResumeFile(file || null);
   };
-
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const formData = new FormData();
-    Object.entries(candidate).forEach(([key, value]) => {
+
+    Object.entries(formState).forEach(([key, value]) => {
       if (Array.isArray(value)) {
         value.forEach((val) => formData.append(key, val));
       } else if (value !== undefined && value !== null) {
-        formData.append(key, value.toString());
+        formData.append(key, value.toString()); // 👈 שימי לב: אין toString
       }
     });
+
     if (imageFile) formData.append("fileImage", imageFile);
-    if (resumeFile) formData.append("rezumehFile", resumeFile);
+    if (resumeFile) formData.append("RezumehFile", resumeFile);
+
     console.log("Form data being sent:", Object.fromEntries(formData.entries()));
+
     try {
-      if (id) {
-        await createCandidate(formData);
-        alert("מועמד נוסף בהצלחה");
-      }
-    } catch {
-      setError("שגיאה בשליחה");
+      Object.entries(formState).forEach(([key, value]) => {
+        console.log(`🔸 ${key}:`, value);
+      });
+      const result = await dispatch(createCandidate(formData)).unwrap();
+      console.log('נוצר בהצלחה', result);
+    } catch (err) {
+      console.error('שגיאה ביצירת מועמד:', err);
     }
   };
-//פונקציה שאחראית על המשתנים שיש להם רשימה של אפשרויות לבחירה
-   const renderSelectWithPlaceholder = (
+
+  //פונקציה שאחראית על המשתנים שיש להם רשימה של אפשרויות לבחירה
+  const renderSelectWithPlaceholder = (
     name: string,
     value: any,
     options: any,
@@ -315,7 +323,7 @@ useEffect(() => {
   );
 
 
-//אחראית על תיבת טקסט שצריך לכתוב בתוכה את התוכן, לגומא: תיאור עצמי
+  //אחראית על תיבת טקסט שצריך לכתוב בתוכה את התוכן, לגומא: תיאור עצמי
   //היא גם אחראית על הצבע של הנקודה שליד השם
   const renderTextareaField = (
     name: string,
@@ -357,7 +365,7 @@ useEffect(() => {
       </label>
     </div>
   );
-//אחראית על הסליידר של טווחים, לגומא: כמה מבקשים, כמה נותנים
+  //אחראית על הסליידר של טווחים, לגומא: כמה מבקשים, כמה נותנים
   //היא גם אחראית על הצבע של הנקודה שליד השם
   const renderRangeSlider = (
     name: string,
@@ -390,7 +398,7 @@ useEffect(() => {
       </div>
     </div>
   );
-//אחראית על כפתורי המגדר, לגומא: אישה, גבר
+  //אחראית על כפתורי המגדר, לגומא: אישה, גבר
   //היא גם אחראית על הצבע של הנקודה שליד השם
   const renderGenderButtons = () => (
     <div className={styles.fieldWrapper}>
@@ -402,7 +410,7 @@ useEffect(() => {
         <button
           type="button"
           className={`${styles.genderButton} ${formState.gender === 'נקבה' ? styles.active : ''}`}
-          onClick={() => setFormState((prev : typeof formState) => ({...prev, gender: 'נקבה'}))}
+          onClick={() => setFormState((prev: typeof formState) => ({ ...prev, gender: 'נקבה' }))}
         >
           <div className={styles.genderIcon}>👤</div>
           אישה
@@ -410,7 +418,7 @@ useEffect(() => {
         <button
           type="button"
           className={`${styles.genderButton} ${formState.gender === 'זכר' ? styles.active : ''}`}
-          onClick={() => setFormState((prev : typeof formState) => ({...prev, gender: 'זכר'}))}
+          onClick={() => setFormState((prev: typeof formState) => ({ ...prev, gender: 'זכר' }))}
         >
           <div className={styles.genderIcon}>👤</div>
           גבר
@@ -418,7 +426,7 @@ useEffect(() => {
       </div>
     </div>
   );
-//אחראית על העלאת קבצים, לגומא: תמונה, רזומה
+  //אחראית על העלאת קבצים, לגומא: תמונה, רזומה
   const renderFileUpload = (
     name: string,
     file: File | null,
@@ -454,7 +462,7 @@ useEffect(() => {
 
 
   return (
-        <div className={styles.container}>
+    <div className={styles.container}>
       <div className={styles.header}>
         <div className={styles.profileSection}>
           <div className={styles.profileImage}>
@@ -468,24 +476,24 @@ useEffect(() => {
         <div className={styles.formTitle}>פרטי מועמד</div>
       </div>
 
-    <form onSubmit={handleSubmit} className={styles.form} dir="rtl">
+      <form onSubmit={handleSubmit} className={styles.form} dir="rtl">
 
-           {/* שורה ראשונה */}
-          <div className={styles.row}>
-            {renderInputField("firstName", formState.firstName, "שם פרטי *", "text", "purple")}
-           {renderInputField("lastName", formState.lastName, "שם משפחה", "text", "green")}
+        {/* שורה ראשונה */}
+        <div className={styles.row}>
+          {renderInputField("firstName", formState.firstName, "שם פרטי *", "text", "purple")}
+          {renderInputField("lastName", formState.lastName, "שם משפחה", "text", "green")}
         </div>
 
-           {/* שורה שנייה */}
-          <div className={styles.row}>
-          {renderGenderButtons()} 
-           {renderSelectWithPlaceholder("status", formState.status, Status, false, "מצב אישי *", "green")}
-         </div>
+        {/* שורה שנייה */}
+        <div className={styles.row}>
+          {renderGenderButtons()}
+          {renderSelectWithPlaceholder("status", formState.status, CandidateStatusDisplayMap, false, "מצב אישי *", "green")}
+        </div>
 
 
-           {/* שורה שלישית */}
-           <div className={styles.row}>
-             {/* <div className={styles.fieldWrapper}>
+        {/* שורה שלישית */}
+        <div className={styles.row}>
+          {/* <div className={styles.fieldWrapper}>
                <label className={styles.labelWithDot}>
                  <span className={styles.purpleDot}></span>
                  תאריך לידה *
@@ -496,103 +504,103 @@ useEffect(() => {
                 className={styles.input}
               />
             </div> */}
-            {renderInputField("age", formState.age, "גיל *", "number", "purple")}
-            {renderInputField("candidateId", formState.id, "מספר זהות *" , "purple")}
-       </div>
+          {renderInputField("age", formState.age, "גיל *", "number", "purple")}
+          {renderInputField("candidateId", formState.id, "מספר זהות *", "purple")}
+        </div>
 
-           {/* שורה רביעית */}
-           <div className={styles.row}>
-             {renderSelectWithPlaceholder("sector", candidate.sector, candidateSector, false, "מגזר *", "green")}
-             {renderSelectWithPlaceholder("subSector", candidate.subSector, SubSector, false, "תת מגזר *", "green")}
-             {/* {renderSelectWithPlaceholder("sector", candidate.sector, Sector, false, "מגזר *", "green")} */}
-           </div>
+        {/* שורה רביעית */}
+        <div className={styles.row}>
+          {renderSelectWithPlaceholder("sector", candidate.sector, SectorDisplayMap, false, "מגזר *", "green")}
+          {renderSelectWithPlaceholder("subSector", candidate.subSector, SubSectorDisplayMap, false, "תת מגזר *", "green")}
+          {/* {renderSelectWithPlaceholder("sector", candidate.sector, Sector, false, "מגזר *", "green")} */}
+        </div>
 
-           
-           {/* שדות נוספים */}
-           <div className={styles.row}>
-             {renderSelectWithPlaceholder("languages", formState.languages, Language, false, "שפות *", "green")}
-              {renderInputField("city", formState.city, "עיר *", "text", "green")}
-             {/* {renderSelectWithPlaceholder("openness", candidate.openness, Openness, false, "פתיחות", "green")} */}
-           </div>
 
-           {/* טווחי כסף */}
-           <div className={styles.row}>
-             {renderRangeSlider("giving", formState.giving, "כמה מבקשים (ועליו לידירה - מקסימום)", 0, 1000000, 25000, "green")}
-             {renderRangeSlider("expecting", formState.expecting, "כמה נותנים (ועליו לידירה - מקסימום)", 0, 1000000, 25000, "green")}
-           </div>
+        {/* שדות נוספים */}
+        <div className={styles.row}>
+          {renderSelectWithPlaceholder("languages", formState.languages, LanguageDisplayMap, false, "שפות *", "green")}
+          {renderInputField("city", formState.city, "עיר *", "text", "green")}
+          {/* {renderSelectWithPlaceholder("openness", candidate.openness, Openness, false, "פתיחות", "green")} */}
+        </div>
 
-            <div className={styles.row}>
-              {renderSelectWithPlaceholder("phoneType", formState.phoneType, PhoneType, false, "סוג טלפון *", "green")}
-              {renderSelectWithPlaceholder("openness", formState.openness, Openness, false, "רמת פתיחות *", "green")}
-            </div>
+        {/* טווחי כסף */}
+        <div className={styles.row}>
+          {renderRangeSlider("giving", formState.giving, "כמה מבקשים (ועליו לידירה - מקסימום)", 0, 1000000, 25000, "green")}
+          {renderRangeSlider("expecting", formState.expecting, "כמה נותנים (ועליו לידירה - מקסימום)", 0, 1000000, 25000, "green")}
+        </div>
 
-            <div className={styles.row}>
-              {renderSelectWithPlaceholder("clothingStyle", formState.clothingStyle, ClothingStyle, false, "סגנון לבוש *", "green")}
-              {renderSelectWithPlaceholder("headCovering", formState.headCovering, HeadCovering, false, "כיסוי ראש *", "green")}
-            </div>
+        <div className={styles.row}>
+          {renderSelectWithPlaceholder("phoneType", formState.phoneType, PhoneTypeDisplayMap, false, "סוג טלפון *", "green")}
+          {renderSelectWithPlaceholder("openness", formState.openness, OpennessDisplayMap, false, "רמת פתיחות *", "green")}
+        </div>
 
-            <div className={styles.row}>
-              {renderCheckboxField("license", formState.license, "רישיון נהיגה *")}
-              {renderCheckboxField("beard", formState.beard, "זקן *")}
-            </div>
+        <div className={styles.row}>
+          {renderSelectWithPlaceholder("clothingStyle", formState.clothingStyle, ClothingStyleDisplayMap, false, "סגנון לבוש *", "green")}
+          {renderSelectWithPlaceholder("headCovering", formState.headCovering, HeadCoveringDisplayMap, false, "כיסוי ראש *", "green")}
+        </div>
 
-            <div className={styles.row}>
-              {renderSelectWithPlaceholder("physique", formState.physique, Physique, false, "מבנה גוף *", "green")}
-              {renderInputField("origin", formState.origin, "מוצא *", "text", "green")}
-            </div>
-              {/* גובה */}
-                {/* <HeightSlider
+        <div className={styles.row}>
+          {renderCheckboxField("license", formState.license, "רישיון נהיגה *")}
+          {renderCheckboxField("beard", formState.beard, "זקן *")}
+        </div>
+
+        <div className={styles.row}>
+          {renderSelectWithPlaceholder("physique", formState.physique, PhysiqueDisplayMap, false, "מבנה גוף *", "green")}
+          {renderInputField("origin", formState.origin, "מוצא *", "text", "green")}
+        </div>
+        {/* גובה */}
+        {/* <HeightSlider
                   value={candidate.height}
                   onChange={(val) => setCandidate((prev: any) => ({ ...prev, height: val }))}
                   min={140}
                   max={200}
                   step={1}
                 /> */}
-                {renderRangeSlider("height", formState.height, 'גובה (ס"מ) *', 140, 220, 1, "green")}
-          <div className={styles.row}>
-            <ColorCircleSelector
-              name="hairColor"
-              selected={formState.hairColor}
-              onChange={(val) => setFormState((prev: any) => ({ ...prev, hairColor: val }))}
-              options={hairColorOptions}
-              labelText="צבע שיער"
-            />
+        {renderRangeSlider("height", formState.height, 'גובה (ס"מ) *', 140, 220, 1, "green")}
+        <div className={styles.row}>
+          <ColorCircleSelector
+            name="hairColor"
+            selected={formState.hairColor}
+            onChange={(val) => setFormState((prev: any) => ({ ...prev, hairColor: val }))}
+            options={hairColorOptions}
+            labelText="צבע שיער"
+          />
 
-            <ColorCircleSelector
-              name="skinTone"
-              selected={formState.skinTone}
-              onChange={(val) => setFormState((prev : any) => ({ ...prev, skinTone: val }))}
-              options={skinToneOptions}
-              labelText="גוון עור"
-            />
+          <ColorCircleSelector
+            name="skinTone"
+            selected={formState.skinTone}
+            onChange={(val) => setFormState((prev: any) => ({ ...prev, skinTone: val }))}
+            options={skinToneOptions}
+            labelText="גוון עור"
+          />
         </div>
 
         <div className={styles.row}>
-          {renderSelectWithPlaceholder("education", formState.education, EducationInstitution, false, "מוסד לימודים *", "green")}
-          {renderSelectWithPlaceholder("occupation", formState.occupation, Occupation, false, "עיסוק *", "green")}
+          {renderSelectWithPlaceholder("education", formState.education, EducationInstitutionDisplayMap, false, "מוסד לימודים *", "green")}
+          {renderSelectWithPlaceholder("occupation", formState.occupation, OccupationDisplayMap, false, "עיסוק *", "green")}
         </div>
 
         <div className={styles.row}>
-              {renderSelectWithPlaceholder("torahLearning", formState.torahLearning, TorahStudy, false, "לומד / עובד *", "green")}
-              {renderSelectWithPlaceholder("familyStatus", formState.familyStatus, ParentsStatus, false, "סטטוס הורים *", "green")}
+          {renderSelectWithPlaceholder("torahLearning", formState.torahLearning, TorahStudyDisplayMap, false, "לומד / עובד *", "green")}
+          {renderSelectWithPlaceholder("familyStatus", formState.familyStatus, ParentsStatusDisplayMap, false, "סטטוס הורים *", "green")}
         </div>
 
         <div className={styles.row}>
-              {renderCheckboxField("availableForProposals", formState.availableForProposals, "זמין להצעות")}
-              {renderSelectWithPlaceholder("smokingStatus", formState.smokingStatus, Smoking, false, "עישון *", "green")}
+          {renderCheckboxField("availableForProposals", formState.availableForProposals, "זמין להצעות")}
+          {renderSelectWithPlaceholder("smokingStatus", formState.smokingStatus, SmokingDisplayMap, false, "עישון *", "green")}
         </div>
 
-          {renderTextareaField("descriptionSelf", formState.descriptionSelf, "תיאור עצמי", "purple")}
-          {renderTextareaField("descriptionFind", formState.descriptionFind, "מה אני מחפש/ת?", "purple")}
-        
-                {/* העלאת קבצים */}
-           <div className={styles.row}>
-             {renderFileUpload("image", imageFile, handleImageChange, "העלאת תמונה*", "image/*", "purple")}
-             {renderFileUpload("resume", resumeFile, handleResumeChange, "העלאת רזומה *", ".pdf,.doc,.docx", "purple")}
-           </div>
+        {renderTextareaField("descriptionSelf", formState.descriptionSelf, "תיאור עצמי", "purple")}
+        {renderTextareaField("descriptionFind", formState.descriptionFind, "מה אני מחפש/ת?", "purple")}
 
-      <button type="submit" className={styles.submitBtn}>שלח</button>
-    </form>
+        {/* העלאת קבצים */}
+        <div className={styles.row}>
+          {renderFileUpload("image", imageFile, handleImageChange, "העלאת תמונה*", "image/*", "purple")}
+          {renderFileUpload("resume", resumeFile, handleResumeChange, "העלאת רזומה *", ".pdf,.doc,.docx", "purple")}
+        </div>
+
+        <button type="submit" className={styles.submitBtn}>שלח</button>
+      </form>
     </div>
   );
 };

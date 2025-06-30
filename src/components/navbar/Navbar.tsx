@@ -8,7 +8,7 @@ import { useAppSelector } from '../../redux/store';
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../redux/store";
 import { loadUserFromToken, loginUser, logoutUser, registerUser } from "../../redux/auth/auth.slice"; // פעולה שמנקה את הסטייט של המשתמש
-import { getUserFromToken, jwtDecode, mapJwtClaims } from '../../auth/auth.utils';
+import {  jwtDecode, mapJwtClaims } from '../../auth/auth.utils';
 import { UserType } from '../../types/enums';
 
 const LogoutButton = ({ className }: { className?: string }) => {
@@ -44,7 +44,7 @@ const Navbar = () => {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      dispatch(loadUserFromToken(token));
+      dispatch(loadUserFromToken());
       const payload = jwtDecode(token);
       console.log("Payload מהטוקן:", payload);
       console.log('Token found, loading user from token', token);
@@ -133,13 +133,13 @@ const Navbar = () => {
       setLoginData({ email: '', password: '' });
       setLoginErrors({});
       console.log('התחברות בוצעה בהצלחה');
-      const row = getUserFromToken();
+      const row = loadUserFromToken();
       if (!row) {
         console.error('❌ טוקן לא קיים או לא תקף');
         return;
       }
       const user = mapJwtClaims(row);
-      const userType = user.role;
+      const userType = user?.id;
       console.log('userType', userType);
     } catch (error) {
       console.error('שגיאה בהתחברות:', error);

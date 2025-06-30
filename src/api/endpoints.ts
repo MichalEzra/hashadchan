@@ -1,6 +1,6 @@
 export const ENDPOINTS = {
   login: 'http://localhost:5245/api/user/login',
-  signup: 'http://localhost:5245/api/user',
+  register: 'http://localhost:5245/api/User',
   getCandidates: 'http://localhost:5245/api/Candidate',
   getAllUsers: 'http://localhost:5245/api/User',
   getAllMatchmakers: 'http://localhost:5245/api/Matchmaker',

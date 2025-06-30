@@ -1,4 +1,5 @@
  import { Candidate } from "./candidate.types";
+import { UserType } from "./enums";
  
 export type User = {
   id?: number;
@@ -6,15 +7,27 @@ export type User = {
   email: string;
   password: string;
   phoneNumber?: string;
-  userType: "ADMIN" | "MATCHMAKER" | "PARENT" ;
+  userType: UserType ;
   candidate?: Candidate;
 };
+export type RegisterUserDto = Omit<User, 'id'>;
+
+// types/auth.types.ts
+export type JwtUserType = UserType | 'GUEST';
+
+export interface JwtUser {
+  id: string;
+  email: string;
+  fullName: string;
+  userType: JwtUserType;
+  // הוסף כאן מאפייני משתמש נוספים שה-JWT שלך עשוי למפות אליהם
+}
 
 export type UserLoginType ={
     email: string,
     fullName: string,
     id?: number;
-    userType: "ADMIN" | "MATCHMAKER" | "PARENT";
+    userType: UserType;
 }
 
 

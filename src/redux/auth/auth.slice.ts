@@ -1,123 +1,111 @@
-// redux/auth/auth.slice.ts
+// src/redux/auth/auth.slice.ts
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { User } from 'lucide-react';
-import { UserType } from '../../types/enums';
-import { getUserFromToken, jwtDecode, mapJwtClaims } from '../../auth/auth.utils';
-import { get } from 'http';
+import { isValidToken, jwtDecode, mapJwtClaims, setAuthorizationHeader } from '../../auth/auth.utils';
+import { login as authServiceLogin, register as authServiceRegister } from '../../services/auth.service';
+import {  JwtUser, RegisterUserDto } from '../../types/user.types';
 
-// טייפים
-interface User {
-  id?: Number;
-  fullName?: string;
-  email?: string;
-  userType?: UserType;
-  // status: 'ACTIVE' | 'INACTIVE' | 'PENDING' | 'SUSPENDED';
-  // profileCompleted?: number;
-}
-
+// טיפוס מצב האותנטיקציה
 interface AuthState {
-  user: User | null;
+  user: JwtUser | null;
   token: string | null;
   isLoading: boolean;
   error: string | null;
   isAuthenticated: boolean;
 }
 
-// Initial State
+// מצב התחלתי
 const initialState: AuthState = {
-  user: JSON.parse(localStorage.getItem("user") || "null"),
+  user: null,
   token: localStorage.getItem('token'),
   isLoading: false,
   error: null,
   isAuthenticated: false,
 };
 
-export const loadUserFromToken = createAsyncThunk('auth/loadUserFromToken', async (token: string) => {
-  // כאן אפשר לפענח את הטוקן ולשלוף פרטי משתמש
-  const user = mapJwtClaims(token);
-  return user;
-});
+// ✨ פונקציה עזר לפענוח טוקן
+const processToken = (token: string): { user: JwtUser; token: string } | null => {
+  const claims = jwtDecode(token);
+  if (!claims) return null;
+  const user = mapJwtClaims(claims);
+  if (!user) return null;
+  return { user, token };
+};
 
+// טעינת משתמש מטוקן
+export const loadUserFromToken = createAsyncThunk(
+  'auth/loadUserFromToken',
+  async (_, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (token && isValidToken(token)) {
+        const claims = jwtDecode(token);
+        const user = mapJwtClaims(claims);
+        if (user) return user;
+      }
+      localStorage.removeItem('token');
+      return rejectWithValue('Invalid or missing token.');
+    } catch (error: any) {
+      localStorage.removeItem('token');
+      return rejectWithValue(error.message || 'Failed to load user from token.');
+    }
+  }
+);
 
-
+// התחברות
 export const loginUser = createAsyncThunk(
   'auth/loginUser',
   async (credentials: { email: string; password: string }, { rejectWithValue }) => {
     try {
-      const response = await fetch('/api/User/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(credentials),
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText || 'שגיאה בהתחברות');
-      }
-      const token = await response.text();
+      const token = await authServiceLogin(credentials.email, credentials.password);
+      const result = processToken(token);
+      if (!result) return rejectWithValue('טוקן התחברות לא תקין.');
       localStorage.setItem('token', token);
-      return { token }; // נחזיר כאובייקט עם token
-
+      // setAuthorizationHeader(token);
+      return result;
     } catch (error: any) {
+      localStorage.removeItem('token');
       return rejectWithValue(error.message || 'שגיאה בהתחברות');
     }
   }
 );
-
+// registerUser עם התחברות מיידית
 export const registerUser = createAsyncThunk(
   'auth/registerUser',
-  async (userData: {
-    fullName: string;
-    email: string;
-    password: string;
-    phoneNumber: string;
-    userType: UserType;
-  }, { rejectWithValue }) => {
+  async (
+    userData: RegisterUserDto,
+    { dispatch, rejectWithValue }
+  ) => {
     try {
-      const response = await fetch('/api/User', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+      console.log('📩 שולח בקשת הרשמה:', userData.email);
 
-        body: JSON.stringify(userData),
-      });
+      // קודם כל — מבצע הרשמה
+      await authServiceRegister(userData);
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'שגיאה בהרשמה');
+      // לאחר הרשמה מוצלחת — מנסה להתחבר מיד
+      const token = await authServiceLogin(userData.email, userData.password);
+
+      // מפענח טוקן
+      const result = processToken(token);
+      if (!result) {
+        return rejectWithValue('ההתחברות לאחר ההרשמה נכשלה: טוקן לא תקין.');
       }
 
-      const data = await response.json();
+      // שומר טוקן ב-localStorage
+      localStorage.setItem('token', token);
+      // setAuthorizationHeader(token);
 
-      // שמירת הטוכן אם הרשמה מצליחה מיד
-      if (data.token) {
-        localStorage.setItem('token', data.token);
-      }
+      return result;
 
-      return data;
     } catch (error: any) {
-      return rejectWithValue(error.message || 'שגיאה בהרשמה');
+      console.error("❌ שגיאה בהרשמה או התחברות:", error);
+      localStorage.removeItem('token');
+      return rejectWithValue(error.message || 'שגיאה בהרשמה או התחברות');
     }
   }
 );
 
 
-// בתוך auth.slice.ts
-function parseJWT(token: string) {
-  try {
-    const payload = token.split('.')[1];
-    const decoded = atob(payload);
-    return JSON.parse(decoded);
-  } catch (e) {
-    console.error('שגיאה בפענוח הטוקן:', e);
-    return null;
-  }
-}
-
-// Auth Slice
+// ✅ ה-Slice
 const authSlice = createSlice({
   name: 'auth',
   initialState,
@@ -125,82 +113,70 @@ const authSlice = createSlice({
     logoutUser(state) {
       state.user = null;
       state.token = null;
+      state.isAuthenticated = false;
+      state.error = null;
+      localStorage.removeItem('token');
     },
-    clearError: (state) => {
+    clearError(state) {
       state.error = null;
     },
-    setUser: (state, action: PayloadAction<User>) => {
+    setUser(state, action: PayloadAction<JwtUser>) {
       state.user = action.payload;
       state.isAuthenticated = true;
     },
   },
   extraReducers: (builder) => {
-    // loadUserFromToken
     builder
       .addCase(loadUserFromToken.pending, (state) => {
         state.isLoading = true;
         state.error = null;
       })
       .addCase(loadUserFromToken.fulfilled, (state, action) => {
-        state.isLoading = false;
         state.user = action.payload;
         state.isAuthenticated = true;
-        if (!action.payload || !action.payload.role) {
-          state.user = null;
-          state.isAuthenticated = false;
-        } else {
-          const upperRole = action.payload.role?.toUpperCase();
-          const validRole = Object.values(UserType).includes(upperRole as UserType)
-            ? (upperRole as UserType)
-            : undefined;
-          state.user = {
-            ...action.payload,
-            userType: validRole, // שימי לב לזה
-          };
-          state.isAuthenticated = true;
-        }
+        state.isLoading = false;
+        state.error = null;
       })
       .addCase(loadUserFromToken.rejected, (state, action) => {
-        state.isLoading = false;
         state.user = null;
         state.token = null;
         state.isAuthenticated = false;
+        state.isLoading = false;
         state.error = action.payload as string;
-      });
-
-    // loginUser
-    builder
+      })
       .addCase(loginUser.pending, (state) => {
         state.isLoading = true;
         state.error = null;
       })
       .addCase(loginUser.fulfilled, (state, action) => {
-        const parsedUser = parseJWT(action.payload.token);
-        state.isLoading = false;
+        state.user = action.payload.user;
         state.token = action.payload.token;
-        state.user = parsedUser;
         state.isAuthenticated = true;
+        state.isLoading = false;
         state.error = null;
       })
       .addCase(loginUser.rejected, (state, action) => {
+        state.user = null;
+        state.token = null;
+        state.isAuthenticated = false;
         state.isLoading = false;
         state.error = action.payload as string;
-      });
-
-    // registerUser
-    builder
+      })
       .addCase(registerUser.pending, (state) => {
         state.isLoading = true;
         state.error = null;
       })
       .addCase(registerUser.fulfilled, (state, action) => {
-        state.isLoading = false;
         state.user = action.payload.user;
         state.token = action.payload.token;
-        state.isAuthenticated = !!action.payload.token;
+        state.isAuthenticated = true;
+        state.isLoading = false;
         state.error = null;
       })
       .addCase(registerUser.rejected, (state, action) => {
+        state.user = null;
+        state.token = null;
+        state.isAuthenticated = false;
         state.isLoading = false;
         state.error = action.payload as string;
       });

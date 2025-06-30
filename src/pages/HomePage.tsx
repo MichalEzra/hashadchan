@@ -1,15 +1,11 @@
 // HomePage.tsx
-import { useState, ChangeEvent, MouseEvent, useEffect, FormEvent } from 'react';
+import { useState, ChangeEvent, useEffect, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Heart, Search, MessageCircle, Shield, Users, Settings, UserCheck, UserX, Edit3 } from 'lucide-react';
 import styles from './style/HomePage.module.css';
 import { useAppSelector, useAppDispatch } from '../redux/store';
 import { loadUserFromToken, loginUser, registerUser, setUser } from '../redux/auth/auth.slice';
-import { login, Signup } from '../services/auth.service';
 import { UserType } from '../types/enums';
-import { getUserFromToken, mapJwtClaims, jwtDecode } from '../auth/auth.utils';
-import { ENDPOINTS } from '../api/endpoints';
-import { raw } from 'express';
+import { mapJwtClaims } from '../auth/auth.utils';
 
 export default function HomePage() {
   const dispatch = useAppDispatch();
@@ -21,29 +17,20 @@ export default function HomePage() {
 
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
+  const [isRegisterLoading, setIsRegisterLoading] = useState(false); // New loading state for register form
 
   useEffect(() => {
-    const raw = getUserFromToken();
-    if (raw) {
-      const user = mapJwtClaims(raw);
-      dispatch(setUser(user)); // הכנסת המשתמש לסטייט
+    if (user) {
+      console.log("✅ התחברות בוצעה בהצלחה!", user);
+      console.log("🔍 userType =", user?.userType);
+
+      navigate("/"); // או כל מסלול מתאים
     }
-  }, []);
-
-  // useEffect(() => {
-  //   console.log("🎯 Redux user:", user);
-  //   console.log("🎯 userType:", userType);
-  // }, [user, userType]);
-
-  // useEffect(() => {
-  //   if (isAuthenticated && userType) {
-  //     navigate('/');
-  //   }
-  // }, [isAuthenticated, userType, navigate]);
+  }, [user]);
 
   const [loginData, setLoginData] = useState({ email: '', password: '' });
   const [registerData, setRegisterData] = useState({
-    fullName: '', email: '', password: '', phoneNumber: '', userType: UserType.PARENT
+    fullName: '', email: '', password: '', phoneNumber: '', userType: UserType.DEFAULT
   });
 
   const [loginErrors, setLoginErrors] = useState<{ email?: string; password?: string }>({});
@@ -64,7 +51,11 @@ export default function HomePage() {
 
   const handleRegisterChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setRegisterData(prev => ({ ...prev, [name]: value }));
+    setRegisterData(prev => ({
+      ...prev,
+      [name]: name === "userType" ? value as UserType : value
+    }));
+
     if (registerErrors[name as keyof typeof registerErrors]) {
       setRegisterErrors(prev => ({ ...prev, [name]: '' }));
     }
@@ -97,51 +88,67 @@ export default function HomePage() {
     } else if (registerData.password.length < 6) {
       newErrors.password = 'סיסמה חייבת להכיל לפחות 6 תווים';
     }
-    if (!registerData.userType) newErrors.userType = 'סוג משתמש נדרש';
+    if (!registerData.userType || userType === UserType.DEFAULT) newErrors.userType = 'סוג משתמש נדרש';
     setRegisterErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!validateLogin()) return;
+    if (!validateLogin()) {
+      return;
+    }
+
     try {
-      console.log('loginData', loginData);
+      // קורא ל-thunk של ההתחברות (loginUser).
+      // ה-thunk הזה כבר מטפל בשליחת הבקשה לשרת דרך auth.service.ts,
+      // שמירת הטוקן ב-localStorage, פענוח המשתמש ועדכון Redux state.
       await dispatch(loginUser(loginData)).unwrap();
-      if(user)
-        dispatch(setUser(user));
+
+      // אם ההתחברות הצליחה, סגור את המודאל ונקה את הטופס.
       setShowLoginModal(false);
       setLoginData({ email: '', password: '' });
       setLoginErrors({});
-      console.log('התחברות בוצעה בהצלחה');
-      const row = getUserFromToken();
-      if (!row) {
-        console.error('❌ טוקן לא קיים או לא תקף');
-        return;
-      }
-      const user1 = mapJwtClaims(row);
-      const userType = user1.role;
-      dispatch(setUser(user1)); // פעולה מה־authSlice שמכניסה את המשתמש ל־store
-      // navigate("/");
-      console.log('userType', userType);
-    } catch (error) {
-      console.error('שגיאה בהתחברות:', error);
+      // הניווט יטופל אוטומטית על ידי ה-useEffect לעיל כשה-Redux state מתעדכן.
+    } catch (loginError: any) {
+      // הודעת השגיאה מגיעה מה-rejectWithValue של ה-thunk,
+      // והיא כבר נשמרת במצב ה-error של Redux (state.auth.error).
+      console.error('שגיאה בהתחברות:', loginError);
+      // אתה יכול להציג אותה למשתמש באמצעות ה-error state של Redux.
+    }
+  };
+  const handleRegister = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!validateRegister()) {
+      return;
+    }
+
+    setIsRegisterLoading(true);
+    try {
+      // קורא ל-thunk של ההרשמה (registerUser).
+      // ה-thunk הזה כבר מטפל בשליחת הבקשה לשרת דרך auth.service.ts,
+      // שמירת הטוקן ב-localStorage (אם הוחזר), פענוח המשתמש ועדכון Redux state.
+      await dispatch(registerUser(registerData)).unwrap();
+
+      // אם ההרשמה הצליחה, סגור את המודאל ונקה את הטופס.
+      setShowRegisterModal(false);
+      setRegisterData({ // Reset form after successful registration
+        fullName: '',
+        email: '',
+        password: '',
+        phoneNumber: '',
+        userType: UserType.PARENT
+      });
+      setRegisterErrors({}); // Clear errors
+      // הניווט יטופל אוטומטית על ידי ה-useEffect לעיל כשה-Redux state מתעדכן.
+    } catch (registerError: any) {
+      console.error('שגיאה בהרשמה:', registerError);
+      // מצב השגיאה ב-Redux יתעדכן אוטומטית על ידי ה-extraReducers של ה-slice.  
+    } finally {
+      setIsRegisterLoading(false);
     }
   };
 
-  const handleRegister = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (!validateRegister()) return;
-    try {
-      console.log('registerData', registerData);
-      await dispatch(registerUser(registerData)).unwrap();
-      setShowRegisterModal(false);
-      setRegisterData({ fullName: '', email: '', password: '', phoneNumber: '', userType: (e.target as HTMLSelectElement).value as UserType });
-      setRegisterErrors({});
-    } catch (error) {
-      console.error('שגיאה בהרשמה:', error);
-    }
-  };
 
   if (isLoading) {
     return <div className={styles.container}><div>טוען...</div></div>;
@@ -184,6 +191,15 @@ export default function HomePage() {
           <button className={styles.adminButton} onClick={() => navigate('/match')}>התאמת מועמדים</button>
         </div>
       )}
+      
+      {user && userType === UserType.PARENT && (
+        <div className={styles.adminButtonsContainer}>
+          <h2>שלום {userName}, אתה מחובר כהורה</h2>
+          {/* <button className={styles.adminButton} onClick={() => navigate('/users')}>ניהול משתמשים</button> */}
+          <button className={styles.adminButton} onClick={() => navigate('/candidates/new')}>הוספת מועמד</button>
+          <button className={styles.adminButton} onClick={() => navigate('/algorithm-match')}>חיפוש הצעות מתאימות</button>
+        </div>
+      )}
 
       {showLoginModal && (
         <div className={styles.modalBackdrop}>
@@ -197,7 +213,7 @@ export default function HomePage() {
               {loginErrors.password && <p className={styles.errorMessage}>{loginErrors.password}</p>}
               <button type="submit">{isLoading ? 'מתחבר...' : 'התחבר'}</button>
             </form>
-            <p>אין לך חשבון? <button onClick={() => { setShowRegisterModal(true); }}>הירשם כאן</button></p>
+            <p>אין לך חשבון? <button onClick={() => { setShowRegisterModal(true); setShowLoginModal(false) }}>הירשם כאן</button></p>
           </div>
         </div>
       )}
@@ -224,7 +240,7 @@ export default function HomePage() {
               {registerErrors.password && <p className={styles.errorMessage}>{registerErrors.password}</p>}
               <button type="submit">{isLoading ? 'נרשם...' : 'הירשם'}</button>
             </form>
-            <p>כבר יש לך חשבון? <button onClick={() => { setShowLoginModal(true); }}>התחבר כאן</button></p>
+            <p>כבר יש לך חשבון? <button onClick={() => { setShowLoginModal(true);setShowRegisterModal(false) }}>התחבר כאן</button></p>
           </div>
         </div>
       )}

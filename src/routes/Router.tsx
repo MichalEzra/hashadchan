@@ -4,7 +4,7 @@ import RootLayout from "../layouts/RootLayout";
 import HomePage from "../pages/HomePage";
 import UserPage from "../pages/UserPage";
 import { DaatTorahPage } from "../pages/DaatTorahPage";
-import EngagedPage from "../pages/EngagedPage";
+// import EngagedPage from "../pages/EngagedPage";
 import { HereToServeYouPage } from "../pages/HereToServeYouPage";
 import { UserGuidePage } from "../pages/UserGuidePage";
 import CandidatesPage from "../pages/admin/CandidateManagementPage"
@@ -23,14 +23,14 @@ const router = createBrowserRouter([
     children: [
       { path: "/", element: <HomePage /> },
       { path: "/daattorah", element: <DaatTorahPage /> },
-      { path: "/engaged", element: <EngagedPage /> },
+      // { path: "/engaged", element: <EngagedPage /> },
       { path: "/heretoserve", element: <HereToServeYouPage /> },
       { path: "/guide", element: <UserGuidePage /> },
       // { path: "/login", element: <LoginPage /> },
       // { path: "/signup", element: <Signup /> },
       { path: "/home", element: <HomePage /> },
       { path: "/candidates/edit/:id", element: <CandidateForm /> },
-      { path: "/candidates/new", element: <CandidateForm /> },     
+      // { path: "/candidates/new", element: <CandidateForm /> },     
       //עמודי ניהול 
       { path: "/candidates", element: <CandidateManagementPage /> },
       { path: "/matchmakers", element: <MatchmakerManagementPage /> },

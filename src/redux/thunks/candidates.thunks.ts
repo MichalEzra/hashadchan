@@ -1,59 +1,58 @@
-import { createAsyncThunk, isRejectedWithValue } from "@reduxjs/toolkit";
-import axios from "axios";
+// redux/thunks/candidateThunks.ts
+import { createAsyncThunk } from "@reduxjs/toolkit";
 import { Candidate } from "../../types/candidate.types";
-import {  deleteCandidate, getCandidates } from "../../services/candidate.service";
+import {
+  getCandidates,
+  createCandidate as createCandidateApi,
+  deleteCandidate as deleteCandidateApi,
+  updateCandidate as updateCandidateApi,
+} from "../../services/candidate.service";
 
 // שליפת כל המועמדים
 export const fetchCandidates = createAsyncThunk<Candidate[], void>(
   "candidates/fetchCandidates",
   async (_, thunkAPI) => {
-        console.log('thunkAPI:', thunkAPI); // בדוק מה יש כאן
-        const { rejectWithValue } = thunkAPI;
     try {
-      const candidates = await getCandidates(); // ודא שאתה קורא לפונקציה הזו
-      return candidates;
+      return await getCandidates();
     } catch (error: any) {
-      return rejectWithValue(error.response?.data || error.message);
+      return thunkAPI.rejectWithValue(error.response?.data || error.message);
     }
   }
 );
 
 // יצירת מועמד חדש
-export const createCandidate = createAsyncThunk(
+export const createCandidate = createAsyncThunk<Candidate, FormData>(
   "candidates/create",
-  async (newCandidate: FormData, thunkAPI) => {
+  async (formData, thunkAPI) => {
     try {
-      const response = await axios.post("/api/candidates", newCandidate, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      return response.data; // מועמד חדש
+      return await createCandidateApi(formData);
     } catch (error: any) {
-      return thunkAPI.rejectWithValue(error.message);
+      return thunkAPI.rejectWithValue(error.response?.data || error.message);
     }
   }
 );
 
-// דוגמה בתוך ה־thunk:
-export const deleteCandidateById = createAsyncThunk(
-  'candidates/deleteById',
-  async (id: number) => {
-    await axios.delete(`/api/candidate/${id}`);
-    return id; // או return deletedCandidate אם אתה רוצה להחזיר את כולו
+// מחיקת מועמד לפי מזהה
+export const deleteCandidateById = createAsyncThunk<number, number>(
+  "candidates/deleteById",
+  async (id, thunkAPI) => {
+    try {
+      await deleteCandidateApi(id);
+      return id;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(error.response?.data || error.message);
+    }
   }
 );
 
-
-export const updateCandidate = createAsyncThunk(
+// עדכון מועמד
+export const updateCandidate = createAsyncThunk<Candidate, { id: number; data: FormData }>(
   "candidates/update",
-  async ({ id, data }: { id: number; data: FormData }) => {
-    const response = await axios.put(`/api/candidate/${id}`, data, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
-    return response.data; // מחזיר את המועמד המעודכן
+  async ({ id, data }, thunkAPI) => {
+    try {
+      return await updateCandidateApi(id, data);
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(error.response?.data || error.message);
+    }
   }
 );
-
