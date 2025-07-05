@@ -23,24 +23,24 @@ export type JwtPayload = {
   exp: number;
 };
 
-export const setSession = ( token: string) => {
-    localStorage.setItem('token', token)
-    axios.defaults.headers.common.Authorization = `Bearer ${token}`
+export const setSession = (token: string) => {
+  localStorage.setItem('token', token)
+  axios.defaults.headers.common.Authorization = `Bearer ${token}`
 }
 
 export const setAuthorizationHeader = (token: string) => {
-    axios.defaults.headers.common.Authorization = `Bearer ${token}`
+  axios.defaults.headers.common.Authorization = `Bearer ${token}`
 }
 
 export const getSession = (): AuthUser | null => {
-    const user = JSON.parse(localStorage.getItem('user') || 'null')
-    return user
+  const user = JSON.parse(localStorage.getItem('user') || 'null')
+  return user
 }
 
 export const removeSession = () => {
-    localStorage.removeItem('user');
-    axios.defaults.headers.common.Authorization = undefined;
-    window.location.href = PATHS.login;
+  localStorage.removeItem('user');
+  axios.defaults.headers.common.Authorization = undefined;
+  window.location.href = PATHS.login;
 }
 
 // //מה הפונקציה הזאת עושה??
@@ -64,20 +64,20 @@ export const jwtDecode = (token: string | null): UserClaims | null => {
     console.error('❌ שגיאה בפענוח הטוקן: הטוקן אינו מחרוזת או שהוא ריק/null.', { receivedToken: token });
     return null;
   }
-  
+
   try {
     // טוקן JWT מורכב משלושה חלקים מופרדים בנקודות: header.payload.signature
     const parts = token.split('.');
-    
+
     // ודא שמבנה הטוקן תקין (שלושה חלקים)
     if (parts.length !== 3) {
       console.error('❌ שגיאה בפענוח הטוקן: מבנה טוקן לא תקין. צפוי: header.payload.signature', { token });
       return null;
     }
-    
+
     // החלק השני הוא ה-payload המקודד ב-Base64
     const payloadEncoded = parts[1];
-    
+
     // פענוח Base64 ו-parsing ל-JSON
     const decodedPayload = atob(payloadEncoded); // atob משמש לפענוח Base64
     console.log(decodedPayload)
@@ -102,7 +102,7 @@ export const mapJwtClaims = (claims: UserClaims | null): JwtUser | null => {
     console.error('❌ Claims are null or undefined, cannot map to User.');
     return null;
   }
-console.log("📦 Claims מהטוקן:", claims);
+  console.log("📦 Claims מהטוקן:", claims);
 
   // חילוץ המאפיינים הרלוונטיים מה-claims באמצעות מפתחות ה-URL המלאים
   const userIdClaim = claims['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'];
@@ -123,7 +123,7 @@ console.log("📦 Claims מהטוקן:", claims);
 
   // יצירת והחזרת אובייקט ה-User
   return {
-    id: userIdClaim,
+    id: Number(userIdClaim),
     email: emailClaim,
     fullName: fullNameClaim,
     userType: userType,
@@ -138,36 +138,36 @@ console.log("📦 Claims מהטוקן:", claims);
  * @returns true אם הטוקן תקין ולא פג תוקף, false אחרת.
  */
 export const isValidToken = (token: string | null): boolean => {
-    // אם הטוקן ריק, הוא אינו תקין
-    if (!token) {
-        console.warn('אין טוקן לבדיקה. מחזיר false.');
-        return false;
-    }
+  // אם הטוקן ריק, הוא אינו תקין
+  if (!token) {
+    console.warn('אין טוקן לבדיקה. מחזיר false.');
+    return false;
+  }
 
-    // נסה לפענח את הטוקן
-    const claims = jwtDecode(token);
-    // אם הפענוח נכשל, הטוקן אינו תקין
-    if (!claims) {
-        console.warn('פענוח הטוקן נכשל. מחזיר false.');
-        return false;
-    }
+  // נסה לפענח את הטוקן
+  const claims = jwtDecode(token);
+  // אם הפענוח נכשל, הטוקן אינו תקין
+  if (!claims) {
+    console.warn('פענוח הטוקן נכשל. מחזיר false.');
+    return false;
+  }
 
-    // בדיקת תפוגת הטוקן באמצעות ה-claim 'exp'
-    if (claims.exp) {
-        // זמן נוכחי בשניות מאז תקופת יוניקס
-        const currentTime = Date.now() / 1000; 
-        // אם זמן התפוגה עבר, הטוקן פג תוקף
-        if (claims.exp < currentTime) {
-            console.warn('טוקן פג תוקף. מחזיר false.');
-            return false;
-        }
-    } else {
-        // אם אין claim של תפוגה, ייתכן שזו שגיאת הגדרה או טוקן שאינו סטנדרטי.
-        // לשם בטיחות, נתייחס לכך כאזהרה, אך נאפשר לו לעבור אם אין דרישת תפוגה מפורשת.
-        // ביישומים קריטיים, לרוב טוקן ללא EXP ייחשב כלא תקין.
-        console.warn('חסר פרטי תוקף (exp) בטוקן. אנא וודא שהטוקן מכיל את ה-claim הזה.');
+  // בדיקת תפוגת הטוקן באמצעות ה-claim 'exp'
+  if (claims.exp) {
+    // זמן נוכחי בשניות מאז תקופת יוניקס
+    const currentTime = Date.now() / 1000;
+    // אם זמן התפוגה עבר, הטוקן פג תוקף
+    if (claims.exp < currentTime) {
+      console.warn('טוקן פג תוקף. מחזיר false.');
+      return false;
     }
+  } else {
+    // אם אין claim של תפוגה, ייתכן שזו שגיאת הגדרה או טוקן שאינו סטנדרטי.
+    // לשם בטיחות, נתייחס לכך כאזהרה, אך נאפשר לו לעבור אם אין דרישת תפוגה מפורשת.
+    // ביישומים קריטיים, לרוב טוקן ללא EXP ייחשב כלא תקין.
+    console.warn('חסר פרטי תוקף (exp) בטוקן. אנא וודא שהטוקן מכיל את ה-claim הזה.');
+  }
 
-    // אם כל הבדיקות עברו, הטוקן נחשב תקין
-    return true;
+  // אם כל הבדיקות עברו, הטוקן נחשב תקין
+  return true;
 };

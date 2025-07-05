@@ -11,6 +11,7 @@ export const fetchUsers = createAsyncThunk<User[], void>(
         const { rejectWithValue } = thunkAPI;
     try {
       const users = await getAllUsers(); // ודא שאתה קורא לפונקציה הזו
+      console.log(users)
       return users;
     } catch (error: any) {
       return rejectWithValue(error.response?.data || error.message);

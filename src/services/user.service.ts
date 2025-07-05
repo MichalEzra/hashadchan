@@ -2,6 +2,7 @@
 import axios from 'axios';
 import { User } from '../types/user.types';
 import {register} from './auth.service'; // Assuming you have a signup function in auth.service
+import { CandidateDto } from '../types/candidateDto.types';
 
 const API_URL = 'http://localhost:5245/api/user';
 export type NewUser = Omit<User, 'id' | 'candidate'>;
@@ -68,4 +69,27 @@ export const deleteUser = async (id: number): Promise<void> => {
       Authorization: `Bearer ${token}`,
     },
   });
+};
+
+export const getCandidatesByUserId = async (userId: number): Promise<CandidateDto[]> => {
+  const token = localStorage.getItem("token");
+  const response = await axios.get(`/api/users/${userId}/candidates`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
+};
+
+export const getMyCandidate = async (): Promise<CandidateDto> => {
+  const token = localStorage.getItem('token');
+  if (!token) throw new Error('Token not found');
+
+  const response = await axios.get<CandidateDto>(
+    `${API_URL}/Candidate/User`,
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
+  return response.data;
 };

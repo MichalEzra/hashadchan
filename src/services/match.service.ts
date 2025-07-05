@@ -1,6 +1,6 @@
-import { Candidate } from "../types/candidate.types";
 import axios from 'axios';
-import { MatchRequest, MatchResultsDto } from "../types/candidateDto.types";
+import { CandidateDto, MatchRequest, MatchResultsDto } from "../types/candidateDto.types";
+import { EngagedMatch } from '../types/match.types';
 const BASE_URL = 'http://localhost:5245/api';
 
 const token = localStorage.getItem('token'); // או איך שאת שומרת אותו
@@ -24,7 +24,7 @@ export const getMaleMatchProposals = async (): Promise<MatchResultsDto[]> => {
     throw new Error('No authentication token found.');
   }
   const response = await axios.get<MatchResultsDto[]>(
-    `${BASE_URL}/HungarianAlgorithm/Get10Male`,
+    `${BASE_URL}/HungarianAlgorithm/male`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -41,7 +41,7 @@ export const getFemaleMatchProposals = async (): Promise<MatchResultsDto[]> => {
     throw new Error('No authentication token found.');
   }
   const response = await axios.get<MatchResultsDto[]>(
-    `${BASE_URL}/HungarianAlgorithm/Get10Female`,
+    `${BASE_URL}/HungarianAlgorithm/female`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -50,3 +50,50 @@ export const getFemaleMatchProposals = async (): Promise<MatchResultsDto[]> => {
   );
   return response.data;
 };
+
+export const getEngagedMatches = async (): Promise<EngagedMatch[]> => {
+  console.log(`${BASE_URL}/Matches/engaged`);
+  const response = await axios.get(`${BASE_URL}/Match/engaged`);
+  return response.data;
+};
+
+
+
+// const getCandidateSummary = (c: CandidateDto) => {
+//   if (!c) return '';
+
+//   const lines = [
+//     `שם מוסד הלימודים: ${c.studyPlaceName}`,
+//     `גיל: ${c.age}`,
+//     `עיר: ${c.city}`,
+//     `מצב אישי: ${c.status}`,
+//     `מגזר: ${c.sector}`,
+//     `תת מגזר: ${c.subSector}`,
+//     `מוצא: ${c.origin}`,
+//     `פתיחות דתית: ${c.religiousOpenness}`,
+//     `סגנון לבוש: ${c.clothingStyle}`,
+//     `עיסוק/לימודים: ${c.jobOrStudies}`,
+//     `מוסד לימודים: ${c.education}`,
+//     c.gender === 'נקבה'
+//       ? `כיסוי ראש מועדף: ${c.preferredHeadCovering}`
+//       : [
+//           `רמת לימוד תורה: ${c.torahLearning}`,
+//           `רישיון נהיגה: ${c.license ? 'כן' : 'לא'}`,
+//           `זקן: ${c.beard ? 'כן' : 'לא'}`,
+//           `סטטוס עישון: ${c.smokingStatus}`
+//         ].join('\n'),
+//     `מה הוא מחפש: ${c.descriptionFind}`,
+//   ];
+
+//   return lines.filter(Boolean).join('\n');
+// };
+
+
+// export const getMyCandidate = async (): Promise<CandidateDto> => {
+//   const response = await axios.get<CandidateDto>('/api/HungarianAlgorithm/all', {
+//     headers: {
+//       Authorization: `Bearer ${localStorage.getItem('token')}`,
+//     },
+//   });
+//   return response.data;
+// };

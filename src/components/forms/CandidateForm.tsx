@@ -22,7 +22,7 @@ import {
 import { createCandidate } from "../../redux/thunks/candidates.thunks";
 import styles from "../design/CandidateForm.module.css";
 import { useParams } from "react-router-dom";
-import { Candidate } from "../../types/candidate.types";
+import { CandidateDto } from "../../types/candidateDto.types";
 import { useAppDispatch } from "../../redux/store";
 
 //זה אחראי בעצם על העיגולים של הצבעים, הבנת???
@@ -68,20 +68,20 @@ const ColorCircleSelector: React.FC<ColorCircleSelectorProps> = ({
 };
 //צבע שיער
 const hairColorOptions = [
-  { value: 'BROWN', label: HairColorDisplayMap.חום, hex: '#6B4423' },
-  { value: 'BLACK', label: HairColorDisplayMap.שחור, hex: ' #000000' },
-  { value: 'DIRTY_BLONDE', label: HairColorDisplayMap.שטני, hex: 'rgb(230, 175, 81)' },
-  { value: 'BLONDE', label: HairColorDisplayMap.בלונדי, hex: 'rgb(250, 235, 104)' },
-  { value: 'REDHEAD', label: HairColorDisplayMap.גינגי, hex: 'rgb(254, 160, 45)' },
+  { value: HairColor.HUM, label: HairColorDisplayMap.חום, hex: '#6B4423' },
+  { value: HairColor.SHAHOR, label: HairColorDisplayMap.שחור, hex: ' #000000' },
+  { value: HairColor.SHATANI, label: HairColorDisplayMap.שטני, hex: 'rgb(230, 175, 81)' },
+  { value: HairColor.BLONDI, label: HairColorDisplayMap.בלונדי, hex: 'rgb(250, 235, 104)' },
+  { value: HairColor.GINGI, label: HairColorDisplayMap.גינגי, hex: 'rgb(254, 160, 45)' },
 ];
 
 //צבע גוף
 const skinToneOptions = [
-  { value: 'FAIR', label: SkinToneDisplayMap.בהיר, hex: 'rgb(255, 220, 202) ' },
-  { value: 'FAIR_TO_MEDIUM', label: SkinToneDisplayMap.נוטה_לבהיר, hex: 'rgb(255, 218, 175) ' },
-  { value: 'TAN', label: SkinToneDisplayMap.שזוף, hex: 'rgb(230, 189, 157)' },
-  { value: 'MEDIUM_TO_DARK', label: SkinToneDisplayMap.נוטה_לכהה, hex: 'rgb(212, 167, 138)' },
-  { value: 'DARK', label: SkinToneDisplayMap.כהה, hex: 'rgb(182, 127, 91)' },
+  { value: SkinTone.BAHIR, label: SkinToneDisplayMap.בהיר, hex: 'rgb(255, 220, 202) ' },
+  { value: SkinTone.NOTE_LE_BAHIR, label: SkinToneDisplayMap.נוטה_לבהיר, hex: 'rgb(255, 218, 175) ' },
+  { value: SkinTone.SHAZUF, label: SkinToneDisplayMap.שזוף, hex: 'rgb(230, 189, 157)' },
+  { value: SkinTone.NOTE_LE_KEHA, label: SkinToneDisplayMap.נוטה_לכהה, hex: 'rgb(212, 167, 138)' },
+  { value: SkinTone.KEHA, label: SkinToneDisplayMap.כהה, hex: 'rgb(182, 127, 91)' },
 ];
 
 interface HeightSliderProps {
@@ -135,8 +135,8 @@ const HeightSlider: React.FC<HeightSliderProps> = ({
 
 
 interface CandidateFormProps {
-  candidate: Candidate;
-  onChange: (updated: Candidate) => void;
+  candidate: CandidateDto;
+  onChange: (updated: CandidateDto) => void;
 }
 
 
@@ -175,6 +175,8 @@ const CandidateForm: React.FC = () => {
     license: false,
     descriptionSelf: "",
     descriptionFind: "",
+    email: "",
+    studyPlaceName: "",
   };
 
   const [candidate, setCandidate] = useState(initialCandidate);
@@ -239,18 +241,36 @@ const CandidateForm: React.FC = () => {
     }
     setResumeFile(file || null);
   };
-  
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const formData = new FormData();
-
     Object.entries(formState).forEach(([key, value]) => {
       if (Array.isArray(value)) {
-        value.forEach((val) => formData.append(key, val));
-      } else if (value !== undefined && value !== null) {
-        formData.append(key, value.toString()); // 👈 שימי לב: אין toString
+        value.forEach((val) => {
+          if (typeof val === "string" || typeof val === "number" || val instanceof Blob) {
+            formData.append(key, val.toString());
+          }
+        });
+      } else if (
+        typeof value === "string" ||
+        typeof value === "number" ||
+        typeof value === "boolean" ||
+        value instanceof Blob
+      ) {
+        formData.append(key, value.toString());
+      } else {
+        console.warn(`⚠️ שדה ${key} לא נשלח - טיפוס לא נתמך`, value);
       }
     });
+
+    // Object.entries(formState).forEach(([key, value]) => {
+    //   if (Array.isArray(value)) {
+    //     value.forEach((val) => formData.append(key, val));
+    //   } else if (value !== undefined && value !== null) {
+    //     formData.append(key, value.toString()); // 👈 שימי לב: אין toString
+    //   }
+    // });
 
     if (imageFile) formData.append("fileImage", imageFile);
     if (resumeFile) formData.append("RezumehFile", resumeFile);
@@ -505,7 +525,7 @@ const CandidateForm: React.FC = () => {
               />
             </div> */}
           {renderInputField("age", formState.age, "גיל *", "number", "purple")}
-          {renderInputField("candidateId", formState.id, "מספר זהות *", "purple")}
+          {renderInputField("candidateId", formState.candidateId, "מספר זהות *", "purple")}
         </div>
 
         {/* שורה רביעית */}
@@ -578,6 +598,8 @@ const CandidateForm: React.FC = () => {
         <div className={styles.row}>
           {renderSelectWithPlaceholder("education", formState.education, EducationInstitutionDisplayMap, false, "מוסד לימודים *", "green")}
           {renderSelectWithPlaceholder("occupation", formState.occupation, OccupationDisplayMap, false, "עיסוק *", "green")}
+          {renderInputField("studyPlaceName", formState.studyPlaceName, "שם מוסד לימודים *", "purple")}
+
         </div>
 
         <div className={styles.row}>
@@ -586,7 +608,7 @@ const CandidateForm: React.FC = () => {
         </div>
 
         <div className={styles.row}>
-          {renderCheckboxField("availableForProposals", formState.availableForProposals, "זמין להצעות")}
+          {renderInputField("email", formState.email, "אימייל *", "email", "purple")}
           {renderSelectWithPlaceholder("smokingStatus", formState.smokingStatus, SmokingDisplayMap, false, "עישון *", "green")}
         </div>
 
@@ -598,7 +620,9 @@ const CandidateForm: React.FC = () => {
           {renderFileUpload("image", imageFile, handleImageChange, "העלאת תמונה*", "image/*", "purple")}
           {renderFileUpload("resume", resumeFile, handleResumeChange, "העלאת רזומה *", ".pdf,.doc,.docx", "purple")}
         </div>
-
+        <div className={styles.row}>
+          {renderCheckboxField("availableForProposals", formState.availableForProposals, "זמין להצעות")}
+        </div>
         <button type="submit" className={styles.submitBtn}>שלח</button>
       </form>
     </div>

@@ -15,5 +15,6 @@ export const ENDPOINTS = {
   updateMatchmaker: 'http://localhost:5245/api/Matchmaker',
   getImage: 'http://localhost:5245/Images',
   getResume: 'http://localhost:5245/Resumes',
+  getEngaged: 'http://localhost:5245/api/Match/engaged'
   // ...
 };

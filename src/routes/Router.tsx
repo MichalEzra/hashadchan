@@ -15,6 +15,8 @@ import UserManagementPage from "../pages/admin/UserManagementPage";
 import MatchPage from "../components/matches/MatchPage";
 // import CandidateForm from "../components/candidate/CandidateForm";
 import AlgorithmMatchingPage from "../components/matches/AlgorithmMatchingPage";//✅ ייבוא לדף הצעות שידוכים
+import EngagedPage from "../pages/EngagedPage";
+import SuggestionsPage from "../pages/SuggestionsPage";
 
 
 const router = createBrowserRouter([
@@ -23,7 +25,7 @@ const router = createBrowserRouter([
     children: [
       { path: "/", element: <HomePage /> },
       { path: "/daattorah", element: <DaatTorahPage /> },
-      // { path: "/engaged", element: <EngagedPage /> },
+      { path: "/engaged", element: <EngagedPage /> },
       { path: "/heretoserve", element: <HereToServeYouPage /> },
       { path: "/guide", element: <UserGuidePage /> },
       // { path: "/login", element: <LoginPage /> },
@@ -38,7 +40,7 @@ const router = createBrowserRouter([
       { path: "/match", element: <MatchPage /> },
       { path: "/candidates/new", element: <CandidateForm /> },
       { path: "/algorithm-match", element: <AlgorithmMatchingPage /> }, // לדף הצעות שידוכים מהאלגוריתם
-
+      { path: "/suggestions", element: <SuggestionsPage /> }
     ],
   },
 ]);

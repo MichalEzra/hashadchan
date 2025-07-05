@@ -1,0 +1,48 @@
+/* עוטף את כל הדף */
+.rootLayout {
+  display: flex;
+  flex-direction: row-reverse; /* חשוב בגלל עברית */
+  min-height: 100vh;
+  width: 100%;
+}
+
+/* הנבבר הצדדי */
+.sideNav {
+  width: 250px;
+  min-height: 100vh;
+  background-color: #f8f8f8;
+  /* border-left: 1px solid #ddd; */
+}
+
+/* עוטף את שאר התוכן (כולל הניווט העליון + תוכן העמודים) */
+.contentArea {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* תוכן הדף עצמו */
+/* .mainContent {
+  padding: 2rem;
+  flex: 1;
+  box-sizing: border-box;
+  background-color: #fff;
+} */
+
+.rootLayout {
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* כשיש נבבר משני */
+.withSideNav {
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+/* כשאין נבבר צדדי */
+.withoutSideNav {
+  display: block;
+}

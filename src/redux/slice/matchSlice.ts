@@ -1,10 +1,13 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { fetchMaleMatches, fetchFemaleMatches, createNewMatch } from '../thunks/matches.thunks';
 import { MatchResultsDto } from '../../types/candidateDto.types';
+import { getEngagedMatches } from '../../services/match.service';
+import { EngagedMatch } from '../../types/match.types';
 
 interface MatchState {
   maleMatches: MatchResultsDto[];
   femaleMatches: MatchResultsDto[];
+  engagedMatches: EngagedMatch[]; // ✅ חדש
   loading: boolean;
   error: string | null;
   matchCreationMessage: string | null;
@@ -13,10 +16,20 @@ interface MatchState {
 const initialState: MatchState = {
   maleMatches: [],
   femaleMatches: [],
+  engagedMatches: [], // ✅ חדש
   loading: false,
   error: null,
   matchCreationMessage: null,
 };
+
+
+export const fetchEngagedMatches = createAsyncThunk(
+  'matches/fetchEngaged',
+  async () => {
+    const matches = await getEngagedMatches();
+    return matches;
+  }
+);
 
 const matchSlice = createSlice({
   name: 'matches',
@@ -74,6 +87,20 @@ const matchSlice = createSlice({
         state.loading = false;
         state.error = action.payload as string || 'אירעה שגיאה ביצירת השידוך.';
         state.matchCreationMessage = null; // נקה הודעה קודמת אם הייתה הצלחה
+      })
+      // טיפול ב-fetchEngagedMatches
+      .addCase(fetchEngagedMatches.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.engagedMatches = []; // נקה תוצאות קודמות
+      })
+      .addCase(fetchEngagedMatches.fulfilled, (state, action) => {
+        state.loading = false;
+        state.engagedMatches = action.payload;
+      })
+      .addCase(fetchEngagedMatches.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'שגיאה בשליפת המאורסים';
       });
   },
 });

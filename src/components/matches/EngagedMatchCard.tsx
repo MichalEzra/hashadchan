@@ -1,6 +1,5 @@
-// components/EngagedMatchCard.tsx
 import React from 'react';
-import styles from './EngagedMatchCard.module.css';
+import styles from '../design/EngagedMatchCard.module.css';
 
 interface EngagedMatch {
   nameGuy: string;

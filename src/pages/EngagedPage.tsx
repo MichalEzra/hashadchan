@@ -1,29 +1,32 @@
-// // pages/EngagedPage.tsx
-// import React, { useEffect, useState } from 'react';
-// import { getEngagedMatches } from '../api/matches';
-// import EngagedMatchCard from '../components/matches/EngagedMatchCard';
+// pages/EngagedPage.tsx
+import React, { useEffect } from 'react';
+import { useAppDispatch, useAppSelector } from '../redux/store';
+import { fetchEngagedMatches } from '../redux/slice/matchSlice';
+import EngagedMatchCard from '../components/matches/EngagedMatchCard';
+import styles from '../components/design/EngagedMatchCard.module.css'
 
-// const EngagedPage: React.FC = () => {
-//   const [matches, setMatches] = useState([]);
+const EngagedPage: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const { engagedMatches, loading, error } = useAppSelector((state) => state.matches);
 
-//   useEffect(() => {
-//     const fetchMatches = async () => {
-//       const data = await getEngagedMatches();
-//       setMatches(data);
-//     };
-//     fetchMatches();
-//   }, []);
+  useEffect(() => {
+    dispatch(fetchEngagedMatches());
+  }, [dispatch]);
 
-//   return (
-//     <div>
-//       <h1>מאורסים מהשבוע האחרון</h1>
-//       <div style={{ display: 'grid', gap: '1rem' }}>
-//         {matches.map((m, i) => (
-//           <EngagedMatchCard key={i} match={m} />
-//         ))}
-//       </div>
-//     </div>
-//   );
-// };
+  if (loading) return <p>טוען...</p>;
+  if (error) return <p>שגיאה: {error}</p>;
 
-// export default EngagedPage;
+  return (
+    <div>
+      <h1>מאורסים מהשבוע האחרון</h1>
+      <div className={styles.container}>
+        {engagedMatches.map((m) => (
+  <EngagedMatchCard key={m.matchId} match={m} />
+))}
+
+      </div>
+    </div>
+  );
+};
+
+export default EngagedPage;

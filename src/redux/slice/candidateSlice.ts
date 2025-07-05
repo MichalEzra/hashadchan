@@ -1,15 +1,18 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Candidate } from "../../types/candidate.types";
-import { fetchCandidates, createCandidate, deleteCandidateById, updateCandidate } from "../thunks/candidates.thunks";
+import { CandidateDto } from "../../types/candidateDto.types";
+import { fetchCandidates, createCandidate, deleteCandidateById, updateCandidateThunk, fetchMyCandidate } from "../thunks/candidates.thunks";
 
 interface CandidatesState {
-  candidates: Candidate[];
+  candidates: CandidateDto[];
+  currentCandidate: CandidateDto | null;  // <-- שדה למועמד נוכחי
+
   loading: boolean;
   error: string | null;
 }
 
 const initialState: CandidatesState = {
   candidates: [],
+  currentCandidate: null,
   loading: false,
   error: null,
 };
@@ -20,8 +23,12 @@ const candidateSlice = createSlice({
   reducers: {
     clearCandidates: (state) => {
       state.candidates = [];
+      state.currentCandidate = null;
     },
-    
+    setCurrentCandidate: (state, action: PayloadAction<CandidateDto>) => {
+      state.currentCandidate = action.payload;
+    },
+
   },
   extraReducers: (builder) => {
     builder
@@ -29,8 +36,7 @@ const candidateSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchCandidates.fulfilled, (state, action: PayloadAction<Candidate[]>) => {
-        console.log("✅ קיבלנו את המועמדים:", action.payload);
+      .addCase(fetchCandidates.fulfilled, (state, action: PayloadAction<CandidateDto[]>) => {
         state.loading = false;
         state.candidates = action.payload;
       })
@@ -38,19 +44,20 @@ const candidateSlice = createSlice({
         state.loading = false;
         state.error = action.error.message || "Failed to fetch candidates";
       })
-      .addCase(createCandidate.fulfilled, (state, action: PayloadAction<Candidate>) => {
-        state.candidates.push(action.payload);
+      // תוסיפי כאן את הטיפול ב־fetchMyCandidate thunk
+      .addCase(fetchMyCandidate.fulfilled, (state, action: PayloadAction<CandidateDto>) => {
+        state.currentCandidate = action.payload;
+        state.loading = false;
       })
-      .addCase(deleteCandidateById.fulfilled, (state, action) => {
-        state.candidates = state.candidates.filter(c => c.id !== action.payload);
-    })
-      .addCase(updateCandidate.fulfilled, (state, action) => {
-        const updated = action.payload;
-        const index = state.candidates.findIndex(c => c.id === updated.id);
-        if (index !== -1) {
-          state.candidates[index] = updated;
-        }
-    });
+      .addCase(fetchMyCandidate.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchMyCandidate.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || "Failed to fetch current candidate";
+      });
+      // המשך הטיפול ביצירת מועמד, מחיקה, עדכון כמו שיש לך...
   },
 });
 

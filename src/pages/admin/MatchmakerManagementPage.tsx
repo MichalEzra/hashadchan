@@ -1,6 +1,6 @@
 // src/pages/MatchmakerManagementPage.tsx
 import { useEffect, useState } from 'react';
-import styles from '../style/MatchmakerManagementPage.module.css'; // צור קובץ CSS Module תואם
+import styles from '../style/UserManagementPage.module.css'; // צור קובץ CSS Module תואם
 import { useAppDispatch, useAppSelector } from '../../redux/store';
 import { fetchMatchmakers } from '../../redux/thunks/matchmaker.thunks';
 import { Matchmaker } from '../../types/matchmaker.types';
@@ -22,7 +22,7 @@ export default function MatchmakerManagementPage() {
   if (error) return <p className={styles.error}>שגיאה: {error}</p>;
 
   return (
-    <div className={styles.container}>
+    <div className={styles.page}>
       <h2 className={styles.title}>ניהול שדכנים</h2>
       <input
         className={styles.searchInput}

@@ -1,31 +1,76 @@
+/* מרכז את הכרטיסים ומגביל את רוחבם */
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+/* הכרטיס עצמו */
 .card {
   background: #f0f3ff;
   border-radius: 1rem;
-  padding: 1.2rem;
+  padding: 1.5rem 2rem;
   text-align: center;
   font-family: 'Heebo', sans-serif;
   color: #212121;
+
+  /* רוחב של שליש המסך במקסימום, עם מינימום רוחב */
+  width: 33.33%;
+  min-width: 280px;
+
+  /* הוספת צל לעיצוב מודרני */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: default;
 }
 
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* מיקום השמות - שומר על flex כדי להפריד בין השמות */
 .names {
   display: flex;
   justify-content: space-between;
   font-size: 1rem;
-  margin-bottom: 0.8rem;
+  margin-bottom: 1rem;
+  gap: 1rem;
 }
 
 .girl, .guy {
   width: 45%;
+  word-break: break-word;
 }
 
 .engagedLabel {
-  font-weight: bold;
-  font-size: 1.2rem;
+  font-weight: 700;
+  font-size: 1.25rem;
   color: #3f51b5;
-  margin-bottom: 0.3rem;
+  margin-bottom: 0.5rem;
 }
 
 .date {
   font-size: 0.9rem;
   color: #888;
+}
+
+/* רספונסיביות */
+/* במסכים קטנים יותר הכרטיס תופס את כל הרוחב */
+@media (max-width: 900px) {
+  .card {
+    width: 80%;
+    min-width: unset;
+  }
+
+  .names {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .girl, .guy {
+    width: 100%;
+  }
 }

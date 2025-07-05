@@ -12,43 +12,54 @@ const UserManagementPage = () => {
   const [search, setSearch] = useState('');
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [showModal, setShowModal] = useState(false);
+  const [expandedUsers, setExpandedUsers] = useState<number[]>([]);
 
   useEffect(() => {
-    dispatch(fetchUsers());
+    dispatch(fetchUsers()).then(() => {
+      console.log("📦 Users after fetch:", users);
+    });
   }, [dispatch]);
+
 
   const filteredUsers = users.filter((u: User) =>
     u.fullName.toLowerCase().includes(search.toLowerCase())
   );
 
-  
-    const handleDelete = async (id: number) => {
-      const confirmDelete = window.confirm('האם את בטוחה שברצונך למחוק את המועמד?');
-      if (confirmDelete) {
-        await deleteUser(id);
-        dispatch(fetchUsers());
-      }
-    };
+  const toggleCandidates = (userId: number) => {
+    setExpandedUsers((prev) =>
+      prev.includes(userId)
+        ? prev.filter((id) => id !== userId)
+        : [...prev, userId]
+    );
+  };
 
-    const handleEditClick = (user: User) => {
-  setSelectedUser(user);
-  setShowModal(true);
-};
+  const handleDelete = async (id: number) => {
+    const confirmDelete = window.confirm('האם את בטוחה שברצונך למחוק את המועמד?');
+    if (confirmDelete) {
+      await deleteUser(id);
+      dispatch(fetchUsers());
+    }
+  };
 
-  
-  
-      const handleSaveEdit = async () => {
-        if (!selectedUser || !selectedUser.id) return;
-        try {
-          await updateUser(selectedUser.id, selectedUser); // שולח את המשתמש המעודכן
-          alert("המשתמש עודכן בהצלחה!");
-          dispatch(fetchUsers()); // מרענן את הרשימה
-          setShowModal(false);    // סוגר את החלונית
-        } catch (error) {
-          console.error("שגיאה בעדכון המשתמש:", error);
-          alert("אירעה שגיאה בעת עדכון המשתמש. נסה שוב.");
-        }
-      };
+  const handleEditClick = (user: User) => {
+    setSelectedUser(user);
+    setShowModal(true);
+  };
+
+
+
+  const handleSaveEdit = async () => {
+    if (!selectedUser || !selectedUser.id) return;
+    try {
+      await updateUser(selectedUser.id, selectedUser); // שולח את המשתמש המעודכן
+      alert("המשתמש עודכן בהצלחה!");
+      dispatch(fetchUsers()); // מרענן את הרשימה
+      setShowModal(false);    // סוגר את החלונית
+    } catch (error) {
+      console.error("שגיאה בעדכון המשתמש:", error);
+      alert("אירעה שגיאה בעת עדכון המשתמש. נסה שוב.");
+    }
+  };
 
   if (loading) return <p className={styles.loading}>טוען נתונים...</p>;
   if (error) return <p className={styles.error}>שגיאה: {error}</p>;
@@ -85,8 +96,27 @@ const UserManagementPage = () => {
                 <li><strong>אימייל:</strong> {user.email}</li>
                 <li><strong>טלפון:</strong> {user.phoneNumber || 'לא צויין'}</li>
                 <li><strong>סוג משתמש:</strong> {user.userType}</li>
-                {user.candidate && (
-                  <li><strong>מועמד מקושר:</strong> {user.candidate.firstName} {user.candidate.lastName}</li>
+                {user.candidates && user.candidates.length > 0 && (
+                  <>
+                    <button
+                      className={styles.toggleBtn}
+                      onClick={() => toggleCandidates(user.id!)}
+                    >
+                      {expandedUsers.includes(user.id!)
+                        ? 'הסתר מועמדים'
+                        : 'הצג מועמדים'}
+                    </button>
+
+                    {expandedUsers.includes(user.id!) && (
+                      <ul className={styles.candidatesList}>
+                        {user.candidates.map((candidate) => (
+                          <li key={candidate.id}>
+                            {candidate.firstName} {candidate.lastName}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </>
                 )}
               </ul>
 
@@ -140,16 +170,16 @@ const UserManagementPage = () => {
             </label> */}
 
             <div className={styles.modalActions}>
-              <button onClick={() =>  handleSaveEdit()}>שמור</button>
+              <button onClick={() => handleSaveEdit()}>שמור</button>
 
               <button onClick={() => setShowModal(false)}>ביטול</button>
             </div>
           </div>
         </div>
-)}
+      )}
 
     </div>
-    
+
   );
 };
 

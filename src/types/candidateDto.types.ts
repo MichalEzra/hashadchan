@@ -27,7 +27,7 @@ export type CandidateDto = {
   gender: Gender | null;
   status: string; // שיניתי ל-string בהתאם לדוגמת ה-JSON שסיפקת ("רווק_ה")
   age: number;
-  sector: candidateSector | null;
+  candidateSector: candidateSector | null;
   subSector: SubSector | null;
   torahLearning: TorahStudy | null;
   education: EducationInstitution | null;

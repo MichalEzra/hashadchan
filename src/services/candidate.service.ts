@@ -1,36 +1,36 @@
 // services/candidate.service.ts
 import axios from 'axios';
-import { Candidate } from '../types/candidate.types';
+import { CandidateDto } from '../types/candidateDto.types';
 import axiosInstance from './axiosInstance';
 
 const BASE_URL = 'http://localhost:5245/api/Candidate';
 
 // שליפת מועמדים לפי מגדר
-export const getMaleCandidates = async (): Promise<Candidate[]> => {
+export const getMaleCandidates = async (): Promise<CandidateDto[]> => {
   const response = await axios.get(`${BASE_URL}/males`);
   return response.data;
 };
 
-export const getFemaleCandidates = async (): Promise<Candidate[]> => {
+export const getFemaleCandidates = async (): Promise<CandidateDto[]> => {
   const response = await axios.get(`${BASE_URL}/females`);
   return response.data;
 };
 
 // שליפת כל המועמדים (גברים + נשים)
-export const getCandidates = async (): Promise<Candidate[]> => {
+export const getCandidates = async (): Promise<CandidateDto[]> => {
   const male = await getMaleCandidates();
   const female = await getFemaleCandidates();
   return [...male, ...female];
 };
 
 // שליפת מועמד בודד
-export const getCandidate = async (id: number): Promise<Candidate> => {
-  const response = await axios.get(`${BASE_URL}/${id}`);
-  return response.data;
-};
+// export const getCandidate = async (id: number): Promise<CandidateDto> => {
+//   const response = await axios.get(`${BASE_URL}/${id}`);
+//   return response.data;
+// };
 
 // יצירת מועמד חדש
-export const createCandidate = async (formData: FormData): Promise<Candidate> => {
+export const createCandidate = async (formData: FormData): Promise<CandidateDto> => {
   const token = localStorage.getItem("token"); // ← שליפת הטוקן
   const response = await axiosInstance.post(BASE_URL, formData, {
     headers: {
@@ -43,11 +43,11 @@ export const createCandidate = async (formData: FormData): Promise<Candidate> =>
 
 
 // עדכון מועמד
-export const updateCandidate = async (id: number, formData: FormData): Promise<Candidate> => {
+export const updateCandidate = async (id: number, formData: FormData): Promise<CandidateDto> => {
   const token = localStorage.getItem("token");
-  const response = await axiosInstance.put(`${BASE_URL}/${id}`, formData, {
+  const response = await axiosInstance.post(`${BASE_URL}/${id}`, {
     headers: {
-      'Authorization': `Bearer ${token}`,
+      Authorization: `Bearer ${token}`,
       'Content-Type': 'multipart/form-data',
     },
   });
@@ -62,4 +62,14 @@ export const deleteCandidate = async (id: number): Promise<void> => {
       'Authorization': `Bearer ${token}`,
     },
   });
+};
+
+export const getCandidateByUserId = async (userId: number) => {
+  const token = localStorage.getItem('token');
+  if (!token) throw new Error('Token not found');
+
+  const response = await axios.get(`${BASE_URL}/user/${userId}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return response.data;
 };

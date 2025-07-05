@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import styles from '../design/MatchPage.module.css';
+import styles from '../design/MatchPage.module.css'
 import { useAppSelector } from '../../redux/store';
-import { Candidate } from '../../types/candidate.types';
+import { CandidateDto } from '../../types/candidateDto.types';
 import { createMatch } from '../../services/match.service';
 import { getMaleCandidates, getFemaleCandidates } from '../../services/candidate.service';
 import { mapJwtClaims } from '../../auth/auth.utils';
@@ -9,8 +9,8 @@ import { loadUserFromToken } from '../../redux/auth/auth.slice';
 
 export default function MatchPage() {
 //   const currentUser = useAppSelector(state => state.auth.user);
-  const [males, setMales] = useState<Candidate[]>([]);
-  const [females, setFemales] = useState<Candidate[]>([]);
+  const [males, setMales] = useState<CandidateDto[]>([]);
+  const [females, setFemales] = useState<CandidateDto[]>([]);
   const [selectedMale, setSelectedMale] = useState<number | null>(null);
   const [selectedFemale, setSelectedFemale] = useState<number | null>(null);
   const [statusMessage, setStatusMessage] = useState('');

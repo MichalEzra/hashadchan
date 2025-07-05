@@ -101,7 +101,7 @@
 .page {
   padding: 40px 20px;
   max-width: 1200px;
-  margin: auto;
+  margin-top: 70px;
   background-color: #f9f9f9;
   min-height: 100vh;
   box-sizing: border-box;
@@ -288,4 +288,125 @@
 
 .modalActions button:last-child {
   background-color: #999;
+}
+.toggleBtn {
+  background-color: #ddd;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 8px;
+  font-weight: bold;
+}
+
+.candidatesList {
+  list-style-type: disc;
+  margin-top: 10px;
+  padding-right: 20px;
+  color: #333;
+}
+
+.card {
+  background: linear-gradient(145deg, #ffffff, #f4f4f4);
+  padding: 24px;
+  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+}
+
+
+
+
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+  overflow-y: auto; /* אפשרות לגלילה של כל המסך במקרה קיצוני */
+}
+
+
+.modalContent {
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 80vh;         /* מגביל גובה של החלון */
+  overflow-y: auto;         /* מאפשר גלילה אנכית */
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.3);
+  animation: fadeIn 0.3s ease-in-out;
+  direction: rtl;
+}
+
+
+.modalTitle {
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+  color: #333;
+  text-align: center;
+}
+
+.modalLabel {
+  display: block;
+  margin-bottom: 1rem;
+  font-weight: bold;
+  color: #444;
+}
+
+.modalInput,
+.modalSelect {
+  width: 100%;
+  padding: 0.5rem;
+  margin-top: 0.3rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.modalActions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2rem;
+}
+
+.modalSaveBtn {
+  background-color: #28a745;
+  color: white;
+  padding: 0.6rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.modalCancelBtn {
+  background-color: #dc3545;
+  color: white;
+  padding: 0.6rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.scrollableContent {
+  max-height: 60vh;
+  overflow-y: auto;
+  padding-right: 0.5rem;
 }

@@ -42,7 +42,7 @@ const AlgorithmMatchingPage: React.FC = () => {
       <p><strong>שם:</strong> {candidate.firstName} {candidate.lastName}</p>
       <p><strong>גיל:</strong> {candidate.age}</p>
       <p><strong>סטטוס:</strong> {candidate.status}</p>
-      <p><strong>מגזר:</strong> {candidate.sector}</p> 
+      <p><strong>מגזר:</strong> {candidate.candidateSector}</p> 
       <p><strong>תת-מגזר:</strong> {candidate.subSector}</p>
       <p><strong>עיר:</strong> {candidate.city}</p>
       <p><strong>פתיחות דתית:</strong> {candidate.religiousOpenness}</p>

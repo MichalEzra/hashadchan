@@ -1,0 +1,85 @@
+.sideNav {
+  position: fixed;
+  top: 75px; /* שומר על מיקום מתחת לנבבר ראשי */
+  right: 0;
+  width: 220px;
+  height: calc(100vh - 75px);
+  background: linear-gradient(145deg, #f0f4f8, #d9e2ec);
+  box-shadow: -4px 0 15px rgba(0, 0, 0, 0.15);
+  padding: 1.5rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  border-radius: 8px 0 0 8px;
+  z-index: 1100;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  user-select: none;
+}
+
+button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0.7rem 1rem;
+  background-color: #ffffff;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  font-weight: 600;
+  color: #1f2937; /* צבע טקסט כהה */
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  background-color: #3b82f6; /* כחול יפה */
+  color: white;
+  border-color: #2563eb;
+  box-shadow: 0 0 10px #3b82f6;
+  transform: translateX(-4px);
+}
+
+/* אייקון פשוט לפני הטקסט (אפשר לשנות) */
+button::before {
+  content: "⚙️"; /* אפשר לשנות לכל אייקון רלוונטי */
+  font-size: 1.1rem;
+}
+
+/* אייקונים לפי סוג משתמש */
+.adminButton::before {
+  content: "👑";
+}
+button:nth-child(2)::before {
+  content: "📋";
+}
+button:nth-child(3)::before {
+  content: "🤝";
+}
+
+/* רספונסיבי - מתחת ל-768px */
+@media (max-width: 768px) {
+  .sideNav {
+    position: relative;
+    width: 100%;
+    height: auto;
+    padding: 1rem;
+    flex-direction: row;
+    justify-content: space-around;
+    border-radius: 0;
+    box-shadow: none;
+    background: linear-gradient(90deg, #f0f4f8, #d9e2ec);
+  }
+
+  button {
+    flex: 1;
+    justify-content: center;
+    font-size: 0.9rem;
+    padding: 0.6rem 0.5rem;
+    border-radius: 6px;
+  }
+
+  button::before {
+    display: none; /* מסתיר אייקונים בנייד */
+  }
+}

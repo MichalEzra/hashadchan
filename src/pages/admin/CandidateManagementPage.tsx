@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../redux/store';
-import { fetchCandidates } from '../../redux/thunks/candidates.thunks';
-import styles from '../style/CandidateManagementPage.module.css';
-import { Candidate } from '../../types/candidate.types';
+import { fetchCandidates, updateCandidateThunk } from '../../redux/thunks/candidates.thunks';
+import styles from '../style/UserManagementPage.module.css';
+import { CandidateDto } from '../../types/candidateDto.types';
 import { Pencil, Trash } from 'lucide-react';
 import { deleteCandidate, updateCandidate } from '../../services/candidate.service';
 import {
@@ -15,16 +15,24 @@ const CandidateManagementPage = () => {
   const dispatch = useAppDispatch();
   const { candidates = [], loading, error } = useAppSelector((state) => state.candidates) || {};
   const [search, setSearch] = useState('');
-  const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null);
+  const [selectedCandidate, setSelectedCandidate] = useState<CandidateDto | null>(null);
   const [showModal, setShowModal] = useState(false);
+  const { user } = useAppSelector((state) => state.auth);
 
   useEffect(() => {
     dispatch(fetchCandidates());
   }, [dispatch]);
 
-  const filteredCandidates = candidates.filter((c: Candidate) =>
-    `${c.firstName} ${c.lastName}`.includes(search)
-  );
+  const filteredCandidates = candidates
+    .filter((c: CandidateDto) => {
+      if (user?.userType === 'PARENT') {
+        return c.userId === Number(user.id);
+      }
+      return true; // אם המשתמש הוא ADMIN או MATCHMAKER – הצג את כל המועמדים
+    })
+    .filter((c: CandidateDto) =>
+      `${c.firstName} ${c.lastName}`.includes(search)
+    );
 
   const handleDelete = async (id: number) => {
     const confirmDelete = window.confirm('האם את בטוחה שברצונך למחוק את המועמד?');
@@ -34,47 +42,48 @@ const CandidateManagementPage = () => {
     }
   };
 
-  const handleEditClick = (candidate: Candidate) => {
+  const handleEditClick = (candidate: CandidateDto) => {
     setSelectedCandidate(candidate);
     setShowModal(true);
   };
 
   const handleSaveEdit = async () => {
-    
+
     if (!selectedCandidate || !selectedCandidate.id) return;
     try {
       const formData = convertCandidateToFormData(selectedCandidate);
-      await updateCandidate(selectedCandidate.id, formData);
+      await dispatch(updateCandidateThunk({ id: selectedCandidate.id, data: formData })).unwrap();
 
       alert("המועמד עודכן בהצלחה!");
       dispatch(fetchCandidates());
       setShowModal(false);
       setSelectedCandidate(null);
-    } catch (error) {
-      console.error("שגיאה בעדכון המועמד:", error);
-      alert("אירעה שגיאה בעת עדכון המועמד. נסה שוב.");
+    } catch (error: any) {
+      console.error("שגיאה בעדכון המועמד:", error.response?.data);
+      alert("אירעה שגיאה בעת עדכון המועמד. בדקי את הנתונים ונסי שוב.");
     }
-  };
-  function convertCandidateToFormData(candidate: Candidate): FormData {
-  const formData = new FormData();
 
-  for (const key in candidate) {
-    const value = candidate[key as keyof Candidate];
-    if (value !== undefined && value !== null) {
-      if (typeof value === 'boolean') {
-        formData.append(key, value ? 'true' : 'false');
-      } else {
-        formData.append(key, value.toString());
+  };
+  function convertCandidateToFormData(candidate: CandidateDto): FormData {
+    const formData = new FormData();
+
+    for (const key in candidate) {
+      const value = candidate[key as keyof CandidateDto];
+      if (value !== undefined && value !== null) {
+        if (typeof value === 'boolean') {
+          formData.append(key, value ? 'true' : 'false');
+        } else {
+          formData.append(key, value.toString());
+        }
       }
     }
-  }
 
-  return formData;
-}
+    return formData;
+  }
 
   const renderSelect = (
     label: string,
-    field: keyof Candidate,
+    field: keyof CandidateDto,
     options: Record<string, string | number>
   ) => (
     <label>
@@ -118,7 +127,7 @@ const CandidateManagementPage = () => {
         <p className={styles.noUsers}>לא נמצאו מועמדים להצגה כרגע.</p>
       ) : (
         <div className={styles.grid}>
-          {filteredCandidates.map((c: Candidate) => (
+          {filteredCandidates.map((c: CandidateDto) => (
             <div key={c.id} className={styles.card}>
               <div className={styles.header}>
                 <div className={styles.avatarPlaceholder}>
@@ -131,9 +140,11 @@ const CandidateManagementPage = () => {
               </div>
 
               <ul className={styles.details}>
+                <li><strong>אימייל:</strong> {c.email}</li>
+                <li><strong>טלפון:</strong> {c.phoneNumber}</li>
                 <li><strong>גיל:</strong> {c.age}</li>
                 <li><strong>סטטוס:</strong> {c.status ? 'פעיל' : 'לא פעיל'}</li>
-                <li><strong>מגזר:</strong> {c.sector}</li>
+                <li><strong>מגזר:</strong> {c.candidateSector}</li>
                 <li><strong>תת מגזר:</strong> {c.subSector}</li>
                 <li><strong>עיר:</strong> {c.city}</li>
                 <li><strong>מוצא:</strong> {c.origin}</li>
@@ -143,14 +154,14 @@ const CandidateManagementPage = () => {
                 <li><strong>צבע שיער:</strong> {c.hairColor}</li>
                 <li><strong>לימוד תורה:</strong> {c.torahLearning}</li>
                 <li><strong>מוסד לימודים:</strong> {c.education}</li>
-                <li><strong>עיסוק:</strong> {c.occupation}</li>
+                <li><strong>עיסוק:</strong> {c.jobOrStudies}</li>
                 <li><strong>שפות:</strong> {c.languages}</li>
-                <li><strong>פתיחות:</strong> {c.openness}</li>
+                <li><strong>פתיחות:</strong> {c.religiousOpenness}</li>
                 <li><strong>לבוש:</strong> {c.clothingStyle}</li>
-                <li><strong>כיסוי ראש:</strong> {c.headCovering}</li>
+                <li><strong>כיסוי ראש:</strong> {c.preferredHeadCovering}</li>
                 <li><strong>זקן:</strong> {c.beard ? 'כן' : 'לא'}</li>
                 <li><strong>סטטוס הורים:</strong> {c.familyStatus}</li>
-                <li><strong>סוג טלפון:</strong> {c.phoneType}</li>
+                <li><strong>סוג טלפון:</strong> {c.candidatePhoneType}</li>
                 <li><strong>עישון:</strong> {c.smokingStatus}</li>
                 <li><strong>רישיון נהיגה:</strong> {c.license ? 'כן' : 'לא'}</li>
                 <li><strong>נותנים:</strong> {c.giving}</li>
@@ -159,9 +170,11 @@ const CandidateManagementPage = () => {
               </ul>
 
               <div className={styles.actions}>
-                {/* <button onClick={() => handleEditClick(c)} className={styles.editBtn}>
-                  <Pencil size={16} /> עריכה
-                </button> */}
+                {(user?.userType === 'PARENT' && c.userId === Number(user?.id)) && (
+                  <button onClick={() => handleEditClick(c)} className={styles.editBtn}>
+                    <Pencil size={16} /> עריכה
+                  </button>
+                )}
                 <button onClick={() => handleDelete(c.id)} className={styles.deleteBtn}>
                   <Trash size={16} /> מחיקה
                 </button>
@@ -175,106 +188,131 @@ const CandidateManagementPage = () => {
         <div className={styles.modalOverlay}>
           <div className={styles.modal}>
             <h3>עריכת מועמד</h3>
-            <label>
-              שם פרטי:
-              <input
-                value={selectedCandidate.firstName}
-                onChange={(e) => setSelectedCandidate({ ...selectedCandidate, firstName: e.target.value })}
-              />
-            </label>
-            <label>
-              שם משפחה:
-              <input
-                value={selectedCandidate.lastName}
-                onChange={(e) => setSelectedCandidate({ ...selectedCandidate, lastName: e.target.value })}
-              />
-            </label>
-            <label>
-              עיר:
-              <input
-                value={selectedCandidate.city}
-                onChange={(e) => setSelectedCandidate({ ...selectedCandidate, city: e.target.value })}
-              />
-            </label>
-            <label>
-              גיל:
-              <input
-                type="number"
-                value={selectedCandidate.age}
-                onChange={(e) => setSelectedCandidate({ ...selectedCandidate, age: Number(e.target.value) })}
-              />
-            </label>
-            <label>
-              מוצא:
-              <input
-                value={selectedCandidate.origin}
-                onChange={(e) => setSelectedCandidate({ ...selectedCandidate, origin: e.target.value })}
-              />
-            </label>
-            <label>
-              גובה:
-              <input
-                type="number"
-                value={selectedCandidate.height}
-                onChange={(e) => setSelectedCandidate({ ...selectedCandidate, height: Number(e.target.value) })}
-              />
-            </label>
-            {renderSelect('מגדר', 'gender', Gender)}
-            {renderSelect('מגזר', 'sector', candidateSector)}
-            {renderSelect('תת מגזר', 'subSector', SubSector)}
-            {renderSelect('לימוד תורה', 'torahLearning', TorahStudy)}
-            {renderSelect('מוסד לימודים', 'education', EducationInstitution)}
-            {renderSelect('עיסוק', 'occupation', Occupation)}
-            {renderSelect('שפות', 'languages', Language)}
-            {renderSelect('פתיחות', 'openness', Openness)}
-            {renderSelect('לבוש', 'clothingStyle', ClothingStyle)}
-            {renderSelect('מבנה גוף', 'physique', Physique)}
-            {renderSelect('צבע עור', 'skinTone', SkinTone)}
-            {renderSelect('צבע שיער', 'hairColor', HairColor)}
-            {renderSelect('כיסוי ראש', 'headCovering', HeadCovering)}
-            {renderSelect('סטטוס הורים', 'familyStatus', ParentsStatus)}
-            {renderSelect('סוג טלפון', 'phoneType', PhoneType)}
-            {renderSelect('עישון', 'smokingStatus', Smoking)}
-            <label>
-              נותנים:
-              <input
-                type="number"
-                value={selectedCandidate.giving ?? ''}
-                onChange={(e) => setSelectedCandidate({ ...selectedCandidate, giving: Number(e.target.value) })}
-              />
-            </label>
-            <label>
-              דורשים:
-              <input
-                type="number"
-                value={selectedCandidate.expecting ?? ''}
-                onChange={(e) => setSelectedCandidate({ ...selectedCandidate, expecting: Number(e.target.value) })}
-              />
-            </label>
-            <label>
-              זמין להצעות:
-              <input
-                type="checkbox"
-                checked={selectedCandidate.availableForProposals}
-                onChange={(e) => setSelectedCandidate({ ...selectedCandidate, availableForProposals: e.target.checked })}
-              />
-            </label>
-            <label>
-              זקן:
-              <input
-                type="checkbox"
-                checked={selectedCandidate.beard}
-                onChange={(e) => setSelectedCandidate({ ...selectedCandidate, beard: e.target.checked })}
-              />
-            </label>
-            <label>
-              רישיון נהיגה:
-              <input
-                type="checkbox"
-                checked={selectedCandidate.license}
-                onChange={(e) => setSelectedCandidate({ ...selectedCandidate, license: e.target.checked })}
-              />
-            </label>
+            <div className={styles.scrollableContent}>
+              <label>
+                שם פרטי:
+                <input
+                  value={selectedCandidate.firstName}
+                  onChange={(e) => setSelectedCandidate({ ...selectedCandidate, firstName: e.target.value })}
+                />
+              </label>
+              <label>
+                שם משפחה:
+                <input
+                  value={selectedCandidate.lastName}
+                  onChange={(e) => setSelectedCandidate({ ...selectedCandidate, lastName: e.target.value })}
+                />
+              </label>
+              <label>
+                אימייל:
+                <input
+                  value={selectedCandidate.email?? ''}
+                  onChange={(e) => setSelectedCandidate({ ...selectedCandidate, email: e.target.value })}
+                />
+              </label>
+
+              <label>
+                עיר:
+                <input
+                  value={selectedCandidate.city}
+                  onChange={(e) => setSelectedCandidate({ ...selectedCandidate, city: e.target.value })}
+                />
+              </label>
+              <label>
+                גיל:
+                <input
+                  type="number"
+                  value={selectedCandidate.age}
+                  onChange={(e) => setSelectedCandidate({ ...selectedCandidate, age: Number(e.target.value) })}
+                />
+              </label>
+              <label>
+                מוצא:
+                <input
+                  value={selectedCandidate.origin}
+                  onChange={(e) => setSelectedCandidate({ ...selectedCandidate, origin: e.target.value })}
+                />
+              </label>
+              <label>
+                גובה:
+                <input
+                  type="number"
+                  value={selectedCandidate.height}
+                  onChange={(e) => setSelectedCandidate({ ...selectedCandidate, height: Number(e.target.value) })}
+                />
+              </label>
+              {renderSelect('מגדר', 'gender', Gender)}
+              {renderSelect('מגזר', 'candidateSector', candidateSector)}
+              {renderSelect('תת מגזר', 'subSector', SubSector)}
+              {renderSelect('לימוד תורה', 'torahLearning', TorahStudy)}
+              {renderSelect('מוסד לימודים', 'education', EducationInstitution)}
+              {renderSelect('עיסוק', 'jobOrStudies', Occupation)}
+              {renderSelect('שפות', 'languages', Language)}
+              {renderSelect('פתיחות', 'religiousOpenness', Openness)}
+              {renderSelect('לבוש', 'clothingStyle', ClothingStyle)}
+              {renderSelect('מבנה גוף', 'physique', Physique)}
+              {renderSelect('צבע עור', 'skinTone', SkinTone)}
+              {renderSelect('צבע שיער', 'hairColor', HairColor)}
+              {renderSelect('כיסוי ראש', 'preferredHeadCovering', HeadCovering)}
+              {renderSelect('סטטוס הורים', 'familyStatus', ParentsStatus)}
+              {renderSelect('סוג טלפון', 'candidatePhoneType', PhoneType)}
+              {renderSelect('עישון', 'smokingStatus', Smoking)}
+              <label>
+                נותנים:
+                <input
+                  type="number"
+                  value={selectedCandidate.giving ?? ''}
+                  onChange={(e) => setSelectedCandidate({ ...selectedCandidate, giving: Number(e.target.value) })}
+                />
+              </label>
+              <label>
+                דורשים:
+                <input
+                  type="number"
+                  value={selectedCandidate.expecting ?? ''}
+                  onChange={(e) => setSelectedCandidate({ ...selectedCandidate, expecting: Number(e.target.value) })}
+                />
+              </label>
+              <label>
+                תיאור עצמי:
+                <textarea
+                  value={selectedCandidate.descriptionSelf}
+                  onChange={(e) => setSelectedCandidate({ ...selectedCandidate, descriptionSelf: e.target.value })}
+                />
+              </label>
+<label>
+  תיאור בן/בת זוג רצוי:
+  <textarea
+    value={selectedCandidate.descriptionFind}
+    onChange={(e) => setSelectedCandidate({ ...selectedCandidate, descriptionFind: e.target.value })}
+  />
+</label>
+
+              <label>
+                זמין להצעות:
+                <input
+                  type="checkbox"
+                  checked={selectedCandidate.availableForProposals}
+                  onChange={(e) => setSelectedCandidate({ ...selectedCandidate, availableForProposals: e.target.checked })}
+                />
+              </label>
+              <label>
+                זקן:
+                <input
+                  type="checkbox"
+                  checked={selectedCandidate.beard}
+                  onChange={(e) => setSelectedCandidate({ ...selectedCandidate, beard: e.target.checked })}
+                />
+              </label>
+              <label>
+                רישיון נהיגה:
+                <input
+                  type="checkbox"
+                  checked={selectedCandidate.license}
+                  onChange={(e) => setSelectedCandidate({ ...selectedCandidate, license: e.target.checked })}
+                />
+              </label>
+            </div>
             <div className={styles.modalActions}>
               <button onClick={() => handleSaveEdit()}>שמור</button>
               <button onClick={() => setShowModal(false)}>ביטול</button>

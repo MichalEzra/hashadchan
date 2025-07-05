@@ -6,10 +6,14 @@ import { useAppSelector, useAppDispatch } from '../redux/store';
 import { loadUserFromToken, loginUser, registerUser, setUser } from '../redux/auth/auth.slice';
 import { UserType } from '../types/enums';
 import { mapJwtClaims } from '../auth/auth.utils';
+import SideNav from '../components/navbar/SideNav';
+import { User } from 'lucide-react';
 
 export default function HomePage() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const [showSideNav, setShowSideNav] = useState(false);
+  const isLoggedIn = useAppSelector(state => !!state.auth.user?.userType);
 
   const { user, isLoading, error, isAuthenticated } = useAppSelector(state => state.auth);
   const userType = user?.userType;
@@ -19,14 +23,22 @@ export default function HomePage() {
   const [showRegisterModal, setShowRegisterModal] = useState(false);
   const [isRegisterLoading, setIsRegisterLoading] = useState(false); // New loading state for register form
 
+  // useEffect(() => {
+  //   if (user) {
+  //     console.log("✅ התחברות בוצעה בהצלחה!", user);
+  //     console.log("🔍 userType =", user?.userType);
+
+  //     navigate("/"); // או כל מסלול מתאים
+  //   }
+  // }, [user]);
+
   useEffect(() => {
-    if (user) {
+    if (userType) {
       console.log("✅ התחברות בוצעה בהצלחה!", user);
       console.log("🔍 userType =", user?.userType);
-
-      navigate("/"); // או כל מסלול מתאים
+      // navigate('/suggestions'); // החליפי בנתיב המתאים לעמוד ההצעות שלך
     }
-  }, [user]);
+  }, [userType, navigate]);
 
   const [loginData, setLoginData] = useState({ email: '', password: '' });
   const [registerData, setRegisterData] = useState({
@@ -174,6 +186,7 @@ export default function HomePage() {
         </div>
       )}
 
+      {/* 
       {user && userType === UserType.ADMIN && (
         <div className={styles.adminButtonsContainer}>
           <h2>שלום {userName}, אתה מחובר כמנהל מערכת</h2>
@@ -186,20 +199,19 @@ export default function HomePage() {
       {user && userType === UserType.MATCHMAKER && (
         <div className={styles.adminButtonsContainer}>
           <h2>שלום {userName}, אתה מחובר כשדכן</h2>
-          {/* <button className={styles.adminButton} onClick={() => navigate('/users')}>ניהול משתמשים</button> */}
           <button className={styles.adminButton} onClick={() => navigate('/candidates')}>ניהול מועמדים</button>
           <button className={styles.adminButton} onClick={() => navigate('/match')}>התאמת מועמדים</button>
         </div>
       )}
-      
+
       {user && userType === UserType.PARENT && (
         <div className={styles.adminButtonsContainer}>
           <h2>שלום {userName}, אתה מחובר כהורה</h2>
-          {/* <button className={styles.adminButton} onClick={() => navigate('/users')}>ניהול משתמשים</button> */}
           <button className={styles.adminButton} onClick={() => navigate('/candidates/new')}>הוספת מועמד</button>
           <button className={styles.adminButton} onClick={() => navigate('/algorithm-match')}>חיפוש הצעות מתאימות</button>
+          <button className={styles.adminButton} onClick={() => navigate('/candidates', { state: { userId: user.id } })}>הצגת המועמדים שלי</button>
         </div>
-      )}
+      )} */}
 
       {showLoginModal && (
         <div className={styles.modalBackdrop}>
@@ -240,10 +252,20 @@ export default function HomePage() {
               {registerErrors.password && <p className={styles.errorMessage}>{registerErrors.password}</p>}
               <button type="submit">{isLoading ? 'נרשם...' : 'הירשם'}</button>
             </form>
-            <p>כבר יש לך חשבון? <button onClick={() => { setShowLoginModal(true);setShowRegisterModal(false) }}>התחבר כאן</button></p>
+            <p>כבר יש לך חשבון? <button onClick={() => { setShowLoginModal(true); setShowRegisterModal(false) }}>התחבר כאן</button></p>
           </div>
         </div>
       )}
+
+      {isLoggedIn && (
+        <button className= {styles.personalArea} onClick={() => {setShowSideNav(true); navigate('/suggestions')}}>
+          <User size={18} style={{ marginLeft: 8 }} />לאיזור האישי</button>
+      )}
+
+      {isLoggedIn && showSideNav && (
+        <SideNav onClose={() => setShowSideNav(false)} />
+      )}
+
     </div>
   );
 }

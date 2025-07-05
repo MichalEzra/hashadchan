@@ -32,6 +32,7 @@ export enum Status {
   GARUSH_H_IM_YELADIM = "גרוש_ה_עם_ילדים",
   ALMAN_H_IM_YELADIM = "אלמן_ה_עם_ילדים",
 };
+
 export const CandidateStatusDisplayMap: Record<Status, string> = {
   [Status.RAVAK_H]: "רווק/ה",
   [Status.GARUSH_H]: "גרוש/ה",
