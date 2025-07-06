@@ -247,10 +247,11 @@ const SuggestionsPage: React.FC = () => {
 
     useEffect(() => {
         if (!candidate) return;
+        console.log('candidate.gender:', candidate?.gender);
         if (candidate.gender === 'נקבה') {
-            dispatch(fetchMaleMatches());
-        } else {
             dispatch(fetchFemaleMatches());
+        } else {
+            dispatch(fetchMaleMatches());
         }
     }, [candidate, dispatch]);
 

@@ -64,6 +64,15 @@ export const deleteCandidate = async (id: number): Promise<void> => {
   });
 };
 
+// export const getCandidateByUserId = async (userId: number) => {
+//   const token = localStorage.getItem('token');
+//   if (!token) throw new Error('Token not found');
+
+//   const response = await axios.get(`${BASE_URL}/user/${userId}`, {
+//     headers: { Authorization: `Bearer ${token}` },
+//   });
+//   return response.data;
+// };
 export const getCandidateByUserId = async (userId: number) => {
   const token = localStorage.getItem('token');
   if (!token) throw new Error('Token not found');
@@ -71,5 +80,6 @@ export const getCandidateByUserId = async (userId: number) => {
   const response = await axios.get(`${BASE_URL}/user/${userId}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
-  return response.data;
+
+  return response.data[0]; // בדיוק מה שביקשת: מחזיר את המועמד הראשון במערך
 };

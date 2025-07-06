@@ -64,6 +64,10 @@ export const fetchMyCandidate = createAsyncThunk(
   async (userId: number, { rejectWithValue }) => {
     try {
       const candidate = await getCandidateByUserId(userId);
+      console.log('Candidate from API:', candidate);
+      console.log('Gender value:', candidate.gender);
+      console.log('Gender type:', typeof candidate.gender);
+
       return candidate;
     } catch (error: any) {
       return rejectWithValue(error.response?.data || error.message);
