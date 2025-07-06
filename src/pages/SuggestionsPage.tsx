@@ -219,6 +219,7 @@
 // export default SuggestionsPage;
 
 // SuggestionsPage.tsx
+// SuggestionsPage.tsx
 import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../redux/store';
 import { fetchMyCandidate } from '../redux/thunks/candidates.thunks';
@@ -236,7 +237,7 @@ const SuggestionsPage: React.FC = () => {
     const isLoadingCandidate = useAppSelector(state => state.candidates.loading);
     const isLoadingMatches = useAppSelector(state => state.matches.loading);
     const [selectedCandidate, setSelectedCandidate] = useState<CandidateDto | null>(null);
-    const [candidateDetails, setCandidateDetails] = useState<string>('');  // המידע המפורט מהשרת
+    const [candidateDetails, setCandidateDetails] = useState<string>('');    // המידע המפורט מהשרת
     const [loadingDetails, setLoadingDetails] = useState(false);
 
     useEffect(() => {
@@ -247,11 +248,12 @@ const SuggestionsPage: React.FC = () => {
 
     useEffect(() => {
         if (!candidate) return;
-        console.log('candidate.gender:', candidate?.gender);
+        // כאשר המשתמש המחובר הוא נקבה, אנחנו רוצים להביא התאמות של גברים (MaleMatches)
+        // וכאשר המשתמש המחובר הוא זכר, אנחנו רוצים להביא התאמות של נשים (FemaleMatches)
         if (candidate.gender === 'נקבה') {
-            dispatch(fetchFemaleMatches());
+            dispatch(fetchMaleMatches()); // תיקון כאן: נקבה רואה בנים
         } else {
-            dispatch(fetchMaleMatches());
+            dispatch(fetchFemaleMatches()); // תיקון כאן: זכר רואה בנות
         }
     }, [candidate, dispatch]);
 
@@ -272,10 +274,13 @@ const SuggestionsPage: React.FC = () => {
             .finally(() => setLoadingDetails(false));
     }, [selectedCandidate]);
 
+    // גם כאן צריך לתקן: אם המשתמש הוא נקבה, הוא רואה הצעות של גברים (matchesMale)
+    // אם המשתמש הוא זכר, הוא רואה הצעות של נשים (matchesFemale)
     const suggestions = candidate?.gender === 'נקבה' ? matchesMale : matchesFemale;
 
+    // וגם כאן, כדי לוודא שמוצג המועמד השני בזוג ההתאמה
     const getOtherCandidate = (match: MatchResultsDto) =>
-        candidate?.gender === 'נקבה' ? match.male : match.female;
+        candidate?.gender === 'נקבה' ? match.male : match.female; // נקבה רואה את ה-male בזוג, זכר רואה את ה-female בזוג
 
     return (
         <div className={styles.suggestionsContainer}>
@@ -305,6 +310,7 @@ const SuggestionsPage: React.FC = () => {
                         >
                             <div className={styles.cardHeader}>
                                 <div className={styles.profileImageContainer}>
+                                    {/* תמונת פרופיל בעתיד */}
                                     <span className={styles.candidateId}>{other.id}</span>
                                 </div>
                                 <div className={styles.starIcon}>⭐</div>
@@ -323,6 +329,7 @@ const SuggestionsPage: React.FC = () => {
                                     <span className={styles.detailLabel}>מצב אישי:</span>
                                     <span className={styles.detailValue}>{other.status}</span>
                                 </div>
+                                {/* תצוגה מותנית ללימוד תורה עבור זכרים */}
                                 {other.gender === 'זכר' && (
                                     <div className={styles.detailRow}>
                                         <span className={styles.detailLabel}>לימוד תורה:</span>
@@ -351,4 +358,3 @@ const SuggestionsPage: React.FC = () => {
 };
 
 export default SuggestionsPage;
-
