@@ -33,7 +33,7 @@ const AlgorithmMatchingPage: React.FC = () => {
 
   const handleCreateMatch = async (candidate1Id: number, candidate2Id: number) => {
     if (window.confirm('האם אתה בטוח שברצונך ליצור שידוך זה?')) {
-      await dispatch(createNewMatch({ idCandidate1: candidate1Id, idCandidate2: candidate2Id }));
+      await dispatch(createNewMatch({ idCandidate1: candidate1Id, idCandidate2: candidate2Id}));
     }
   };
 

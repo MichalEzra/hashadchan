@@ -4,11 +4,11 @@ import { useAppSelector } from '../../redux/store';
 import { CandidateDto } from '../../types/candidateDto.types';
 import { createMatch } from '../../services/match.service';
 import { getMaleCandidates, getFemaleCandidates } from '../../services/candidate.service';
-import { mapJwtClaims } from '../../auth/auth.utils';
+import { jwtDecode, mapJwtClaims } from '../../auth/auth.utils';
 import { loadUserFromToken } from '../../redux/auth/auth.slice';
 
 export default function MatchPage() {
-//   const currentUser = useAppSelector(state => state.auth.user);
+  //   const currentUser = useAppSelector(state => state.auth.user);
   const [males, setMales] = useState<CandidateDto[]>([]);
   const [females, setFemales] = useState<CandidateDto[]>([]);
   const [selectedMale, setSelectedMale] = useState<number | null>(null);
@@ -21,36 +21,41 @@ export default function MatchPage() {
   }, []);
 
   const handleSubmit = async () => {
-    const currentUser = loadUserFromToken();
-    if (!currentUser) {
-        setStatusMessage('לא נמצאה משתמש מחובר');
-        return;
-        }
-    const user = mapJwtClaims(currentUser);
-    console.log('currentUser:', currentUser);
+    const token = localStorage.getItem('token');
+    const decoded = jwtDecode(token || '');
+
+    if (!decoded) {
+      setStatusMessage('לא נמצאה משתמש מחובר');
+      return;
+    }
+    const user = mapJwtClaims(decoded);
+    console.log('📦 decoded claims:', decoded);
+    console.log('👤 user:', user);
+
     if (!selectedMale || !selectedFemale || !user?.id) {
       setStatusMessage('יש לבחור מועמד, מועמדת ולהיות מחובר');
       return;
     }
 
     try {
-        // const raw = getUserFromToken();
-        // if (!raw) {
-        //     setStatusMessage('לא נמצאה משתמש מחובר');
-        //     return;
-        //     }
-        //     const user = mapJwtClaims(raw);
-        //     const idMatchmaker = user.nameid.valueOf();
+      // const raw = getUserFromToken();
+      // if (!raw) {
+      //     setStatusMessage('לא נמצאה משתמש מחובר');
+      //     return;
+      //     }
+      //     const user = mapJwtClaims(raw);
+      //     const idMatchmaker = user.nameid.valueOf();
       await createMatch({
         idCandidate1: selectedMale,
         idCandidate2: selectedFemale,
       });
 
       setStatusMessage('שידוך נשלח בהצלחה!');
-    } catch (error) {
-      console.error(error);
-      setStatusMessage('אירעה שגיאה בשליחת השידוך');
+    } catch (error: any) {
+      console.error('שגיאת שרת:', error.response?.data || error.message);
+      setStatusMessage('אירעה שגיאה: ' + (error.response?.data || error.message));
     }
+
   };
 
   return (
