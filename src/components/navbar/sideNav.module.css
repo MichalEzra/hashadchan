@@ -1,6 +1,6 @@
 .sideNav {
   position: fixed;
-  top: 75px; /* שומר על מיקום מתחת לנבבר ראשי */
+  top: 0; /* שומר על מיקום מתחת לנבבר ראשי */
   right: 0;
   width: 220px;
   height: calc(100vh - 75px);
@@ -82,4 +82,16 @@ button:nth-child(3)::before {
   button::before {
     display: none; /* מסתיר אייקונים בנייד */
   }
+}
+.selector {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 0.75rem;
+}
+
+.selector select {
+  padding: 0.4rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
 }

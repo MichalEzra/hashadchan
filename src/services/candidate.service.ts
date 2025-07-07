@@ -68,7 +68,7 @@ export const getCandidateByUserId = async (userId: number) => {
   const token = localStorage.getItem('token');
   if (!token) throw new Error('Token not found');
 
-  const response = await axios.get(`${BASE_URL}/user/${userId}`, {
+  const response = await axios.get(`${BASE_URL}/user/${userId}/all`, {
     headers: { Authorization: `Bearer ${token}` },
   });
   return response.data;

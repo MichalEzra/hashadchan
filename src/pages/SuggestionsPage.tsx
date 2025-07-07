@@ -304,9 +304,20 @@ const SuggestionsPage: React.FC = () => {
                         >
                             <div className={styles.cardHeader}>
                                 <div className={styles.profileImageContainer}>
+                                    <div className={styles.profileImageContainer}>
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="42"
+                                            height="42"
+                                            viewBox="0 0 24 24"
+                                            fill="#6b7280"
+                                        >
+                                            <path d="M12 2a5 5 0 0 1 5 5v1a5 5 0 0 1-10 0V7a5 5 0 0 1 5-5zm0 14c4.418 0 8 2.239 8 5v1H4v-1c0-2.761 3.582-5 8-5z" />
+                                        </svg>
+                                    </div>
                                     <span className={styles.candidateId}>{other.id}</span>
                                 </div>
-                                <div className={styles.starIcon}>⭐</div>
+                                {/* <div className={styles.starIcon}>⭐</div> */}
                             </div>
                             <div className={styles.candidateMainInfo}>
                                 <div className={styles.nameAndAge}>

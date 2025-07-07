@@ -226,3 +226,9 @@ pre {
   align-self: flex-start;
   direction: rtl;
 }
+
+
+
+.profileImageContainer {
+  background-color: transparent;
+}

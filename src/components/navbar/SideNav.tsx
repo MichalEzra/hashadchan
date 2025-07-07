@@ -1,17 +1,36 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './sideNav.module.css';
-import { useAppSelector } from '../../redux/store';
+import { useAppDispatch, useAppSelector } from '../../redux/store';
 import { useNavigate } from 'react-router';
+import { fetchCandidates } from '../../redux/thunks/candidates.thunks';
 
 interface SideNavProps {
     onClose: () => void;
 }
 
 const SideNav: React.FC<SideNavProps> = ({ onClose }) => {
+    const dispatch = useAppDispatch();
+    const candidates = useAppSelector(state => state.candidates.candidates || []);
+    const currentUser = useAppSelector(state => state.auth.user);
+    const [selectedCandidateId, setSelectedCandidateId] = useState<number | null>(null);
+const userType = useAppSelector(state => state.auth.user?.userType);
+
+    useEffect(() => {
+        if (userType === 'PARENT') {
+            dispatch(fetchCandidates());
+        }
+    }, [dispatch, userType]);
+
+    useEffect(() => {
+        if (userType === 'PARENT' && candidates.length > 0 && selectedCandidateId === null) {
+            const myCandidates = candidates.filter(c => c.userId === Number(currentUser?.id));
+            if (myCandidates.length > 0) {
+                setSelectedCandidateId(myCandidates[0].id); // ברירת מחדל
+            }
+        }
+    }, [candidates, currentUser, userType]);
 
     const navigate = useNavigate()
-    const userType = useAppSelector(state => state.auth.user?.userType);
-
     const renderButtons = () => {
         switch (userType) {
             case 'ADMIN':
@@ -31,11 +50,37 @@ const SideNav: React.FC<SideNavProps> = ({ onClose }) => {
                     </>
                 );
             case 'PARENT':
+                const myCandidates = candidates.filter(c => c.userId === Number(currentUser?.id));
                 return (
                     <>
                         <button className={styles.adminButton} onClick={() => navigate('/candidates/new')}>הוספת מועמד</button>
                         <button className={styles.adminButton} onClick={() => navigate('/candidates')}>צפייה בפרטי המועמדים</button>
-                        <button className={styles.adminButton} onClick={() => navigate('/algorithm-match')}>הסטוריית שידוכים</button>
+
+                        {/* בחירת מועמד */}
+                        {myCandidates.length > 0 && (
+                            <div className={styles.selector}>
+                                <label>בחר מועמד:</label>
+                                <select
+                                    value={selectedCandidateId ?? ''}
+                                    onChange={(e) => setSelectedCandidateId(Number(e.target.value))}
+                                >
+                                    {myCandidates.map(c => (
+                                        <option key={c.id} value={c.id}>
+                                            {c.firstName} {c.lastName}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        )}
+
+                        {/* כפתור להצעות */}
+                        <button
+                            className={styles.adminButton}
+                            onClick={() => navigate(`/suggestions?candidateId=${selectedCandidateId}`)}
+                            disabled={!selectedCandidateId}
+                        >
+                            הצעות עבור המועמד
+                        </button>
                     </>
                 );
             default:

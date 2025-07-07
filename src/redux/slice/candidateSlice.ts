@@ -56,8 +56,24 @@ const candidateSlice = createSlice({
       .addCase(fetchMyCandidate.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || "Failed to fetch current candidate";
+      })
+      .addCase(createCandidate.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(createCandidate.fulfilled, (state, action: PayloadAction<CandidateDto>) => {
+        state.loading = false;
+        // מוסיף את המועמד החדש למערך הקיים
+        state.candidates.push(action.payload);
+        // אופציונלי: להגדיר אותו כמועמד נוכחי
+        state.currentCandidate = action.payload;
+      })
+      .addCase(createCandidate.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string || action.error.message || "Failed to create candidate";
       });
-      // המשך הטיפול ביצירת מועמד, מחיקה, עדכון כמו שיש לך...
+
+    // המשך הטיפול ביצירת מועמד, מחיקה, עדכון כמו שיש לך...
   },
 });
 
