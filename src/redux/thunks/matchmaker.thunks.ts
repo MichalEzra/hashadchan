@@ -1,6 +1,5 @@
-import { createAsyncThunk, isRejectedWithValue } from "@reduxjs/toolkit";
-import axios from "axios";
-import {  getAllMatchmakers } from "../../services/matchmaker.service";
+import { createAsyncThunk } from "@reduxjs/toolkit";
+import {  createMatchmaker, getAllMatchmakers, updateMatchmaker } from "../../services/matchmaker.service";
 import { Matchmaker } from "../../types/matchmaker.types";
 
 // שליפת כל המועמדים
@@ -19,18 +18,29 @@ export const fetchMatchmakers = createAsyncThunk<Matchmaker[], void>(
 );
 
 // יצירת מועמד חדש
-export const createMatchmaker = createAsyncThunk(
-  "matchmakers/create",
-  async (newMatchmaker: FormData, thunkAPI) => {
+export const createMatchmakerThunk = createAsyncThunk(
+  'matchmakers/create',
+  async (newMatchmaker: FormData, { rejectWithValue }) => {
     try {
-      const response = await axios.post("/api/matchmaker", newMatchmaker, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      return response.data; // מועמד חדש
-    } catch (error: any) {
-      return thunkAPI.rejectWithValue(error.message);
+      const response = await createMatchmaker(newMatchmaker)
+      return response; // מועמד חדש
+    } catch (err: any) {
+      return rejectWithValue(err.response?.data || err.message);
     }
   }
 );
+
+// thunk/updateMatchmakerThunk.ts
+
+interface UpdateMatchmakerPayload {
+  id: number;
+  formData: FormData;
+}
+
+export const updateMatchmakerThunk = createAsyncThunk(
+  'matchmaker/update',
+  async ({ id, formData }: UpdateMatchmakerPayload) => {
+    await updateMatchmaker(id, formData);
+  }
+);
+

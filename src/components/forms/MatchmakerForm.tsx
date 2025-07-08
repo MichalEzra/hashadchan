@@ -10,6 +10,8 @@ import {
 import styles from "../design/CandidateForm.module.css"; // ודא שהנתיב הזה נכון בפרויקט שלך - ייתכן שתצטרך לשנות אותו
 import { useParams } from "react-router-dom";
 import { createMatchmaker, getAllMatchmakers, getMatchmakerById, updateMatchmaker } from "../../services/matchmaker.service";
+import { useAppDispatch } from "../../redux/store";
+import { createMatchmakerThunk, updateMatchmakerThunk } from "../../redux/thunks/matchmaker.thunks";
 
 // ממשק Matchmaker כפי שסופק
 interface Matchmaker {
@@ -103,10 +105,10 @@ const MatchmakerForm: React.FC = () => {
   const [matchmaker, setMatchmaker] = useState<Matchmaker>(initialMatchmaker);
   // const [imageFile, setImageFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
-
+  const dispatch = useAppDispatch();
   useEffect(() => {
     if (id) {
-      getMatchmakerById(Number(id)).then((data : any) => { // Type annotation removed here as it's already defined in getMatchmaker
+      getMatchmakerById(Number(id)).then((data: any) => { // Type annotation removed here as it's already defined in getMatchmaker
         setMatchmaker(data);
       }).catch(err => {
         setError("שגיאה בטעינת נתוני שדכן: " + err.message);
@@ -157,11 +159,25 @@ const MatchmakerForm: React.FC = () => {
     // if (imageFile) formData.append("fileImage", imageFile); // אם השדכן מעלה תמונה
 
     console.log("Form data being sent:", Object.fromEntries(formData.entries()));
+
     try {
-      if (id) {
-        await updateMatchmaker(Number(id), formData);
+      const selectedId = matchmaker?.id;
+      if (selectedId) {
+        try {
+          await dispatch(updateMatchmakerThunk({ id: selectedId, formData })).unwrap();
+          alert('עודכן בהצלחה!');
+        } catch (err) {
+          console.error('שגיאה בעדכון:', err);
+          alert('אירעה שגיאה בעדכון');
+        }
       } else {
-        await createMatchmaker(formData);
+        try {
+          await dispatch(createMatchmakerThunk(formData)).unwrap();
+          alert('נוצר בהצלחה!');
+        } catch (err) {
+          console.error('שגיאה בעת הוספת שדכן:', err);
+          alert('אירעה שגיאה בהוספת שדכן');
+        }
       }
       setError(null); // Clear any previous errors on successful submission
     } catch (err) {
@@ -236,7 +252,7 @@ const MatchmakerForm: React.FC = () => {
         <button
           type="button"
           className={`${styles.genderButton} ${matchmaker.matchmakerGender === Gender.NEKEVA ? styles.active : ''}`}
-          onClick={() => setMatchmaker((prev : Matchmaker) => ({...prev, matchmakerGender: Gender.NEKEVA}))}
+          onClick={() => setMatchmaker((prev: Matchmaker) => ({ ...prev, matchmakerGender: Gender.NEKEVA }))}
         >
           <div className={styles.genderIcon}>👤</div>
           אישה
@@ -244,7 +260,7 @@ const MatchmakerForm: React.FC = () => {
         <button
           type="button"
           className={`${styles.genderButton} ${matchmaker.matchmakerGender === Gender.ZACHOR ? styles.active : ''}`}
-          onClick={() => setMatchmaker((prev : Matchmaker) => ({...prev, matchmakerGender: Gender.ZACHOR}))}
+          onClick={() => setMatchmaker((prev: Matchmaker) => ({ ...prev, matchmakerGender: Gender.ZACHOR }))}
         >
           <div className={styles.genderIcon}>👤</div>
           גבר

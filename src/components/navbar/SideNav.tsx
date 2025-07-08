@@ -13,7 +13,7 @@ const SideNav: React.FC<SideNavProps> = ({ onClose }) => {
     const candidates = useAppSelector(state => state.candidates.candidates || []);
     const currentUser = useAppSelector(state => state.auth.user);
     const [selectedCandidateId, setSelectedCandidateId] = useState<number | null>(null);
-const userType = useAppSelector(state => state.auth.user?.userType);
+    const userType = useAppSelector(state => state.auth.user?.userType);
 
     useEffect(() => {
         if (userType === 'PARENT') {
@@ -39,12 +39,14 @@ const userType = useAppSelector(state => state.auth.user?.userType);
                         <button className={styles.adminButton} onClick={() => navigate('/users')}>ניהול משתמשים</button>
                         <button className={styles.adminButton} onClick={() => navigate('/candidates')}>ניהול מועמדים</button>
                         <button className={styles.adminButton} onClick={() => navigate('/matchmakers')}>ניהול שדכנים</button>
+                        <button className={styles.adminButton} onClick={() => navigate('/matchmaker/new')}>הוספת שדכן</button>
+
                     </>
                 );
             case 'MATCHMAKER':
                 return (
                     <>
-                    
+
                         <button className={styles.adminButton} onClick={() => navigate('/candidates')}>ניהול מועמדים</button>
                         <button className={styles.adminButton} onClick={() => navigate('/match')}>התאמת מועמדים</button>
                         <button className={styles.adminButton} onClick={() => navigate('/algorithm-match')}>התאמת מועמדים ע"י אלגוריתם</button>
