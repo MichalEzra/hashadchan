@@ -7,20 +7,13 @@ const token = localStorage.getItem('token'); // או איך שאת שומרת א
 
 // יצירת שידוך בין מועמד למועמדת על ידי שדכן
 export const createMatch = async (request: MatchRequest) => {
-  const token = localStorage.getItem('token'); // הוסיפי שורה זו!
-
-  console.log('token:', token);
-  if (!token) {
-    console.error('No token found');
-    throw new Error('Missing auth token');
-  }
-
-  return await axios.post(
-    `${BASE_URL}/Match`, request,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+    console.log('token:', localStorage.getItem('token'));
+    return await axios.post(
+        `${BASE_URL}/Match`,request,
+        {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
     });
 };
 

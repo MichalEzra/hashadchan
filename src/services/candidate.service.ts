@@ -5,17 +5,18 @@ import axiosInstance from './axiosInstance';
 
 const BASE_URL = 'http://localhost:5245/api/Candidate';
 
-// שליפת מועמדים לפי מגדר
+
+// שליפת מועמדים זכרים
 export const getMaleCandidates = async (): Promise<CandidateDto[]> => {
   const response = await axios.get(`${BASE_URL}/males`);
   return response.data;
 };
 
+// שליפת מועמדות נקבות
 export const getFemaleCandidates = async (): Promise<CandidateDto[]> => {
   const response = await axios.get(`${BASE_URL}/females`);
   return response.data;
 };
-
 // שליפת כל המועמדים (גברים + נשים)
 export const getCandidates = async (): Promise<CandidateDto[]> => {
   const male = await getMaleCandidates();
