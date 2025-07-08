@@ -44,8 +44,11 @@ const userType = useAppSelector(state => state.auth.user?.userType);
             case 'MATCHMAKER':
                 return (
                     <>
+                    
                         <button className={styles.adminButton} onClick={() => navigate('/candidates')}>ניהול מועמדים</button>
                         <button className={styles.adminButton} onClick={() => navigate('/match')}>התאמת מועמדים</button>
+                        <button className={styles.adminButton} onClick={() => navigate('/algorithm-match')}>התאמת מועמדים ע"י אלגוריתם</button>
+
 
                     </>
                 );
