@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Matchmaker } from "../../types/matchmaker.types";
-import { createMatchmaker, fetchMatchmakers } from "../thunks/matchmaker.thunks";
+import { createMatchmakerThunk, fetchMatchmakers } from "../thunks/matchmaker.thunks";
 
 interface MatchmakerState {
   matchmakers: Matchmaker[];
@@ -38,7 +38,7 @@ const candidateSlice = createSlice({
         state.loading = false;
         state.error = action.error.message || "Failed to fetch matchmakers";
       })
-      .addCase(createMatchmaker.fulfilled, (state, action: PayloadAction<Matchmaker>) => {
+      .addCase(createMatchmakerThunk.fulfilled, (state, action: PayloadAction<Matchmaker>) => {
         state.matchmakers.push(action.payload);
       });
   },

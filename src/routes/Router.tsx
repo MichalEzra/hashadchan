@@ -17,6 +17,7 @@ import MatchPage from "../components/matches/MatchPage";
 import AlgorithmMatchingPage from "../components/matches/AlgorithmMatchingPage";//✅ ייבוא לדף הצעות שידוכים
 import EngagedPage from "../pages/EngagedPage";
 import SuggestionsPage from "../pages/SuggestionsPage";
+import MatchmakerForm from "../components/forms/MatchmakerForm";
 
 
 const router = createBrowserRouter([
@@ -39,6 +40,7 @@ const router = createBrowserRouter([
       { path: "/users", element: <UserManagementPage /> },
       { path: "/match", element: <MatchPage /> },
       { path: "/candidates/new", element: <CandidateForm /> },
+      { path: "/matchmaker/new", element: <MatchmakerForm /> },
       { path: "/algorithm-match", element: <AlgorithmMatchingPage /> }, // לדף הצעות שידוכים מהאלגוריתם
       { path: "/suggestions", element: <SuggestionsPage /> }
     ],
