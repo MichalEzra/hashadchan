@@ -26,11 +26,11 @@ export const GenderDisplayMap: Record<Gender, string> = {
 
 
 export enum Status {
-  RAVAK_H = "רווק_ה",
-  GARUSH_H = "גרוש_ה",
-  ALMAN_H = "אלמן_ה",
-  GARUSH_H_IM_YELADIM = "גרוש_ה_עם_ילדים",
-  ALMAN_H_IM_YELADIM = "אלמן_ה_עם_ילדים",
+  RAVAK_H = "רווק/ה",
+  GARUSH_H = "גרוש/ה",
+  ALMAN_H = "אלמן/ה",
+  GARUSH_H_IM_YELADIM = "גרוש/ה עם ילדים",
+  ALMAN_H_IM_YELADIM = "אלמן/ה עם ילדים",
 };
 
 export const CandidateStatusDisplayMap: Record<Status, string> = {
@@ -47,7 +47,7 @@ export enum candidateSector {
   SEFARDI = "ספרדי",
   TEIMANI = "תימני",
   CHABAD = "חבד",
-  HETZI_HETZI = "חצי_חצי",
+  HETZI_HETZI = "חצי חצי",
   ACHER = "אחר",
 };
 export const SectorDisplayMap: Record<candidateSector, string> = {
@@ -62,14 +62,14 @@ export const SectorDisplayMap: Record<candidateSector, string> = {
 
 export enum SubSector {
   YESHIVATI = "ישיבתי",
-  BNEI_TORAH_ETZ = "בני_תורה_עץ",
-  BALEI_TSHUVA = "בעלי_תשובה",
+  BNEI_TORAH_ETZ = "בני תורה עץ",
+  BALEI_TSHUVA = "בעלי תשובה",
   YERUSHALMI = "ירושלמי",
-  HAREDI_MODERNI = "חרדי_מודרני",
+  HAREDI_MODERNI = "חרדי מודרני",
   CHUTZNIKIM = "חוצניקים",
   CHAZONAISHNIK = "חזונאישניק",
   ZILBERMAN = "זילברמן",
-  REKA_HASIDI = "רקע_חסידי",
+  REKA_HASIDI = "רקע חסידי",
   ACHER = "אחר",
 };
 export const SubSectorDisplayMap: Record<SubSector, string> = {
@@ -86,9 +86,9 @@ export const SubSectorDisplayMap: Record<SubSector, string> = {
 };
 
 export enum TorahStudy {
-  TORATO_OMANUTO = "תורתו_אומנותו",
-  HETZI_OVED_HETZI_LOMED = "חצי_עובד_חצי_לומד",
-  KOVEA_ITIM = "קובע_עיתים",
+  TORATO_OMANUTO = "תורתו אומנותו",
+  HETZI_OVED_HETZI_LOMED = "חצי עובד חצי לומד",
+  KOVEA_ITIM = "קובע עיתים",
 };
 export const TorahStudyDisplayMap: Record<TorahStudy, string> = {
   [TorahStudy.TORATO_OMANUTO]: "תורתו אומנותו",
@@ -97,8 +97,8 @@ export const TorahStudyDisplayMap: Record<TorahStudy, string> = {
 };
 
 export enum EducationInstitution {
-  YESHIVA_KTANA = "ישיבה_קטנה",
-  YESHIVA_GDOLA = "ישיבה_גדולה",
+  YESHIVA_KTANA = "ישיבה קטנה",
+  YESHIVA_GDOLA = "ישיבה גדולה",
   KIBBUTZ = "קיבוץ",
   TIKHON = "תיכון",
   SEMINAR = "סמינר",
@@ -118,8 +118,8 @@ export const EducationInstitutionDisplayMap: Record<EducationInstitution, string
 };
 
 export enum Occupation {
-  LOMED = "לומד",
-  OVED = "עובד",
+  LOMED = "לומד/ת",
+  OVED = "עובד/ת",
 };
 export const OccupationDisplayMap: Record<Occupation, string> = {
   [Occupation.LOMED]: "לומד/ת",
@@ -144,13 +144,13 @@ export const LanguageDisplayMap: Record<Language, string> = {
 };
 
 export enum Openness {
-  SHAMUR_MEOD = "שמור_מאוד",
-  SHAMRAN = "שמרן",
-  MASORTI = "מסורתי",
-  SHAMUR_V_ROSH_PATUACH = "שמור_וראש_פתוח",
+  SHAMUR_MEOD = "שמור/ה מאוד",
+  SHAMRAN = "שמרן/נית",
+  MASORTI = "מסורתי/ת",
+  SHAMUR_V_ROSH_PATUACH = "שמור/ה וראש פתוח",
   PATUACH = "פתוח",
-  MODERNI = "מודרני",
-  MODERNI_MEOD = "מודרני_מאוד",
+  MODERNI = "מודרני/ת",
+  MODERNI_MEOD = "מודרני/ת מאוד",
 };
 export const OpennessDisplayMap: Record<Openness, string> = {
   [Openness.SHAMUR_MEOD]: "שמור/ה מאד",
@@ -163,11 +163,11 @@ export const OpennessDisplayMap: Record<Openness, string> = {
 };
 
 export enum HeadCovering {
-  PEA_BILVAD = "פאה_בלבד",
-  MITPACHAT_BILVAD = "מטפחת_בלבד",
-  PEA_IM_KISUI = "פאה_עם_כיסוי",
-  TOP_LACE = "טופ_לייס",
-  GAMISH = "גמיש",
+  PEA_BILVAD = "עקרוני - פאה",
+  MITPACHAT_BILVAD = "עקרוני - מטפחת",
+  PEA_IM_KISUI = "פאה + כיסוי מעל",
+  TOP_LACE = "פאה טופ לייס",
+  GAMISH = "גמיש - מטפחת או פאה",
 };
 export const HeadCoveringDisplayMap: Record<HeadCovering, string> = {
   [HeadCovering.PEA_BILVAD]: "עקרוני - פאה",
@@ -179,12 +179,12 @@ export const HeadCoveringDisplayMap: Record<HeadCovering, string> = {
 
 export enum PhoneType {
   KOSHER = "כשר",
-  TOMACH_KOSHER = "תומך_כשר",
-  MAKHSHIR_MUGAN = "מכשיר_מוגן",
+  TOMACH_KOSHER = "תומך כשר",
+  MAKHSHIR_MUGAN = "מכשיר מוגן",
   SMARTPHONE = "סמארטפון",
-  FLAFON_MAKASHIM_IM_SMS = "פלאפון_מקשים_עם_SMS",
-  TELEFON_MUGAN_LA_AVODA = "טלפון_מוגן_לעבודה",
-  SHNEI_TELEFONIM = "שני_טלפונים",
+  FLAFON_MAKASHIM_IM_SMS = "פלאפון מקשים עם SMS",
+  TELEFON_MUGAN_LA_AVODA = "טלפון מוגן לעבודה",
+  SHNEI_TELEFONIM = "שני טלפונים",
 };
 export const PhoneTypeDisplayMap: Record<PhoneType, string> = {
   [PhoneType.KOSHER]: "כשר",
@@ -199,9 +199,9 @@ export const PhoneTypeDisplayMap: Record<PhoneType, string> = {
 export enum ParentsStatus {
   NESUIM = "נשואים",
   GRUSHIM = "גרושים",
-  AV_NIFTAR = "אב_נפטר",
-  EM_NIFTARA = "אם_נפטרה",
-  SHNEIHEM_NIFTARU = "שניהם_נפטרו",
+  AV_NIFTAR = "אב נפטר",
+  EM_NIFTARA = "אם נפטרה",
+  SHNEIHEM_NIFTARU = "אינם בין החיים",
 };
 export const ParentsStatusDisplayMap: Record<ParentsStatus, string> = {
   [ParentsStatus.NESUIM]: "נשואים",
@@ -213,9 +213,9 @@ export const ParentsStatusDisplayMap: Record<ParentsStatus, string> = {
 
 export enum Smoking {
   MEASHEN = "מעשן",
-  MEASHEN_LE_ITIM_RECHOKOT = "מעשן_לעיתים_רחוקות",
-  LO_MEASHEN = "לא_מעשן",
-  SIGARIA_ELEKTRONIT = "סיגריה_אלקטרונית",
+  MEASHEN_LE_ITIM_RECHOKOT = "מעשן לעיתים רחוקות",
+  LO_MEASHEN = "לא מעשן בכלל",
+  SIGARIA_ELEKTRONIT = "מעשן סיגריה אלקטרונית בלבד",
 };
 export const SmokingDisplayMap: Record<Smoking, string> = {
   [Smoking.MEASHEN]: "מעשן",
@@ -225,10 +225,10 @@ export const SmokingDisplayMap: Record<Smoking, string> = {
 };
 
 export enum Physique {
-  RAZE_MEOD = "רזה_מאוד",
+  RAZE_MEOD = "רזה מאוד",
   RAZE = "רזה",
-  MEMUTZA_T = "ממוצע_ת",
-  MALE_H = "מלא_ה",
+  MEMUTZA_T = "ממוצע/ת",
+  MALE_H = "מלא/ה",
 };
 export const PhysiqueDisplayMap: Record<Physique, string> = {
   [Physique.RAZE_MEOD]: "רזה מאד",
@@ -273,7 +273,7 @@ export enum ClothingStyle {
   MECHUBAD = "מכובד",
   KLASI = "קלאסי",
   PASHUT = "פשוט",
-  PASHUT_MEOD = "פשוט_מאוד",
+  PASHUT_MEOD = "פשוט מאוד",
 };
 export const ClothingStyleDisplayMap: Record<ClothingStyle, string> = {
   [ClothingStyle.MODERNI]: "מודרני",

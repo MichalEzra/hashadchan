@@ -636,5 +636,13 @@
 }
 
 .fileInput {
-  display: none; /* כדי שנשתמש בקופסה כטריגר */
+  display: none;
+  /* כדי שנשתמש בקופסה כטריגר */
+}
+
+.error {
+  color: red;
+  margin-top: 1rem;
+  text-align: center;
+  font-weight: bold;
 }

@@ -145,39 +145,39 @@ const CandidateForm: React.FC = () => {
   const { id } = useParams();
 
   const initialCandidate: any = {
-    firstName: "",
-    lastName: "",
-    gender: "",
-    candidateId: "",
-    status: "",
-    age: 18,
-    sector: "",
-    subSector: "",
-    torahLearning: "",
-    education: "",
-    occupation: "",
-    city: "",
-    origin: "",
-    languages: "",
-    openness: "",
-    clothingStyle: "",
-    height: 140,
-    physique: "",
-    skinTone: "",
-    hairColor: "",
-    giving: 0,
-    expecting: 0,
-    familyStatus: "",
-    availableForProposals: false,
-    headCovering: "",
-    phoneType: "",
-    beard: false,
-    smokingStatus: "",
-    license: false,
-    descriptionSelf: "",
-    descriptionFind: "",
-    email: "",
-    studyPlaceName: "",
+    FirstName: "",
+    LastName: "",
+    Gender: "",
+    CandidateId: "",
+    Status: "",
+    Age: 18,
+    Sector: "",
+    SubSector: "",
+    TorahLearning: "",
+    Education: "",
+    Occupation: "",
+    City: "",
+    Origin: "",
+    Languages: "",
+    Openness: "",
+    ClothingStyle: "",
+    Height: 140,
+    Physique: "",
+    SkinTone: "",
+    HairColor: "",
+    Giving: 0,
+    Expecting: 0,
+    FamilyStatus: "",
+    AvailableForProposals: false,
+    HeadCovering: "",
+    PhoneType: "",
+    Beard: false,
+    SmokingStatus: "",
+    License: false,
+    DescriptionSelf: "",
+    DescriptionFind: "",
+    Email: "",
+    StudyPlaceName: "",
   };
 
   const [candidate, setCandidate] = useState(initialCandidate);
@@ -243,17 +243,94 @@ const CandidateForm: React.FC = () => {
     setResumeFile(file || null);
   };
 
+  //בדיקות ולידציה
+  const validateForm = (): string | null => {
+    if (!candidate.firstName.trim()) return "יש למלא שם פרטי";
+    if (!candidate.lastName.trim()) return "יש למלא שם משפחה";
+    if (!candidate.gender) return "יש לבחור מגדר";
+    if (!candidate.status) return "יש לבחור מצב אישי";
+    if (!candidate.age || candidate.age < 18 || candidate.age > 120) return "גיל לא תקין";
+    if (!candidate.candidateId || candidate.candidateId.length !== 9) return "מספר זהות לא תקין";
+    if (!candidate.sector) return "יש לבחור מגזר";
+    if (!candidate.subSector) return "יש לבחור תת מגזר";
+    if (!candidate.languages) return "יש לבחור שפה";
+    if (!candidate.city.trim()) return "יש להזין עיר";
+    if (!candidate.phoneType) return "יש לבחור סוג טלפון";
+    if (!candidate.openness) return "יש לבחור רמת פתיחות";
+    if (!candidate.clothingStyle) return "יש לבחור סגנון לבוש";
+    if (!candidate.headCovering) return "יש לבחור כיסוי ראש";
+    if (!candidate.physique) return "יש לבחור מבנה גוף";
+    if (!candidate.origin.trim()) return "יש להזין מוצא";
+    if (!candidate.education) return "יש לבחור מוסד לימודים";
+    if (!candidate.studyPlaceName.trim()) return "יש למלא שם מוסד לימודים";
+    if (!candidate.occupation) return "יש לבחור עיסוק";
+    if (!candidate.torahLearning) return "יש לבחור לומד/עובד";
+    if (!candidate.familyStatus) return "יש לבחור סטטוס הורים";
+    if (!candidate.smokingStatus) return "יש לבחור סטטוס עישון";
+    if (!candidate.email || !/\S+@\S+\.\S+/.test(candidate.email)) return "אימייל לא תקין";
+    if (!imageFile) return "נא להעלות תמונה";
+    if (!resumeFile) return "נא להעלות קובץ רזומה";
+
+    return null; // טופס תקין
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const errorMsg = validateForm();
+    if (errorMsg) {
+      setError(errorMsg);
+      return;
+    }
+
+    setError(null);
     const formData = new FormData();
 
+    // מיפוי שמות JS => שמות בצד שרת
+    const fieldMap: Record<string, string> = {
+      firstName: "FirstName",
+      lastName: "LastName",
+      gender: "Gender",
+      candidateId: "CandidateId",
+      status: "Status",
+      age: "Age",
+      sector: "CandidateSector",
+      subSector: "SubSector",
+      torahLearning: "TorahLearning",
+      education: "Education",
+      studyPlaceName: "StudyPlaceName",
+      occupation: "JobOrStudies",
+      city: "City",
+      origin: "Origin",
+      languages: "Languages",
+      openness: "ReligiousOpenness",
+      clothingStyle: "ClothingStyle",
+      height: "Height",
+      physique: "Physique",
+      skinTone: "SkinTone",
+      hairColor: "HairColor",
+      giving: "Giving",
+      expecting: "Expecting",
+      familyStatus: "FamilyStatus",
+      availableForProposals: "AvailableForProposals",
+      headCovering: "PreferredHeadCovering",
+      phoneType: "CandidatePhoneType",
+      beard: "Beard",
+      smokingStatus: "Smoking",
+      license: "License",
+      descriptionSelf: "DescriptionSelf",
+      descriptionFind: "DescriptionFind",
+      email: "Email"
+    };
+
+    // הוספת השדות לפי המיפוי
     Object.entries(candidate).forEach(([key, value]) => {
+      const mappedKey = fieldMap[key];
+      if (!mappedKey || value === undefined || value === null) return;
+
       if (Array.isArray(value)) {
-        value.forEach((v) => formData.append(key, v.toString()));
-      } else if (typeof value === "boolean") {
-        formData.append(key, value.toString());
-      } else if (value !== undefined && value !== null) {
-        formData.append(key, value.toString());
+        value.forEach((v) => formData.append(mappedKey, v.toString()));
+      } else {
+        formData.append(mappedKey, value.toString());
       }
     });
 
@@ -267,6 +344,7 @@ const CandidateForm: React.FC = () => {
       console.error("❌ שגיאה ביצירת מועמד", err);
     }
   };
+
   //פונקציה שאחראית על המשתנים שיש להם רשימה של אפשרויות לבחירה
   const renderSelectWithPlaceholder = (
     name: string,
@@ -379,7 +457,7 @@ const CandidateForm: React.FC = () => {
       <label className={styles.labelWithDot}>
         <span className={`${styles.dot} ${styles[dotColor + 'Dot']}`}></span>
         {labelText}
-        <span className={styles.rangeValue}>{value.toLocaleString()}</span>
+        <span className={styles.rangeValue}>{(value ?? 0).toLocaleString()}</span>
       </label>
       <input
         type="range"
@@ -426,49 +504,49 @@ const CandidateForm: React.FC = () => {
     </div>
   );
   //אחראית על העלאת קבצים, לגומא: תמונה, רזומה
-const renderFileUpload = (
-  name: string,
-  file: File | null,
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
-  labelText: string,
-  accept: string,
-  dotColor: 'green' | 'purple' | 'blue' = 'green'
-) => {
-  const inputId = `file-input-${name}`;
+  const renderFileUpload = (
+    name: string,
+    file: File | null,
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
+    labelText: string,
+    accept: string,
+    dotColor: 'green' | 'purple' | 'blue' = 'green'
+  ) => {
+    const inputId = `file-input-${name}`;
 
-  return (
-    <div className={styles.fieldWrapper}>
-      <label className={styles.labelWithDot}>
-        <span className={`${styles.dot} ${styles[dotColor + 'Dot']}`}></span>
-        {labelText}
-      </label>
-
-      <div className={styles.fileUpload}>
-        {/* עטיפת הקופסה והאינפוט יחד בתוך label */}
-        <label htmlFor={inputId} className={styles.fileUploadBox}>
-          <div className={styles.fileUploadIcon}>+</div>
-          <div className={styles.fileUploadText}>
-            {file ? file.name : `קובץ ${labelText.toLowerCase()}`}
-          </div>
+    return (
+      <div className={styles.fieldWrapper}>
+        <label className={styles.labelWithDot}>
+          <span className={`${styles.dot} ${styles[dotColor + 'Dot']}`}></span>
+          {labelText}
         </label>
 
-        <input
-          id={inputId}
-          name={name}
-          type="file"
-          accept={accept}
-          onChange={onChange}
-          className={styles.fileInput}
-          style={{ display: 'none' }} // מוסתר אבל פועל
-        />
-      </div>
+        <div className={styles.fileUpload}>
+          {/* עטיפת הקופסה והאינפוט יחד בתוך label */}
+          <label htmlFor={inputId} className={styles.fileUploadBox}>
+            <div className={styles.fileUploadIcon}>+</div>
+            <div className={styles.fileUploadText}>
+              {file ? file.name : `קובץ ${labelText.toLowerCase()}`}
+            </div>
+          </label>
 
-      <div className={styles.fileHint}>
-        הקובץ יכול להיות בפורמטים {accept.replace(/\./g, '').toUpperCase()} עד למשקל 7MB
+          <input
+            id={inputId}
+            name={name}
+            type="file"
+            accept={accept}
+            onChange={onChange}
+            className={styles.fileInput}
+            style={{ display: 'none' }} // מוסתר אבל פועל
+          />
+        </div>
+
+        <div className={styles.fileHint}>
+          הקובץ יכול להיות בפורמטים {accept.replace(/\./g, '').toUpperCase()} עד למשקל 7MB
+        </div>
       </div>
-    </div>
-  );
-};
+    );
+  };
 
 
   return (
@@ -614,6 +692,7 @@ const renderFileUpload = (
           {renderCheckboxField("availableForProposals", candidate.availableForProposals, "זמין להצעות")}
         </div>
         <button type="submit" className={styles.submitBtn}>שלח</button>
+        {error && <div className={styles.error}>{error}</div>}
       </form>
     </div>
   );
