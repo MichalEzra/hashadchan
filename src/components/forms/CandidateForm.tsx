@@ -426,38 +426,49 @@ const CandidateForm: React.FC = () => {
     </div>
   );
   //אחראית על העלאת קבצים, לגומא: תמונה, רזומה
-  const renderFileUpload = (
-    name: string,
-    file: File | null,
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
-    labelText: string,
-    accept: string,
-    dotColor: 'green' | 'purple' | 'blue' = 'green'
-  ) => (
+const renderFileUpload = (
+  name: string,
+  file: File | null,
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
+  labelText: string,
+  accept: string,
+  dotColor: 'green' | 'purple' | 'blue' = 'green'
+) => {
+  const inputId = `file-input-${name}`;
+
+  return (
     <div className={styles.fieldWrapper}>
       <label className={styles.labelWithDot}>
         <span className={`${styles.dot} ${styles[dotColor + 'Dot']}`}></span>
         {labelText}
       </label>
+
       <div className={styles.fileUpload}>
-        <div className={styles.fileUploadBox}>
+        {/* עטיפת הקופסה והאינפוט יחד בתוך label */}
+        <label htmlFor={inputId} className={styles.fileUploadBox}>
           <div className={styles.fileUploadIcon}>+</div>
           <div className={styles.fileUploadText}>
             {file ? file.name : `קובץ ${labelText.toLowerCase()}`}
           </div>
-        </div>
+        </label>
+
         <input
+          id={inputId}
+          name={name}
           type="file"
           accept={accept}
           onChange={onChange}
           className={styles.fileInput}
+          style={{ display: 'none' }} // מוסתר אבל פועל
         />
       </div>
+
       <div className={styles.fileHint}>
         הקובץ יכול להיות בפורמטים {accept.replace(/\./g, '').toUpperCase()} עד למשקל 7MB
       </div>
     </div>
   );
+};
 
 
   return (
