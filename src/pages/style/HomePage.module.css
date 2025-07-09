@@ -236,7 +236,8 @@
 .adminButtonsContainer {
   display: flex;
   flex-direction: column;
-  align-items: center; /* במקום flex-start */
+  align-items: center;
+  /* במקום flex-start */
   justify-content: center;
   gap: 12px;
   margin-top: 40px;
@@ -316,6 +317,7 @@
   color: white;
   border: none;
 }
+
 .buttonPrimary:hover {
   background-color: #2563eb;
 }
@@ -325,6 +327,7 @@
   color: white;
   border: none;
 }
+
 .buttonSecondary:hover {
   background-color: #059669;
 }
@@ -334,6 +337,7 @@
   color: white;
   border: none;
 }
+
 .buttonTertiary:hover {
   background-color: #d97706;
 }
@@ -423,31 +427,35 @@
 
 
 .personalArea {
-  display: inline-block; /* מבטל התנהגות של block */
-  width: auto;           /* חשוב – לא 100% */
-  max-width: 300px;      /* גבול מקסימלי */
-  min-width: 180px;      /* לא חובה, רק לעיצוב יציב */
-  margin: 0 auto;  
-    background-color: #4a90e2;
-    color: white;
-    border: none;
-    border-radius: 12px;
-    padding: 12px 24px;
-    font-size: 1.1rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  display: inline-block;
+  /* מבטל התנהגות של block */
+  width: auto;
+  /* חשוב – לא 100% */
+  max-width: 300px;
+  /* גבול מקסימלי */
+  min-width: 180px;
+  /* לא חובה, רק לעיצוב יציב */
+  margin: 0 auto;
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 24px;
+  font-size: 1.1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .personalArea:hover {
-    background-color: #357abd;
-    transform: translateY(-2px);
+  background-color: #357abd;
+  transform: translateY(-2px);
 }
 
 .personalArea:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
 @media (max-width: 600px) {

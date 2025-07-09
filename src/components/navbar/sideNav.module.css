@@ -1,6 +1,6 @@
 .sideNav {
   position: fixed;
-  top: 0; /* שומר על מיקום מתחת לנבבר ראשי */
+  top: 0;
   right: 0;
   width: 220px;
   height: calc(100vh - 75px);
@@ -14,6 +14,7 @@
   z-index: 1100;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   user-select: none;
+  transition: right 0.3s ease;
 }
 
 button {
@@ -27,26 +28,24 @@ button {
   box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.05);
   cursor: pointer;
   font-weight: 600;
-  color: #1f2937; /* צבע טקסט כהה */
+  color: #1f2937;
   font-size: 1rem;
   transition: all 0.3s ease;
 }
 
 button:hover {
-  background-color: #3b82f6; /* כחול יפה */
+  background-color: #3b82f6;
   color: white;
   border-color: #2563eb;
   box-shadow: 0 0 10px #3b82f6;
   transform: translateX(-4px);
 }
 
-/* אייקון פשוט לפני הטקסט (אפשר לשנות) */
 button::before {
-  content: "⚙️"; /* אפשר לשנות לכל אייקון רלוונטי */
+  content: "⚙️";
   font-size: 1.1rem;
 }
 
-/* אייקונים לפי סוג משתמש */
 .adminButton::before {
   content: "👑";
 }
@@ -57,32 +56,6 @@ button:nth-child(3)::before {
   content: "🤝";
 }
 
-/* רספונסיבי - מתחת ל-768px */
-@media (max-width: 768px) {
-  .sideNav {
-    position: relative;
-    width: 100%;
-    height: auto;
-    padding: 1rem;
-    flex-direction: row;
-    justify-content: space-around;
-    border-radius: 0;
-    box-shadow: none;
-    background: linear-gradient(90deg, #f0f4f8, #d9e2ec);
-  }
-
-  button {
-    flex: 1;
-    justify-content: center;
-    font-size: 0.9rem;
-    padding: 0.6rem 0.5rem;
-    border-radius: 6px;
-  }
-
-  button::before {
-    display: none; /* מסתיר אייקונים בנייד */
-  }
-}
 .selector {
   display: flex;
   flex-direction: column;
@@ -94,4 +67,66 @@ button:nth-child(3)::before {
   padding: 0.4rem;
   border-radius: 6px;
   border: 1px solid #ccc;
+}
+
+/* כפתור toggle */
+.toggleButton {
+  display: none;
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: 6px;
+  z-index: 1200;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* רקע כהה מאחורי תפריט נפתח */
+.backdrop {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0,0,0,0.3);
+  z-index: 1000;
+}
+
+/* רספונסיביות */
+@media (max-width: 768px) {
+  .toggleButton {
+    display: block;
+  }
+
+  .sideNav {
+    top: 0;
+    right: -100%;
+    height: 100vh;
+    width: 220px;
+    background: linear-gradient(145deg, #f0f4f8, #d9e2ec);
+    box-shadow: -4px 0 15px rgba(0, 0, 0, 0.15);
+    padding: 1.5rem 1rem;
+    transition: right 0.3s ease;
+    z-index: 1101;
+    flex-direction: column;
+  }
+
+  .sideNav.open {
+    right: 0;
+  }
+
+  button {
+    justify-content: flex-start;
+    font-size: 0.95rem;
+    padding: 0.6rem;
+  }
+
+  button::before {
+    display: none; /* אפשר גם להשאיר אם תרצי */
+  }
 }

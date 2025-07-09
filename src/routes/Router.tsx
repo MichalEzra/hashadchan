@@ -18,17 +18,17 @@ import AlgorithmMatchingPage from "../components/matches/AlgorithmMatchingPage";
 import EngagedPage from "../pages/EngagedPage";
 import SuggestionsPage from "../pages/SuggestionsPage";
 import MatchmakerForm from "../components/forms/MatchmakerForm";
-
+import { PATHS } from "./Paths";
 
 const router = createBrowserRouter([
   {
     element: <RootLayout />,
     children: [
       { path: "/", element: <HomePage /> },
-      { path: "/daattorah", element: <DaatTorahPage /> },
-      { path: "/engaged", element: <EngagedPage /> },
-      { path: "/hereToServeYou", element: <HereToServeYouPage /> },
-      { path: "/userGuide", element: <UserGuidePage /> },
+      { path: PATHS.daatTorah, element: <DaatTorahPage /> },
+      { path: PATHS.engaged, element: <EngagedPage /> },
+      { path: PATHS.hereToServeYou, element: <HereToServeYouPage /> },
+      { path: PATHS.userGuide, element: <UserGuidePage /> },
       // { path: "/login", element: <LoginPage /> },
       // { path: "/signup", element: <Signup /> },
       { path: "/home", element: <HomePage /> },

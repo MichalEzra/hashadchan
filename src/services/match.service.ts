@@ -16,7 +16,11 @@ export const createMatch = async (request: MatchRequest) => {
         },
     });
 };
-
+//שליחת מייל לצד השני
+export const sendSingleMatchRequest = async (data: MatchRequest) => {
+  const response = await api.post(`/Match`, data);
+  return response.data;
+};
 // פונקציה לקבלת הצעות שידוכים לבנים
 export const getMaleMatchProposals = async (): Promise<MatchResultsDto[]> => {
   const token = localStorage.getItem('token');
@@ -97,3 +101,20 @@ export const getEngagedMatches = async (): Promise<EngagedMatch[]> => {
 //   });
 //   return response.data;
 // };
+
+
+const api = axios.create({
+  baseURL: 'http://localhost:5245/api', // שימי לב שזה צריך להיות כתובת השרת האמיתי, לא פורט 3000!
+  withCredentials: true // אם את משתמשת בעוגיות
+});
+
+// הוספת הטוקן לכל בקשה:
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token'); // או מאיפה ששומרת אותו
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+export default api;

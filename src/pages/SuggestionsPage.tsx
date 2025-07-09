@@ -223,7 +223,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../redux/store';
 import { fetchMyCandidate } from '../redux/thunks/candidates.thunks';
-import { fetchMaleMatches, fetchFemaleMatches } from '../redux/thunks/matches.thunks';
+import { fetchMaleMatches, fetchFemaleMatches, sendInterest } from '../redux/thunks/matches.thunks';
 import { CandidateDto, MatchResultsDto } from '../types/candidateDto.types';
 import styles from './style/SuggestionsPage.module.css';
 import SideModal from './SideModal';
@@ -278,92 +278,127 @@ const SuggestionsPage: React.FC = () => {
     // אם המשתמש הוא זכר, הוא רואה הצעות של נשים (matchesFemale)
     const suggestions = candidate?.gender === 'נקבה' ? matchesMale : matchesFemale;
 
+    const getMaleOfFemale = () => {
+
+    }
     // וגם כאן, כדי לוודא שמוצג המועמד השני בזוג ההתאמה
     const getOtherCandidate = (match: MatchResultsDto) =>
         candidate?.gender === 'נקבה' ? match.male : match.female; // נקבה רואה את ה-male בזוג, זכר רואה את ה-female בזוג
 
+    const [sending, setSending] = useState(false);
+    const [sentMessage, setSentMessage] = useState<string | null>(null);
+
+    const handleSendInterest = async () => {
+        if (!candidate || !selectedCandidate) return;
+
+        setSending(true);
+        setSentMessage(null);
+
+        try {
+            await dispatch(sendInterest({
+                senderId: candidate.id,
+                receiverId: selectedCandidate.id
+            })).unwrap();
+
+            setSentMessage('ההצעה נשלחה בהצלחה!');
+        } catch (error) {
+            console.error(error);
+            setSentMessage('שגיאה בשליחת ההצעה');
+        } finally {
+            setSending(false);
+        }
+    };
+
+
     return (
-        <div className={styles.suggestionsContainer}>
-            <h2 className={styles.title}>הצעות עבורך</h2>
+        <div className={styles.pageLayout}>
+            <div className={styles.suggestionsContainer}>
+                <h2 className={styles.title}>הצעות עבורך</h2>
 
-            {isLoadingCandidate && <p className={styles.loading}>טוען מועמד...</p>}
-            {isLoadingMatches && <p className={styles.loading}>טוען הצעות...</p>}
+                {isLoadingCandidate && <p className={styles.loading}>טוען מועמד...</p>}
+                {isLoadingMatches && <p className={styles.loading}>טוען הצעות...</p>}
 
-            {!isLoadingCandidate && !candidate && (
-                <p className={styles.message}>לא נמצא מועמד מחובר.</p>
-            )}
+                {!isLoadingCandidate && !candidate && (
+                    <p className={styles.message}>לא נמצא מועמד מחובר.</p>
+                )}
 
-            {suggestions.length === 0 && !isLoadingMatches && (
-                <p className={styles.message}>אין הצעות זמינות כרגע.</p>
-            )}
+                {suggestions.length === 0 && !isLoadingMatches && (
+                    <p className={styles.message}>אין הצעות זמינות כרגע.</p>
+                )}
 
-            <div className={styles.grid}>
-                {suggestions.map((match, idx) => {
-                    const other = getOtherCandidate(match);
-                    if (!other) return null;
+                <div className={styles.grid}>
+                    {suggestions.map((match, idx) => {
+                        const other = getOtherCandidate(match);
+                        if (!other) return null;
 
-                    return (
-                        <div
-                            key={idx}
-                            className={styles.card}
-                            onClick={() => setSelectedCandidate(other)}
-                        >
-                            <div className={styles.cardHeader}>
-                                <div className={styles.profileImageContainer}>
+                        return (
+                            <div
+                                key={idx}
+                                className={styles.card}
+                                onClick={() => setSelectedCandidate(other)}
+                            >
+                                <div className={styles.cardHeader}>
                                     <div className={styles.profileImageContainer}>
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            width="42"
-                                            height="42"
-                                            viewBox="0 0 24 24"
-                                            fill="#6b7280"
-                                        >
-                                            <path d="M12 2a5 5 0 0 1 5 5v1a5 5 0 0 1-10 0V7a5 5 0 0 1 5-5zm0 14c4.418 0 8 2.239 8 5v1H4v-1c0-2.761 3.582-5 8-5z" />
-                                        </svg>
+                                        <div className={styles.profileImageContainer}>
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                width="42"
+                                                height="42"
+                                                viewBox="0 0 24 24"
+                                                fill="#6b7280"
+                                            >
+                                                <path d="M12 2a5 5 0 0 1 5 5v1a5 5 0 0 1-10 0V7a5 5 0 0 1 5-5zm0 14c4.418 0 8 2.239 8 5v1H4v-1c0-2.761 3.582-5 8-5z" />
+                                            </svg>
+                                        </div>
+                                        {/* תמונת פרופיל בעתיד */}
+                                        <span className={styles.candidateId}>{other.id}</span>
                                     </div>
-                                    {/* תמונת פרופיל בעתיד */}
-                                    <span className={styles.candidateId}>{other.id}</span>
+                                    {/* <div className={styles.starIcon}>⭐</div> */}
                                 </div>
-                                {/* <div className={styles.starIcon}>⭐</div> */}
-                            </div>
-                            <div className={styles.candidateMainInfo}>
-                                <div className={styles.nameAndAge}>
-                                    <span className={styles.name}>{other.firstName} {other.lastName}</span>
-                                    <span className={styles.age}> - {other.age}</span>
-                                    <span className={styles.dot}>•</span>
-                                    <span className={styles.city}>{other.city}</span>
-                                </div>
-                                <div className={styles.sector}>{other.candidateSector} {other.subSector}</div>
-                            </div>
-                            <div className={styles.detailsSection}>
-                                <div className={styles.detailRow}>
-                                    <span className={styles.detailLabel}>מצב אישי:</span>
-                                    <span className={styles.detailValue}>{other.status}</span>
-                                </div>
-                                {/* תצוגה מותנית ללימוד תורה עבור זכרים */}
-                                {other.gender === 'זכר' && (
-                                    <div className={styles.detailRow}>
-                                        <span className={styles.detailLabel}>לימוד תורה:</span>
-                                        <span className={styles.detailValue}>{other.torahLearning}</span>
+                                <div className={styles.candidateMainInfo}>
+                                    <div className={styles.nameAndAge}>
+                                        <div className={styles.ageCityContainer}>
+                                            <span className={styles.age}>{other.age} שנים</span>
+                                            <span className={styles.city}>• {other.city}</span>
+                                        </div>
                                     </div>
-                                )}
-                                <div className={styles.detailRow}>
-                                    <span className={styles.detailLabel}>על בת/בן הזוג שאני מחפש:</span>
-                                    <span className={styles.detailValue}>{other.descriptionFind}</span>
-                                </div>
-                            </div>
-                        </div>
-                    );
-                })}
-            </div>
 
-            {/* המודל עם פרטים מורחבים, יופיע רק כשנבחר מועמד */}
-            <SideModal isOpen={!!selectedCandidate} onClose={() => setSelectedCandidate(null)}>
-                {loadingDetails && <p>טוען פרטי מועמד...</p>}
-                <h1>פרטי המועמד</h1>
-                {!loadingDetails && <pre style={{ whiteSpace: 'pre-wrap' }}>{candidateDetails}</pre>}
-                <button>זה מעניין אותי</button>
-            </SideModal>
+                                    <div className={styles.sector}>{other.candidateSector} {other.subSector}</div>
+                                </div>
+                                <div className={styles.detailsSection}>
+                                    <div className={styles.detailRow}>
+                                        <span className={styles.detailLabel}>מצב אישי</span>
+                                        <span className={styles.detailValue}>{other.status}</span>
+                                    </div>
+                                    {/* תצוגה מותנית ללימוד תורה עבור זכרים */}
+                                    {other.gender === 'זכר' && (
+                                        <div className={styles.detailRow}>
+                                            <span className={styles.detailLabel}>לימוד תורה</span>
+                                            <span className={styles.detailValue}>{other.torahLearning}</span>
+                                        </div>
+                                    )}
+                                    <div className={styles.detailRow}>
+                                        <span className={styles.detailLabel}>על בת/בן הזוג שאני מחפש</span>
+                                        <span className={styles.detailValue}>{other.descriptionFind}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+
+                {/* המודל עם פרטים מורחבים, יופיע רק כשנבחר מועמד */}
+                <SideModal isOpen={!!selectedCandidate} onClose={() => setSelectedCandidate(null)}>
+                    {loadingDetails && <p>טוען פרטי מועמד...</p>}
+                    <h1>פרטי המועמד</h1>
+                    {!loadingDetails && <pre style={{ whiteSpace: 'pre-wrap' }}>{candidateDetails}</pre>}
+                    <button onClick={handleSendInterest} disabled={sending}>
+                        {sending ? 'שולח...' : 'זה מעניין אותי'}
+                    </button>
+
+                    {sentMessage && <p>{sentMessage}</p>}
+                </SideModal>
+            </div>
         </div>
     );
 };

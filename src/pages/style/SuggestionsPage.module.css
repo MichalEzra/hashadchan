@@ -47,14 +47,30 @@ pre {
  */
 
 
- .suggestionsContainer {
+.suggestionsContainer {
     padding: 2rem;
-    direction: rtl; /* חשוב לכיוון הטקסט מימין לשמאל */
-    font-family: 'Assistant', sans-serif; /* וודא שהפונט זמין או שנה אותו */
-    margin-top: 75px;
-    background-color: #f0f2f5; /* צבע רקע כללי עדין */
+    direction: rtl;
+    /* חשוב לכיוון הטקסט מימין לשמאל */
+    font-family: 'Assistant', sans-serif;
+    /* וודא שהפונט זמין או שנה אותו */
+    margin-top: 5%;
+    background-color: #f0f2f5;
+    /* צבע רקע כללי עדין */
+    flex-grow: 1;
 }
+/* רק במסכים רחבים תני מרווח מהנבבר */
+/* @media (min-width: 769px) {
+  .suggestionsContainer {
+    margin-right: 220px; 
+  }
+} */
 
+/* במסכים קטנים אין צורך */
+/* @media (max-width: 768px) {
+  .suggestionsContainer {
+    margin-right: 0;
+  }
+} */
 .title {
     text-align: center;
     font-size: 2rem;
@@ -63,27 +79,26 @@ pre {
     font-weight: 700;
 }
 
-.grid {
-    display: grid;
-    gap: 1.5rem;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); /* התאמת רוחב הכרטיס */
-    justify-content: center; /* למרכז את הכרטיסים */
-}
-
 .card {
-    background-color: #ffffff; /* רקע לבן לכרטיס */
-    border-radius: 1.5rem; /* פינות מעוגלות יותר */
+    background-color: #ffffff;
+    /* רקע לבן לכרטיס */
+    border-radius: 1.5rem;
+    /* פינות מעוגלות יותר */
     padding: 1.5rem;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); /* צל עדין יותר */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    /* צל עדין יותר */
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     display: flex;
     flex-direction: column;
-    align-items: flex-start; /* יישור פרטים לשמאל (בגלל rtl) */
-    position: relative; /* למיקום האייקונים והמספר */
+    align-items: flex-start;
+    /* יישור פרטים לשמאל (בגלל rtl) */
+    position: relative;
+    /* למיקום האייקונים והמספר */
 }
 
 .card:hover {
-    transform: translateY(-5px); /* אפקט ריחוף קל */
+    transform: translateY(-5px);
+    /* אפקט ריחוף קל */
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
 }
 
@@ -107,29 +122,36 @@ pre {
 
 .profileImageContainer {
     position: relative;
-    width: 80px; /* גודל תמונת פרופיל */
+    width: 80px;
+    /* גודל תמונת פרופיל */
     height: 80px;
     border-radius: 50%;
-    background-color: #e0e0e0; /* צבע רקע לפלייס הולדר */
+    background-color: #e0e0e0;
+    /* צבע רקע לפלייס הולדר */
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-left: auto; /* לדחוף לימין (בגלל rtl) */
+    margin-left: auto;
+    /* לדחוף לימין (בגלל rtl) */
     overflow: hidden;
 }
 
 .profileImage {
-    width: 70%; /* גודל אייקון הפלייס הולדר בתוך העיגול */
+    width: 70%;
+    /* גודל אייקון הפלייס הולדר בתוך העיגול */
     height: 70%;
     object-fit: cover;
-    opacity: 0.7; /* עמעום קל של התמונה */
+    opacity: 0.7;
+    /* עמעום קל של התמונה */
 }
 
 .candidateId {
     position: absolute;
-    top: 5px; /* מיקום המספר */
+    top: 5px;
+    /* מיקום המספר */
     right: 5px;
-    background-color: #ffc107; /* צבע צהוב למספר */
+    background-color: #ffc107;
+    /* צבע צהוב למספר */
     color: #333;
     padding: 0.2rem 0.5rem;
     border-radius: 0.5rem;
@@ -139,39 +161,22 @@ pre {
 
 .starIcon {
     font-size: 2rem;
-    color: #ffd700; /* צבע זהב לכוכב */
-    margin-right: auto; /* לדחוף לשמאל (בגלל rtl) */
+    color: #ffd700;
+    /* צבע זהב לכוכב */
+    margin-right: auto;
+    /* לדחוף לשמאל (בגלל rtl) */
 }
 
 .candidateMainInfo {
     width: 100%;
     margin-bottom: 1.5rem;
-    text-align: right; /* ליישר לימין */
+    text-align: right;
+    /* ליישר לימין */
 }
 
-.nameAndAge {
-    font-size: 1.6rem;
-    font-weight: 700;
-    color: #2c3e50;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end; /* ליישר לימין */
-}
 
 .name {
     margin-left: 0.5rem;
-}
-
-.dot {
-    margin: 0 0.5rem;
-    font-size: 1.8rem;
-    line-height: 1;
-}
-
-.age, .city {
-    font-size: 1.3rem;
-    font-weight: 500;
-    color: #555;
 }
 
 .sector {
@@ -183,52 +188,112 @@ pre {
 
 .detailsSection {
     width: 100%;
-    border-top: 1px solid #eee; /* קו הפרדה עדין */
+    border-top: 1px solid #eee;
+    /* קו הפרדה עדין */
     padding-top: 1rem;
 }
 
 .detailRow {
     display: flex;
-    justify-content: flex-end; /* יישור לימין */
-    align-items: baseline;
+    flex-direction: column;
+    align-items: flex-start;
     margin-bottom: 0.7rem;
-    font-size: 1rem;
 }
 
 .detailLabel {
+    font-size: 0.85rem;
+    color: #888;
     font-weight: 600;
-    color: #444;
-    margin-left: 0.5rem; /* מרווח בין התווית לערך */
-    flex-shrink: 0; /* למנוע מהתווית להתכווץ */
+    margin-bottom: 0.2rem;
 }
 
 .detailValue {
-    color: #666;
-    text-align: right; /* לוודא שהטקסט מיושר לימין בתוך הערך */
-    flex-grow: 1; /* לאפשר לערך לתפוס את המקום הנותר */
+    font-size: 1rem;
+    color: #333;
 }
 
+
 .suggestionsLayout {
-  display: flex;
-  flex-direction: row-reverse; /* כדי שהחלונית תופיע בצד שמאל */
-  gap: 2rem;
-  align-items: flex-start;
+    display: flex;
+    flex-direction: row-reverse;
+    /* כדי שהחלונית תופיע בצד שמאל */
+    gap: 2rem;
+    align-items: flex-start;
 }
+
 .detailsPanel {
-  width: 340px;
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
-  position: sticky;
-  top: 1rem;
-  align-self: flex-start;
-  direction: rtl;
+    width: 340px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 1rem;
+    align-self: flex-start;
+    direction: rtl;
 }
 
 
 
 .profileImageContainer {
-  background-color: transparent;
+    background-color: transparent;
+}
+
+.grid {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    justify-content: center;
+    width: 100%;
+}
+
+@media (max-width: 600px) {
+    .grid {
+        grid-template-columns: 1fr;
+        padding: 0 1rem;
+    }
+}
+
+.pageLayout {
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+/* במסכים קטנים הנבבר למעלה – הכרטיסים יתפרסו */
+@media (max-width: 768px) {
+    .pageLayout {
+        flex-direction: column;
+    }
+}
+
+
+.nameAndAge {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    font-size: 1.2rem;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.ageCityContainer {
+    display: flex;
+    gap: 0.5rem;
+    font-size: 1rem;
+    color: #555;
+    direction: rtl;
+    justify-content: flex-end;
+}
+
+.ageCityContainer span {
+    display: inline-block;
+}
+
+.city {
+    font-weight: 500;
+}
+
+.age {
+    font-weight: 500;
 }
