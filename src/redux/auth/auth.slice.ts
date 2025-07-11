@@ -2,7 +2,9 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { isValidToken, jwtDecode, mapJwtClaims, setAuthorizationHeader } from '../../auth/auth.utils';
 import { login as authServiceLogin, register as authServiceRegister } from '../../services/auth.service';
-import {  JwtUser, RegisterUserDto } from '../../types/user.types';
+import { JwtUser, RegisterUserDto } from '../../types/user.types';
+import { UserType } from '../../types/enums';
+import { loadUserFromToken, loginUser, registerUser } from '../thunks/auth.thunk';
 
 // טיפוס מצב האותנטיקציה
 interface AuthState {
@@ -21,89 +23,6 @@ const initialState: AuthState = {
   error: null,
   isAuthenticated: false,
 };
-
-// ✨ פונקציה עזר לפענוח טוקן
-const processToken = (token: string): { user: JwtUser; token: string } | null => {
-  const claims = jwtDecode(token);
-  if (!claims) return null;
-  const user = mapJwtClaims(claims);
-  if (!user) return null;
-  return { user, token };
-};
-
-// טעינת משתמש מטוקן
-export const loadUserFromToken = createAsyncThunk(
-  'auth/loadUserFromToken',
-  async (_, { rejectWithValue }) => {
-    try {
-      const token = localStorage.getItem('token');
-      if (token && isValidToken(token)) {
-        const claims = jwtDecode(token);
-        const user = mapJwtClaims(claims);
-        if (user) return user;
-      }
-      localStorage.removeItem('token');
-      return rejectWithValue('Invalid or missing token.');
-    } catch (error: any) {
-      localStorage.removeItem('token');
-      return rejectWithValue(error.message || 'Failed to load user from token.');
-    }
-  }
-);
-
-// התחברות
-export const loginUser = createAsyncThunk(
-  'auth/loginUser',
-  async (credentials: { email: string; password: string }, { rejectWithValue }) => {
-    try {
-      const token = await authServiceLogin(credentials.email, credentials.password);
-      const result = processToken(token);
-      if (!result) return rejectWithValue('טוקן התחברות לא תקין.');
-      localStorage.setItem('token', token);
-      // setAuthorizationHeader(token);
-      return result;
-    } catch (error: any) {
-      localStorage.removeItem('token');
-      return rejectWithValue(error.message || 'שגיאה בהתחברות');
-    }
-  }
-);
-// registerUser עם התחברות מיידית
-export const registerUser = createAsyncThunk(
-  'auth/registerUser',
-  async (
-    userData: RegisterUserDto,
-    { dispatch, rejectWithValue }
-  ) => {
-    try {
-      console.log('📩 שולח בקשת הרשמה:', userData.email);
-
-      // קודם כל — מבצע הרשמה
-      await authServiceRegister(userData);
-
-      // לאחר הרשמה מוצלחת — מנסה להתחבר מיד
-      const token = await authServiceLogin(userData.email, userData.password);
-
-      // מפענח טוקן
-      const result = processToken(token);
-      if (!result) {
-        return rejectWithValue('ההתחברות לאחר ההרשמה נכשלה: טוקן לא תקין.');
-      }
-
-      // שומר טוקן ב-localStorage
-      localStorage.setItem('token', token);
-      // setAuthorizationHeader(token);
-
-      return result;
-
-    } catch (error: any) {
-      console.error("❌ שגיאה בהרשמה או התחברות:", error);
-      localStorage.removeItem('token');
-      return rejectWithValue(error.message || 'שגיאה בהרשמה או התחברות');
-    }
-  }
-);
-
 
 // ✅ ה-Slice
 const authSlice = createSlice({
@@ -167,9 +86,17 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(registerUser.fulfilled, (state, action) => {
-        state.user = action.payload.user;
-        state.token = action.payload.token;
-        state.isAuthenticated = true;
+        const payload = action.payload;
+        if (payload && 'user' in payload && 'token' in payload) {
+          state.user = payload.user;
+          state.token = payload.token;
+          state.isAuthenticated = true;
+        } else {
+          // אם אין user/token – כנראה קיבלת רק message או null
+          state.user = null;
+          state.token = null;
+          state.isAuthenticated = false;
+        }
         state.isLoading = false;
         state.error = null;
       })

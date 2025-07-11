@@ -1,7 +1,6 @@
 import axios from "axios";
 import { ENDPOINTS } from "../api/endpoints"
 import { User } from "../types/user.types"
-import { loadUserFromToken } from "../redux/auth/auth.slice";
 
 export const login = async (email: string, password: string): Promise<string> => {
   console.log("📩 Sending login request to API");
@@ -23,11 +22,13 @@ export const login = async (email: string, password: string): Promise<string> =>
   }
 };
 
-export const register = async (userData: Omit<User, 'id'>): Promise<User> => {
+type RegisterResponse = User | { message: string };
+
+export const register = async (userData: Omit<User, 'id'>): Promise<RegisterResponse> => {
   console.log("📩 Sending registration request to API");
   try {
-    const response = await axios.post<User>(ENDPOINTS.register, userData);
-    return response.data; // רק המשתמש, בלי token
+    const response = await axios.post<RegisterResponse>(ENDPOINTS.register, userData);
+    return response.data;
   } catch (error: any) {
     let errorMessage = 'Registration failed';
     if (axios.isAxiosError(error) && error.response) {
@@ -45,3 +46,4 @@ export const register = async (userData: Omit<User, 'id'>): Promise<User> => {
     throw new Error(errorMessage);
   }
 };
+

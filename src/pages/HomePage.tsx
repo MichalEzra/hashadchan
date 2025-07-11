@@ -3,7 +3,8 @@ import { useState, ChangeEvent, useEffect, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './style/HomePage.module.css';
 import { useAppSelector, useAppDispatch } from '../redux/store';
-import { loadUserFromToken, loginUser, registerUser, setUser } from '../redux/auth/auth.slice';
+import { setUser } from '../redux/auth/auth.slice';
+import { loadUserFromToken, loginUser, registerUser } from '../redux/thunks/auth.thunk'
 import { UserType } from '../types/enums';
 import { mapJwtClaims } from '../auth/auth.utils';
 import SideNav from '../components/navbar/SideNav';
@@ -137,25 +138,28 @@ export default function HomePage() {
 
     setIsRegisterLoading(true);
     try {
-      // קורא ל-thunk של ההרשמה (registerUser).
-      // ה-thunk הזה כבר מטפל בשליחת הבקשה לשרת דרך auth.service.ts,
-      // שמירת הטוקן ב-localStorage (אם הוחזר), פענוח המשתמש ועדכון Redux state.
-      await dispatch(registerUser(registerData)).unwrap();
+      const response = await dispatch(registerUser(registerData)).unwrap();
 
-      // אם ההרשמה הצליחה, סגור את המודאל ונקה את הטופס.
-      setShowRegisterModal(false);
-      setRegisterData({ // Reset form after successful registration
-        fullName: '',
-        email: '',
-        password: '',
-        phoneNumber: '',
-        userType: UserType.PARENT
-      });
-      setRegisterErrors({}); // Clear errors
-      // הניווט יטופל אוטומטית על ידי ה-useEffect לעיל כשה-Redux state מתעדכן.
+      if (response && 'message' in response) {
+        alert(response.message);
+        setShowRegisterModal(false);
+
+        return;
+        // למשל: "הרשמתך התקבלה וממתינה לאישור מנהל."
+      } else {
+        // אם ההרשמה הצליחה, סגור את המודאל ונקה את הטופס.
+        setShowRegisterModal(false);
+        setRegisterData({
+          fullName: '',
+          email: '',
+          password: '',
+          phoneNumber: '',
+          userType: UserType.PARENT
+        });
+        setRegisterErrors({});
+      }
     } catch (registerError: any) {
       console.error('שגיאה בהרשמה:', registerError);
-      // מצב השגיאה ב-Redux יתעדכן אוטומטית על ידי ה-extraReducers של ה-slice.  
     } finally {
       setIsRegisterLoading(false);
     }
@@ -171,8 +175,8 @@ export default function HomePage() {
       {error && <div>{error}</div>}
 
       <div className={styles.title}>
-        <div>מחפשים שידוך?</div>
-        <h1>יהשדכן כאן כדי לעזור לכם למצוא!</h1>
+        <div>?מחפשים שידוך</div>
+        <h1>!השדכן כאן כדי לעזור לכם למצוא</h1>
         <p>מיזם השידוכים הגדול של הציבור החרדי</p>
         <p>בנושיאות מרן ורבני גדולי ישראל שליט"א</p>
         <p>היחיד שמאפשר למצוא הצעה מתאימה בדיסקרטיות</p>
@@ -258,7 +262,7 @@ export default function HomePage() {
       )}
 
       {isLoggedIn && (
-        <button className= {styles.personalArea} onClick={() => {setShowSideNav(true); navigate('/suggestions')}}>
+        <button className={styles.personalArea} onClick={() => { setShowSideNav(true); navigate('/suggestions') }}>
           <User size={18} style={{ marginLeft: 8 }} />לאיזור האישי</button>
       )}
 

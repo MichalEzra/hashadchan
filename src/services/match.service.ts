@@ -8,13 +8,14 @@ const token = localStorage.getItem('token'); // או איך שאת שומרת א
 // יצירת שידוך בין מועמד למועמדת על ידי שדכן
 export const createMatch = async (request: MatchRequest) => {
     console.log('token:', localStorage.getItem('token'));
-    return await axios.post(
+    const response = await axios.post(
         `${BASE_URL}/Match`,request,
         {
         headers: {
             Authorization: `Bearer ${token}`,
         },
     });
+    return response.data;
 };
 //שליחת מייל לצד השני
 export const sendSingleMatchRequest = async (data: MatchRequest) => {

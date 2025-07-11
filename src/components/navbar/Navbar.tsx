@@ -7,9 +7,10 @@ import { useAppSelector } from '../../redux/store';
 
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../redux/store";
-import { loadUserFromToken, loginUser, logoutUser, registerUser } from "../../redux/auth/auth.slice"; // פעולה שמנקה את הסטייט של המשתמש
+import { loadUserFromToken, loginUser, registerUser } from "../../redux/thunks/auth.thunk"; // פעולה שמנקה את הסטייט של המשתמש
 import {  jwtDecode, mapJwtClaims } from '../../auth/auth.utils';
 import { UserType } from '../../types/enums';
+import { logoutUser } from '../../redux/auth/auth.slice';
 
 const LogoutButton = ({ className }: { className?: string }) => {
   const dispatch = useAppDispatch();

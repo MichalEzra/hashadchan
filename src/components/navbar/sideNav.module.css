@@ -114,6 +114,7 @@ button:nth-child(3)::before {
     transition: right 0.3s ease;
     z-index: 1101;
     flex-direction: column;
+    margin-left: 5%;
   }
 
   .sideNav.open {

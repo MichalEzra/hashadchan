@@ -18,8 +18,9 @@ export type NewUser = Omit<User, 'id' | 'candidate'>;
 //   return response.data;
 // };
 
+type RegisterResponse = User | { message: string };
 
-export const addUser = async (user: User): Promise<User> => {
+export const addUser = async (user: User): Promise<RegisterResponse> => {
   console.log('📩 שולח בקשה להרשמה דרך Signup');
   const createdUser = await register(user);
   return createdUser;

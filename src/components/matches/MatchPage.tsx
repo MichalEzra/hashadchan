@@ -5,7 +5,7 @@ import { CandidateDto } from '../../types/candidateDto.types';
 import { createMatch } from '../../services/match.service';
 import { getMaleCandidates, getFemaleCandidates } from '../../services/candidate.service';
 import { jwtDecode, mapJwtClaims } from '../../auth/auth.utils';
-import { loadUserFromToken } from '../../redux/auth/auth.slice';
+import { loadUserFromToken } from '../../redux/thunks/auth.thunk';
 
 export default function MatchPage() {
   //   const currentUser = useAppSelector(state => state.auth.user);
